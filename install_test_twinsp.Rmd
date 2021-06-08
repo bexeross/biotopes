@@ -1,0 +1,111 @@
+---
+title: "install_twinspan"
+author: "GGM & RR"
+date: "8 6 2021"
+output: html_document
+---
+
+```{r global-options, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.path='Figs/')
+```
+
+Geno put this together originally, I (RR) have just updated to ensure I can install both versions of TWINSPAN on my machine too. The test for each is also included. 
+
+I think we should focus on the jarioksa version as there are more options for exploring the output and I dont think we are particularly in need of the modified TWINSPAN that the zdalveindy version was developed to support. Consequently the jarioksa code comes first with the zdalveindy version details at the end in cse they are needed.
+
+
+##JARIOKSA TWINSPAN
+Two-Way Indicator Analysis (TWINSPAN) is a divisive classification method that works by splitting first Correspondence Analysis into two classes, and then recursively working with each split subset. The current function is based on and uses much of the original FORTRAN code of the original TWINSPAN (Hill 1979). twinspan is the main function of this package, but it works silently and prints very little information: you must use separate support functions to extract various aspects of the result.
+
+#install
+```{r install-jari}
+#install.packages ('devtools') # if you don't have it installed yet
+library(devtools)
+devtools::install_github("jarioksa/twinspan") 
+```
+
+
+#libraries
+```{r libs-jari}
+library(twinspan)
+library(vegan) # for data
+```
+
+#test run
+https://github.com/jarioksa/twinspan
+
+arguments: 
+
+`twinspan(x, cutlevels = c(0, 2, 5, 10, 20), indmax = 7, groupmin = 5,
+  levmax = 6, lind, lwgt, noind)`
+  
+cutlevels	 
+Cut levels used to split quantitative data into binary pseudospecies. Max of 9 cutlevels can be used.
+
+indmax	 
+Maximum number of indicators for division (15 or less).
+
+groupmin	 
+Minimum group size for division (2 or larger).
+
+levmax	 
+Maximum depth of levels of divisions (15 or less).
+
+lind	 
+Weights for levels of pseudospecies. For example indicator potentials c(1, 0, 0,1, 0) signify that pseudospecies at levels 1 and 4 can be used as indicators, but that those at other levels cannot. In the default case, all species are available.
+
+lwgt	 
+Weights for the levels of pseudospecies. For example weights c(1, 2, 2, 2) signify that pseudospecies corresponding to 3 higher cut levels are to be given twice the weight of pseudospecies at the lowest level.
+
+noind	 
+Numbers (indices) of species that you wish to omit from list of potential indicators. Species omitted from this list are used in the calculation, but cannot appear as indicators.
+
+```{r runTwinspJ}
+#run with default options
+data(varespec)
+head(varespec)
+twJ <- twinspan(varespec)
+
+```
+
+# explore
+
+To see data transfomation (pseudospecies):
+```{r transforms}
+twindat <- twinsform(varespec)
+colnames(twindat)
+```
+
+see classification
+```{r classTwinspJ}
+summary(twJ)
+```
+
+to extract the classification of each quadrat with cut:
+```{r perQuarat}
+ cut(twJ)
+  cut(twJ, level=2) # use classification at second level
+```
+to predict the membership of quadrats based on pseudospecies and threshold scores
+```{r predMemb}
+predict(twJ, level=2)
+```
+classification of species (not pseudospecies - TWINSPAN = two way - samples and species)
+```{r classSppTwinspJ}
+summary(twJ, "species")
+#cut(tw, "species") #for cutting speces classification
+```
+tabulate: The strings of 0 and 1 in front of the species name and above quadrat name (or number) give the steps of division. The numeric values in the table are the pseudospecies values of the analysis.
+```{r tabTwinspJ}
+twintable(twJ)
+
+```
+dendrogram - quadrats i.e. how quadrats group according to species - primary biotope method
+```{r dendroQuadTwinspJ}
+plot(as.dendrogram(twJ, "quadrat"), type = "triangle")
+```
+
+dendrogram - species i.e. how species group according to quadrats
+```{r dendroSpTwinspJ}
+plot(as.dendrogram(twJ, "species"), type = "triangle")
+```
