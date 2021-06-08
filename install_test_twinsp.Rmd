@@ -15,6 +15,9 @@ I think we should focus on the jarioksa version as there are more options for ex
 
 
 ##JARIOKSA TWINSPAN
+NB. BASED ON CORRESPONDANCE ANALYSIS  
+(Can plot dendrograms and use across platforms but can't use modified algorithm)  
+
 Two-Way Indicator Analysis (TWINSPAN) is a divisive classification method that works by splitting first Correspondence Analysis into two classes, and then recursively working with each split subset. The current function is based on and uses much of the original FORTRAN code of the original TWINSPAN (Hill 1979). twinspan is the main function of this package, but it works silently and prints very little information: you must use separate support functions to extract various aspects of the result.
 
 #install
@@ -109,3 +112,62 @@ dendrogram - species i.e. how species group according to quadrats
 ```{r dendroSpTwinspJ}
 plot(as.dendrogram(twJ, "species"), type = "triangle")
 ```
+***
+## ZDEALVEINDY TWINSPAN
+NB BASED ON DETRENDED CORRESPONDANCE ANALYSIS  
+NB RUN AS ADMIN (on HI machines the zdealveindy twinspan run won't work if run as user as there is an executable in the library)  
+
+(can run modified TWINSPAN but only works in windows and can't plot dendrograms) 
+
+# install
+```{r installTwinspZ}
+#install.packages ('devtools') # if you don't have it installed yet
+library(devtools)
+devtools::install_github("nsj3/riojaExtra")
+devtools::install_github("zdealveindy/twinspanR")
+```
+
+
+# libraries
+```{r libsTwinspZ}
+library (twinspanR)
+library (vegan)
+```
+
+
+# test run
+https://www.davidzeleny.net/anadat-r/doku.php/en:hier-divisive_r  
+
+NB If you have this error when you try and run twinspan then it is probably because you need to run as administrator to get past it...  
+`Error in riojaExtra::write.CEP(com, fName = "tw.cc!") : Cannot open file tw.cc!`  
+
+Modified TWINSPAN on traditional Ellenberg's Danube meadow dataset, projected on DCA and compared with original classification into three vegetation types made by tabular sorting:
+
+```{r}
+data (danube)
+res <- twinspan (danube$spe, modif = TRUE, clusters = 4)
+```
+```{r}
+k <- cut (res)
+dca <- decorana (danube$spe)
+par (mfrow = c(1,2))
+ordiplot (dca, type = 'n', display = 'si', main = 'Modified TWINSPAN')
+points (dca, col = k)
+for (i in c(1,2,4)) ordihull (dca, groups = k, show.group = i, col = i,
+                              draw = 'polygon', label = TRUE)
+ordiplot (dca, type = 'n', display = 'si', main = 'Original assignment\n (Ellenberg 1954)')
+points (dca, col = danube$env$veg.type)
+for (i in c(1:3)) ordihull (dca, groups = danube$env$veg.type, 
+                            show.group = unique (danube$env$veg.type)[i], col = i,
+                            draw = 'polygon', label = TRUE)
+
+## To capture the console output of twinspan.exe into R object, use the following:
+## Not run: 
+out <- capture.output (twZ <- twinspan (danube$spe, show.output.on.console = T))
+summary (twZ)           # returns summary of twinspan algorithm
+cat (out, sep = '\n')  # prints the captured output
+write.table (out, file = 'out.txt', quot = F, row.names = F) # writes output to 'out.txt' file
+
+## End(Not run)
+```
+
