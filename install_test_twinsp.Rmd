@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r global-options, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, fig.path='Figs/')
+knitr::opts_chunk$set(echo = TRUE, fig.path='Figs/', warning=FALSE, message=FALSE)
 ```
 
 Geno put this together originally, I (RR) have just updated and further annotated to ensure I can install both versions of TWINSPAN on my machine too and to remember more about how things work. The test for each version of R based TWINSPAN is also included. 
@@ -137,6 +137,7 @@ devtools::install_github("zdealveindy/twinspanR")
 
 # libraries
 ```{r libsTwinspZ}
+detach(package:twinspan,unload=TRUE)
 library (twinspanR)
 library (vegan)
 ```
