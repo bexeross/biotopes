@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE, fig.path='Figs/', warning=FALSE, message=FALS
 Geno put this together originally, I (RR) have just updated and further annotated to ensure I can install both versions of TWINSPAN on my machine too and to remember more about how things work. The test for each version of R based TWINSPAN is also included. 
 
 Jarikosa version   
-- doesn't need executable, can do various explorations including dendrgrams with outputs 
+- doesn't need executable, can do various explorations including dendrograms with outputs 
 
 Zdealveindy version   
 - needs executable (so R/Rstudio must be run as admin on HI machines), can give output in original format, runs a modified version of TWINSPAN ie. While in the original TWINSPAN, at each level of the division each cluster is divided into two clusters (unless the cluster contains too few samples), in the modified TWINSPAN only the most compositionally heterogeneous cluster is divided into two clusters  
