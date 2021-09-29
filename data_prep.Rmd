@@ -13,3 +13,7 @@ codePath <- getwd()
 ```
 
 ## Read data
+```{r}
+spmatrix <- read.csv(file.path(dataPath,"species_densities.csv"), sep ="|")
+```
+
