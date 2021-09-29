@@ -1,0 +1,10 @@
+---
+title: "Prep input data, including species cleaning"
+output: html_notebook
+---
+
+## Read in the species-by-site matrix
+```{r}
+plot(cars)
+```
+
