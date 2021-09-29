@@ -17,6 +17,7 @@ codePath <- getwd()
 ## Libraries
 ```{r}
 library(readxl)
+library(dplyr)
 ```
 
 ## Read data
@@ -25,7 +26,22 @@ spmatrix <- read.csv(file.path(dataPath,"species_densities.csv"), sep ="|")
 ```
 
 ## Edit species
+# import edits file
 ```{r}
 edits <- read_xlsx(file.path(dataPath,"Further editing of taxa for analyses.xlsx"))
+edits <- mutate(edits, original_name = gsub("&",";",`Row Labels`))
+head(edits)
+```
+
+# modify species according to the edits
+```{r}
+# transcode species
+spmatrix <- spmatrix %>% mutate(new_name = edits$`Replace with`[match(spmatrix$clean_taxonomy,edits$original_name)])
+idx <- which(is.na(spmatrix$new_name))
+spmatrix$new_name[idx]<- as.character(spmatrix$clean_taxonomy[idx])
+
+# remove species
+idx <- which(match(spmatrix$new_name,edits$original_name))
+
 ```
 
