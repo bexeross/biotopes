@@ -26,6 +26,6 @@ spmatrix <- read.csv(file.path(dataPath,"species_densities.csv"), sep ="|")
 
 ## Edit species
 ```{r}
-edits <- 
+edits <- read_xlsx(file.path(dataPath,"Further editing of taxa for analyses.xlsx"))
 ```
 
