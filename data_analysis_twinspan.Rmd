@@ -23,3 +23,11 @@ trimmedwide <- trimmed %>% select(-c(TotAbu,clean_taxonomy)) %>%
 head(trimmedwide)
 ```
 
+## Twinspan
+```{r}
+tw_1 <- trimmedwide %>%
+  select(-SampID) %>%
+  #subset()
+  twinspan()
+```
+
