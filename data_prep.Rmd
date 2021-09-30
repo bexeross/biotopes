@@ -41,7 +41,10 @@ idx <- which(is.na(spmatrix$new_name))
 spmatrix$new_name[idx]<- as.character(spmatrix$clean_taxonomy[idx])
 
 # remove species
-idx <- which(match(spmatrix$new_name,edits$original_name))
+editrem <- edits %>% subset(Delete == "x")
+idx <- which(is.na(match(spmatrix$new_name,editrem$original_name)))
 
+# trimmed matrix
+trimmed <- spmatrix[idx,]
 ```
 
