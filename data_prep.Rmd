@@ -42,9 +42,14 @@ spmatrix$new_name[idx]<- as.character(spmatrix$clean_taxonomy[idx])
 
 # remove species
 editrem <- edits %>% subset(Delete == "x")
-idx <- which(is.na(match(spmatrix$new_name,editrem$original_name)))
+idx <- which(is.na(match(spmatrix$clean_taxonomy,editrem$original_name)))
+#idx <- which(is.na(match(spmatrix$new_name,editrem$original_name))) #or this?
 
 # trimmed matrix
 trimmed <- spmatrix[idx,]
 ```
 
+## Result
+```{r}
+unique(data.frame(sort(trimmed$new_name)))
+```
