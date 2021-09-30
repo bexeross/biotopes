@@ -8,4 +8,15 @@ output: html_notebook
 ## Libraries
 ```{r}
 library(twinspan)
+library(tidyr)
 ```
+
+
+## Make the matrix into wide format
+```{r}
+trimmedwide <- trimmed %>% select(-c(TotAbu,clean_taxonomy)) %>%
+  pivot_wider(names_from = new_name, values_from = density_n_100m2, values_fill = 0, values_fn = sum)
+
+head(trimmedwide)
+```
+
