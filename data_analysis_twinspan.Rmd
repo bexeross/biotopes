@@ -23,11 +23,21 @@ trimmedwide <- trimmed %>% select(-c(TotAbu_pseudocount,TotAbu_count,density_n_1
 head(trimmedwide)
 ```
 ## Subset samples
-### based on total area and video quality
+### Import necessary data
 ```{r}
 sample_info <- read.csv(file.path(dataPath,"sample_info.csv"))
+```
+
+### examine distribution of surveyed area
+```{r}
+hist(sample_info$area_m2)
+```
+
+### set a threshold for surveyed area
+```{r}
 
 ```
+
 
 ## Twinspan
 ```{r}
