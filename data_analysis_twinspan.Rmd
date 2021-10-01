@@ -14,11 +14,11 @@ library(tidyr)
 
 ## Make the matrix into wide format
 ```{r}
-trimmedwide <- trimmed %>% select(-c(TotAbu,clean_taxonomy)) %>%
+trimmedwide <- trimmed %>% select(-c(TotAbu_pseudocount,TotAbu_count,density_n_100m2_count,clean_taxonomy)) %>%
   mutate(new_name = gsub(" ","",new_name)) %>%
   mutate(new_name = gsub("\\.","",new_name)) %>%
   mutate(new_name = tolower(new_name)) %>%
-  pivot_wider(names_from = new_name, values_from = density_n_100m2, values_fill = 0, values_fn = sum)
+  pivot_wider(names_from = new_name, values_from = density_n_100m2_pseudocount, values_fill = 0, values_fn = sum)
 
 head(trimmedwide)
 ```
