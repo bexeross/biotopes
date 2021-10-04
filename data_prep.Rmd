@@ -52,4 +52,5 @@ trimmed <- spmatrix[idx,]
 ## Result
 ```{r}
 unique(data.frame(sort(trimmed$new_name)))
+write.csv(trimmed,file.path(outPath,"species_densities_trimmed.csv"),row.names = FALSE)
 ```
