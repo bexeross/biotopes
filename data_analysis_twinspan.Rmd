@@ -26,6 +26,7 @@ head(trimmedwide)
 ### Import necessary data
 ```{r}
 sample_info <- read.csv(file.path(dataPath,"sample_info.csv"))
+refer <- read.csv(file.path(dataPath,"reference.csv"), sep ="|")
 ```
 
 ### examine distribution of surveyed area
@@ -33,11 +34,13 @@ sample_info <- read.csv(file.path(dataPath,"sample_info.csv"))
 hist(sample_info$area_m2)
 ```
 
-### set a threshold for surveyed area
+### set thresholds for data quality
 ```{r}
+# threshold for total surveyed area
+survarea_thrs <- 2100
 
+# threshold for picture quality
 ```
-
 
 ## Twinspan
 ```{r}
