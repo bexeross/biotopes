@@ -26,14 +26,14 @@ spmatrix <- read.csv(file.path(dataPath,"species_densities.csv"), sep ="|")
 ```
 
 ## Edit species
-# import edits file
+### import edits file
 ```{r}
 edits <- read_xlsx(file.path(dataPath,"Further editing of taxa for analyses.xlsx"))
 edits <- mutate(edits, original_name = gsub("&",";",`Row Labels`))
 head(edits)
 ```
 
-# modify species according to the edits
+### modify species according to the edits
 ```{r}
 # transcode species
 spmatrix <- spmatrix %>% mutate(new_name = edits$`Replace with`[match(spmatrix$clean_taxonomy,edits$original_name)])
