@@ -64,16 +64,20 @@ novis_thres <- 0.5
 filter1 <- sum(sample_info$SegLengthM>length_lower&sample_info$SegLengthM<length_upper)
 filter2 <- length(which(ifelse(is.na(sample_info$ok_vision),1,
                        ifelse(sample_info$poor_vision<poorvis_thres&sample_info$no_vision<novis_thres,1,0))==1))
-filter <- sum(
+filter <- #sum(
     rowSums(
   cbind((sample_info$SegLengthM>length_lower&sample_info$SegLengthM<length_upper),ifelse(is.na(sample_info$ok_vision),1,
-                       ifelse(sample_info$poor_vision<poorvis_thres&sample_info$no_vision<novis_thres,1,0))))==2)
+                       ifelse(sample_info$poor_vision<poorvis_thres&sample_info$no_vision<novis_thres,1,0))))==2
+#)
 
 summary<-data.frame("length_filter_pass"=filter1/dim(sample_info)[1],
                     "picqual_filter_pass" =filter2/dim(sample_info)[1],
-                    "both" = filter/dim(sample_info)[1])
+                    "both" = sum(filter)/dim(sample_info)[1])
 
 summary
+```
+## Filter dataset
+```{r}
 ```
 
 ## Twinspan
