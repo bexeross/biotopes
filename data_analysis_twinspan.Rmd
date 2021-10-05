@@ -117,10 +117,13 @@ shorten <- function(x) substr (x,1,20)
 ```
 
 ## Twinspan
+Perform the twinspan analysis
+
+### Use all samples and all species
 ```{r}
 tw_1 <- trimmedwide %>%
   select(-SampID) %>%
-  #subset()
+  select(which(!is.na(colSums(.)))) %>%
   twinspan()
 ```
 
