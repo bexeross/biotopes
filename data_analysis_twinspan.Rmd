@@ -42,7 +42,11 @@ thres <- 3
 good <- refer$sample_no[which(refer$total_bio/refer$towed_distance<thres)]
 length(good)/length(unique(sample_info$VL))
 ```
-
+### Information on discarded stations
+```{r}
+refer %>% filter(sample_no%in%unique(sample_info$VL)) %>%
+  filter(!sample_no%in%good)
+```
 
 ### Based on survey area
 ```{r}
