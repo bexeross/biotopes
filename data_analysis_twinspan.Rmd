@@ -27,7 +27,7 @@ head(trimmedwide)
 ### Import necessary data
 ```{r}
 sample_info <- read.csv(file.path(dataPath,"sample_info.csv")) %>%
-  mutate(area_m2 = SegLengthM * meanFoV_m)
+  mutate(area_m2 = SegLengthM * meanFoV_m) # I forgot to export/import this column!
 
 refer <- read.csv(file.path(dataPath,"reference.csv"), sep ="|")
 ```
