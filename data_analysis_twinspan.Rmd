@@ -76,8 +76,17 @@ summary<-data.frame("length_filter_pass"=filter1/dim(sample_info)[1],
 
 summary
 ```
-## Filter dataset
+## Missing data
+Which samples are in sample_info and not in matrix, and are they a whole video line or just a portion?
 ```{r}
+res <- anti_join(sample_info,
+          pivot_wider(spmatrix,names_from = new_name, values_from = density_n_100m2_pseudocount, values_fill = 0, values_fn = sum),by = "SampID")[,c(1,2,4)] %>%
+  group_by(VL) %>%
+  summarize(SampID = SampID,
+            #NumSegments = NumSplits,
+            portion_missing = paste(as.character(length(VL)), as.character(NumSplits), sep ="/"))
+
+res
 ```
 
 ## Twinspan
