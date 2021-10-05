@@ -28,6 +28,18 @@ trimmedwide <- trimmed %>% select(-c(TotAbu_pseudocount,TotAbu_count,density_n_1
 
 head(trimmedwide)
 ```
+
+## Subset stations
+### Based on data completeness
+We should use only video lines where data is complete. We determine that by looking at the total number of biological annotations relative to the towed distance. Note that total number of biological annotations depends on species richness!  
+```{r}
+hist(refer$total_bio/refer$towed_distance)
+```
+### Based on survey area
+```{r}
+
+```
+
 ## Subset samples
 ### Import necessary data
 Read in additional data
