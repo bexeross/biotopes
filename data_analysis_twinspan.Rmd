@@ -9,6 +9,7 @@ output: html_notebook
 ```{r}
 library(twinspan)
 library(tidyr)
+library(dplyr)
 ```
 
 
@@ -25,13 +26,15 @@ head(trimmedwide)
 ## Subset samples
 ### Import necessary data
 ```{r}
-sample_info <- read.csv(file.path(dataPath,"sample_info.csv"))
+sample_info <- read.csv(file.path(dataPath,"sample_info.csv")) %>%
+  mutate(area_m2 = SegLengthM * meanFoV_m)
+
 refer <- read.csv(file.path(dataPath,"reference.csv"), sep ="|")
 ```
 
 ### examine distribution of surveyed area
 ```{r}
-hist(sample_info$area_m2)
+hist(sample_info$SegLengthM)
 ```
 
 ### set thresholds for data quality
