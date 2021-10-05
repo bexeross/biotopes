@@ -35,6 +35,15 @@ We should use only video lines where data is complete. We determine that by look
 ```{r}
 hist(refer$total_bio/refer$towed_distance)
 ```
+### Make a list of "good" stations
+Check how much data we would be using/discarding
+```{r}
+thres <- 3
+good <- refer$sample_no[which(refer$total_bio/refer$towed_distance<thres)]
+length(good)/length(unique(sample_info$VL))
+```
+
+
 ### Based on survey area
 ```{r}
 
