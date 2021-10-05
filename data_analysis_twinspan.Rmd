@@ -34,7 +34,7 @@ refer <- read.csv(file.path(dataPath,"reference.csv"), sep ="|")
 
 ### examine distribution of surveyed area
 ```{r}
-par(mfrow=c(2,2))
+par(mfrow=c(1,2))
 hist(sample_info$area_m2, main ="Surveyed area", xlab = "Area (m2)")
 hist(sample_info$SegLengthM, main ="Surveyed distance", xlab = "Length (m)")
 ```
