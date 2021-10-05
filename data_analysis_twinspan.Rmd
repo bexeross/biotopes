@@ -57,17 +57,13 @@ novis_thres <- 0.5
 #table(ifelse(is.na(sample_info$ok_vision),1,
 #                       ifelse(sample_info$poor_vision<poorvis_thres&sample_info$no_vision<novis_thres,1,0)))
 
-#View(cbind(ifelse(is.na(sample_info$ok_vision),1,
-#                       ifelse(sample_info$poor_vision<poorvis_thres&sample_info$no_vision<novis_thres,1,0)),
-#     sample_info$ok_vision, sample_info$poor_vision, sample_info$no_vision))
-
-filter1 <- sum(sample_info$SegLengthM>length_lower&sample_info$SegLengthM<length_upper)
-filter2 <- length(which(ifelse(is.na(sample_info$ok_vision),1,
-                       ifelse(sample_info$poor_vision<poorvis_thres&sample_info$no_vision<novis_thres,1,0))==1))
+filter1 <- sum(with(sample_info, SegLengthM>length_lower&SegLengthM<length_upper))
+filter2 <- length(which(with(sample_info, ifelse(is.na(ok_vision),1,
+                    ifelse(poor_vision<poorvis_thres&no_vision<novis_thres,1,0)))==1))
 filter <- #sum(
     rowSums(
-  cbind((sample_info$SegLengthM>length_lower&sample_info$SegLengthM<length_upper),ifelse(is.na(sample_info$ok_vision),1,
-                       ifelse(sample_info$poor_vision<poorvis_thres&sample_info$no_vision<novis_thres,1,0))))==2
+  cbind((with(sample_info, SegLengthM>length_lower&SegLengthM<length_upper)),ifelse(is.na(sample_info$ok_vision),1,
+       with(sample_info, ifelse(poor_vision<poorvis_thres & no_vision<novis_thres,1,0)))))==2
 #)
 
 summary<-data.frame("length_filter_pass"=filter1/dim(sample_info)[1],
