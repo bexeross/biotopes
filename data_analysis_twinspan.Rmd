@@ -34,15 +34,44 @@ refer <- read.csv(file.path(dataPath,"reference.csv"), sep ="|")
 
 ### examine distribution of surveyed area
 ```{r}
-hist(sample_info$SegLengthM)
+hist(sample_info$area_m2, main ="Surveyed area", xlab = "Area (m2)")
 ```
 
 ### set thresholds for data quality
 ```{r}
-# threshold for total surveyed area
-survarea_thrs <- 2100
+# thresholds for total surveyed area
+#survarea_upper <- 1200
+#survarea_lower <- 250
+
+# alternative, set thresholds for survey length (maybe better)
+length_lower <- 150
+length_upper <- 400
 
 # threshold for picture quality
+# in English, Doc: "either unknown, or not more than half with no vision, or not more than one quarter with poor vision"
+poorvis_thres <- 0.75
+novis_thres <- 0.5
+
+#table(ifelse(is.na(sample_info$ok_vision),1,
+#                       ifelse(sample_info$poor_vision<poorvis_thres&sample_info$no_vision<novis_thres,1,0)))
+
+#View(cbind(ifelse(is.na(sample_info$ok_vision),1,
+#                       ifelse(sample_info$poor_vision<poorvis_thres&sample_info$no_vision<novis_thres,1,0)),
+#     sample_info$ok_vision, sample_info$poor_vision, sample_info$no_vision))
+
+filter1 <- sum(sample_info$SegLengthM>length_lower&sample_info$SegLengthM<length_upper)
+filter2 <- length(which(ifelse(is.na(sample_info$ok_vision),1,
+                       ifelse(sample_info$poor_vision<poorvis_thres&sample_info$no_vision<novis_thres,1,0))==1))
+filter <- sum(
+    rowSums(
+  cbind((sample_info$SegLengthM>length_lower&sample_info$SegLengthM<length_upper),ifelse(is.na(sample_info$ok_vision),1,
+                       ifelse(sample_info$poor_vision<poorvis_thres&sample_info$no_vision<novis_thres,1,0))))==2)
+
+summary<-data.frame("length_filter_pass"=filter1/dim(sample_info)[1],
+                    "picqual_filter_pass" =filter2/dim(sample_info)[1],
+                    "both" = filter/dim(sample_info)[1])
+
+summary
 ```
 
 ## Twinspan
