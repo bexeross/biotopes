@@ -9,6 +9,7 @@ output:
 ---
 
 ## Libraries
+Load necessary libraries
 ```{r}
 library(twinspan)
 library(tidyr)
@@ -17,6 +18,7 @@ library(dplyr)
 
 
 ## Make the matrix into wide format
+Convert from long format input to a wide format where rows are samples and columns are species
 ```{r}
 trimmedwide <- trimmed %>% select(-c(TotAbu_pseudocount,TotAbu_count,density_n_100m2_count,clean_taxonomy)) %>%
   mutate(new_name = gsub(" ","",new_name)) %>%
@@ -28,6 +30,7 @@ head(trimmedwide)
 ```
 ## Subset samples
 ### Import necessary data
+Read in additional data
 ```{r}
 sample_info <- read.csv(file.path(dataPath,"sample_info.csv")) %>%
   mutate(area_m2 = SegLengthM * meanFoV_m) # I forgot to export/import this column!
@@ -35,14 +38,16 @@ sample_info <- read.csv(file.path(dataPath,"sample_info.csv")) %>%
 refer <- read.csv(file.path(dataPath,"reference.csv"), sep ="|")
 ```
 
-### examine distribution of surveyed area
+### Examine distribution of surveyed area
+examine the distribution of total area and length of samples
 ```{r}
 par(mfrow=c(1,2))
 hist(sample_info$area_m2, main ="Surveyed area", xlab = "Area (m2)")
 hist(sample_info$SegLengthM, main ="Surveyed distance", xlab = "Length (m)")
 ```
 
-### set thresholds for data quality
+### Set thresholds for data quality
+Decide what is acceptable in terms of length of sample and picture quality
 ```{r}
 # thresholds for total surveyed area
 #survarea_upper <- 1200
@@ -75,7 +80,10 @@ summary<-data.frame("length_filter_pass"=filter1/dim(sample_info)[1],
 
 summary
 ```
+
 ## Missing data
+Provide explanations for missing species data
+
 ### Sample level
 Which samples are in sample_info and not in matrix, and are they a whole video line or just a portion? If just a portion, it is assumed that no species were detected anywhere along that segment
 ```{r}
@@ -89,6 +97,7 @@ res <- anti_join(sample_info,
 res
 ```
 ### Video line level
+Explanations for missing species data
 ```{r}
 res <- anti_join(sample_info,
           pivot_wider(spmatrix,names_from = new_name, values_from = density_n_100m2_pseudocount, values_fill = 0, values_fn = sum),by = "SampID")[,c(1,2,4)] %>%
