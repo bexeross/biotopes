@@ -1,5 +1,5 @@
 ---
-title: "Prep input data, including species cleaning"
+title: "Prepare input data, including data selection, and fit Twinspan model"
 author: "GGM & RR"
 date: "09/29/2021"
 output: 
