@@ -182,7 +182,8 @@ res <- left_join(res,refer, by=c("VL"="sample_no"))
 shorten <- function(x) substr (x,1,20)
 #res <- 
   res %>% select(VL,Notes, Notes.II,Comments,Other.comments,reason_excluded) %>%
-  mutate_all(shorten) 
+  mutate_all(shorten) %>%
+  mutate(Notes = ifelse(Notes == "in mareano raw",NA,Notes))
 
 ```
 
