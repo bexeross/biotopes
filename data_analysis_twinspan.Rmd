@@ -14,6 +14,9 @@ Load necessary libraries
 library(twinspan)
 library(tidyr)
 library(dplyr)
+library(rgdal)
+library(sf)
+library(rgeos)
 ```
 
 
@@ -49,7 +52,49 @@ refer %>% filter(sample_no%in%unique(sample_info$VL)) %>%
 ```
 
 ### Based on survey area
+Load the shapefile showing the GBK-sampled areas (it will need to be updated), overlay, and select
 ```{r}
+# read shapefile
+dsn <- "U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/GIS_Data"
+gbk <- readOGR(dsn = dsn, layer = "MAREANO_GBK-sampled_areas_100820") #encoding!
+
+# convert reference to spatial points
+refer_spat <- refer %>%
+  select(lon_mid_dec,lat_mid_dec) %>%
+  SpatialPoints %>%
+  SpatialPointsDataFrame(refer) %>%
+  utmize
+
+# specify areas
+areas <-c("Kongsfjorden indre indre",
+          "Kongsfjorden indre indre rest",
+          "Kongsfjorden ytre indre"#,
+          #"Rijpfjorden indre indre rest",
+          #"Rijpfjorden indre-indre",
+          #"Rijpfjorden indre-indre_ny"
+          )
+
+aoi <- gbk %>% 
+  subset(Name%in%areas) %>%
+  gUnaryUnion
+
+# select by location
+fjord <- refer %>%
+  select(sample_no) %>%
+  subset(!is.na(over(refer_spat,aoi)))
+
+# add manually to selection, when needed
+fjord <- fjord %>% add_row(sample_no = c(2112,
+                                         2116,
+                                         2117,
+                                         2118#,
+                                        #,
+                                        #,
+                                        #
+                                        ))
+
+refer_spat %>% subset(sample_no%in%fjord$sample_no) %>%
+  plot
 
 ```
 
