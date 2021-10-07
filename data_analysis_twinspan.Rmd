@@ -202,11 +202,12 @@ shorten <- function(x) substr (x,1,20)
 ## Twinspan
 Perform the twinspan analysis
 
-### Use all samples and all species
+### Fit the twinspan model
+Turn on or off the filters as you wish
 ```{r}
 tw_1 <- trimmedwide %>%
+  filter(new_filter) %>%
   filter(sample_info$VL[match(SampID, sample_info$SampID)]%in%good) %>%
-  filter()
   select(-SampID) %>%
   select(which(!is.na(colSums(.)))) %>%
   twinspan()
