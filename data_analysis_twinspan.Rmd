@@ -123,7 +123,7 @@ hist(sample_info$SegLengthM, main ="Surveyed distance", xlab = "Length (m)")
 ```
 
 ### Set thresholds for data quality
-Decide what is acceptable in terms of length of sample and picture quality
+Decide what is acceptable in terms of length of sample and picture quality. The percentages shown below are relative to the whole set of MAREANO stations (and not the "good" stations!)
 ```{r}
 # thresholds for total surveyed area
 #survarea_upper <- 1200
@@ -200,6 +200,7 @@ Perform the twinspan analysis
 ```{r}
 tw_1 <- trimmedwide %>%
   filter(sample_info$VL[match(SampID, sample_info$SampID)]%in%good) %>%
+  filter()
   select(-SampID) %>%
   select(which(!is.na(colSums(.)))) %>%
   twinspan()
