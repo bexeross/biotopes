@@ -150,6 +150,12 @@ filter <- #sum(
        with(sample_info, ifelse(poor_vision<poorvis_thres & no_vision<novis_thres,1,0)))))==2
 #)
 
+# make filter for later use
+new_filter <- data.frame(SampID = sample_info$SampID,Filter = filter) %>%
+  left_join(data.frame(SampID=trimmedwide$SampID),.)%>%
+  select(Filter) %>%
+  pull(Filter)
+
 summary<-data.frame("length_filter_pass"=filter1/dim(sample_info)[1],
                     "picqual_filter_pass" =filter2/dim(sample_info)[1],
                     "both" = sum(filter)/dim(sample_info)[1])
