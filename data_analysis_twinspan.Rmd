@@ -110,6 +110,8 @@ Read in additional data
 ```{r}
 sample_info <- read.csv(file.path(dataPath,"sample_info.csv")) %>%
   mutate(area_m2 = SegLengthM * meanFoV_m) # I forgot to export/import this column!
+
+refergood <- subset(refer, refer$sample_no%in%good)
 ```
 
 ### Examine distribution of surveyed area
