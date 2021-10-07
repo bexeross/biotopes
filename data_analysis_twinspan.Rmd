@@ -18,6 +18,10 @@ library(rgdal)
 library(sf)
 library(rgeos)
 ```
+## Import other data
+```{r}
+refer <- read.csv(file.path(dataPath,"reference.csv"), sep ="|")
+```
 
 
 ## Make the matrix into wide format
@@ -106,8 +110,6 @@ Read in additional data
 ```{r}
 sample_info <- read.csv(file.path(dataPath,"sample_info.csv")) %>%
   mutate(area_m2 = SegLengthM * meanFoV_m) # I forgot to export/import this column!
-
-refer <- read.csv(file.path(dataPath,"reference.csv"), sep ="|")
 ```
 
 ### Examine distribution of surveyed area
