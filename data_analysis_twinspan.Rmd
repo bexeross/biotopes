@@ -41,15 +41,16 @@ hist(refer$total_bio/refer$towed_distance)
 ### Make a list of "good" stations
 Check how much data we would be using/discarding
 ```{r}
-thres <- 3
+thres <- 5
 good <- refer$sample_no[which(refer$total_bio/refer$towed_distance<thres)]
 length(good)/length(unique(sample_info$VL))
 ```
 ### Information on discarded stations
 ```{r}
 refer %>% filter(sample_no%in%unique(sample_info$VL)) %>%
-  filter(!sample_no%in%good) %>%
-  print(n=1000)
+  filter(!(sample_no%in%good)) %>%
+  #print(n=1000)
+  View
 ```
 
 ### Based on survey area
