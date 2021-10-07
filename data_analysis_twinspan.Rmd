@@ -48,7 +48,8 @@ length(good)/length(unique(sample_info$VL))
 ### Information on discarded stations
 ```{r}
 refer %>% filter(sample_no%in%unique(sample_info$VL)) %>%
-  filter(!sample_no%in%good)
+  filter(!sample_no%in%good) %>%
+  print(n=1000)
 ```
 
 ### Based on survey area
