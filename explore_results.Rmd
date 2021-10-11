@@ -33,5 +33,5 @@ result <- SpatialPointsDataFrame(coords = cbind(sample_info$x_coord[match(res$Sa
                                                 sample_info$y_coord[match(res$SampID,sample_info$SampID)]),
                                  data =  res)
 
-writeOGR(result)
+writeOGR(result, dsn = file.path(outPath, "Spatial"), "twinspan_results", driver = "ESRI Shapefile")
 ```
