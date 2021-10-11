@@ -7,6 +7,11 @@ output:
     toc: yes
   
 ---
+## Libraries
+```{r}
+library(rgdal)
+```
+
 ## Derive classifications
 ```{r}
 samples <- trimmedwide %>%
@@ -27,4 +32,6 @@ for(i in 1:6){
 result <- SpatialPointsDataFrame(coords = cbind(sample_info$x_coord[match(res$SampID,sample_info$SampID)],
                                                 sample_info$y_coord[match(res$SampID,sample_info$SampID)]),
                                  data =  res)
+
+writeOGR(result)
 ```
