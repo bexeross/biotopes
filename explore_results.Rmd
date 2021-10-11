@@ -1,0 +1,30 @@
+---
+title: "Explore Twinspan results"
+author: "GGM & RR"
+date: "10/11/2021"
+output: 
+  html_notebook:
+    toc: yes
+  
+---
+## Derive classifications
+```{r}
+samples <- trimmedwide %>%
+  filter(new_filter) %>%
+  filter(sample_info$VL[match(SampID, sample_info$SampID)]%in%good) %>%
+  select(SampID)
+
+res <- data.frame(SampID = samples, level1 = NA, level2= NA, level3 = NA, level4 = NA, level5 = NA, level6 = NA)
+
+for(i in 1:6){
+  res[,i+1]<-cut(tw_1, level = i)
+}
+
+```
+
+## Write some point shapefiles
+```{r}
+result <- SpatialPointsDataFrame(coords = cbind(sample_info$x_coord[match(res$SampID,sample_info$SampID)],
+                                                sample_info$y_coord[match(res$SampID,sample_info$SampID)]),
+                                 data =  res)
+```
