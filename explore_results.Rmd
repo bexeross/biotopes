@@ -34,4 +34,13 @@ result <- SpatialPointsDataFrame(coords = cbind(sample_info$x_coord[match(res$Sa
                                  data =  res)
 
 writeOGR(result, dsn = file.path(outPath, "Spatial"), "twinspan_results", driver = "ESRI Shapefile")
+unique(res$level6)
+```
+
+
+## Look at class by class species composition
+```{r}
+level = 6
+class = 72
+classreport(trimmedwide, res, level, class)
 ```
