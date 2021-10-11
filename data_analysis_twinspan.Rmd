@@ -213,7 +213,7 @@ tw_1 <- trimmedwide %>%
   filter(sample_info$VL[match(SampID, sample_info$SampID)]%in%good) %>%
   select(-SampID) %>%
   select(which(!is.na(colSums(.)))) %>%
-  mutate_all(sqrt)%>%
+  #mutate_all(sqrt)%>%
   twinspan(cutlevels = cutlevelsPaal)
 ```
 
