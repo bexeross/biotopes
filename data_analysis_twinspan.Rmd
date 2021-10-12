@@ -11,12 +11,12 @@ output:
 ## Libraries
 Load necessary libraries
 ```{r}
-library(twinspan)
-library(tidyr)
-library(dplyr)
-library(rgdal)
-library(sf)
-library(rgeos)
+library(twinspan, quietly = TRUE)
+library(tidyr, quietly = TRUE)
+library(dplyr, quietly = TRUE)
+library(rgdal, quietly = TRUE)
+library(sf, quietly = TRUE)
+library(rgeos, quietly = TRUE)
 ```
 ## Import other data
 ```{r}
