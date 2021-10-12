@@ -48,5 +48,5 @@ classreport(trimmedwide, res, level, class)
 ## Species query
 ```{r}
 sp = "lopheliapertusa"
-
+spquery(trimmedwide, res, sp)
 ```
