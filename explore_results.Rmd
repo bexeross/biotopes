@@ -63,8 +63,6 @@ extract <- res %>%
   select(SampID) %>%
   pull()
 
-# make it into a filter
-class_filter <- match(extract,trimmedwide$SampID)
 ```
 
 ## Subtwinspan
