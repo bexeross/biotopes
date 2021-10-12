@@ -76,5 +76,23 @@ tw_2 <- trimmedwide %>%
   #mutate_all(sqrt)%>%
   twinspan(cutlevels = cutlevelsPaal)
 
+# Derive classifications of this subset
+
+samples <- trimmedwide %>%
+  filter(new_filter) %>%
+  filter(sample_info$VL[match(SampID, sample_info$SampID)]%in%good) %>%
+  filter(SampID%in%extract)%>%
+  select(SampID)
+    
+res <- data.frame(SampID = samples, level1 = NA, level2= NA, level3 = NA, level4 = NA, level5 = NA, level6 = NA)
+
+for(i in 1:6){
+  res[,i+1]<-cut(tw_2, level = i)
+}
+
+f = function(x) length(unique(x))
+lapply(res, FUN = f)
+
+
 ```
 
