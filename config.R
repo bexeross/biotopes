@@ -29,3 +29,13 @@ classreport <- function(data, classifications, level, class){
     select_if(colSums(.)>0)
   return(sort(colMeans(spp), decreasing = TRUE))
 }
+
+# give me the class membership of all samples containing a given species
+
+spquery <- function(data, classifications, sp){
+  extr <- data %>% 
+    filter(data[sp]>0)%>%
+    select(1) %>%
+    pull()
+  return(classifications %>% filter(SampID%in%extr))
+}
