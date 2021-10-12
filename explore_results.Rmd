@@ -25,6 +25,9 @@ for(i in 1:6){
   res[,i+1]<-cut(tw_1, level = i)
 }
 
+f = function(x) length(unique(x))
+lapply(res, FUN = f)
+
 ```
 
 ## Write some point shapefiles
