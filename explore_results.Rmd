@@ -31,16 +31,17 @@ for(i in 1:6){
 ```{r}
 result <- SpatialPointsDataFrame(coords = cbind(sample_info$x_coord[match(res$SampID,sample_info$SampID)],
                                                 sample_info$y_coord[match(res$SampID,sample_info$SampID)]),
+                                 proj4string = CRS("+init=epsg:32633"),
                                  data =  res)
 
-writeOGR(result, dsn = file.path(outPath, "Spatial"), "twinspan_results", driver = "ESRI Shapefile")
+writeOGR(result, dsn = file.path(outPath, "Spatial"), "twinspan_results", driver = "ESRI Shapefile", overwrite_layer = TRUE)
 unique(res$level6)
 ```
 
 
-## Look at class by class species composition
+## Classification query
 ```{r}
 level = 6
-class = 72
+class = 71
 classreport(trimmedwide, res, level, class)
 ```
