@@ -213,7 +213,7 @@ Perform the twinspan analysis
 
 ### Fit the twinspan model
 Turn on or off the filters as you wish
-```{r}
+```{r, warning=FALSE}
 #cutlevels = c(0,100,200,400,1000)
 cutlevelsPaal = c(0,1,2,5,10,20)
 
@@ -224,5 +224,7 @@ tw_1 <- trimmedwide %>%
   select(which(!is.na(colSums(.)))) %>%
   #mutate_all(sqrt)%>%
   twinspan(cutlevels = cutlevelsPaal)
+
+summary(tw_1)
 ```
 
