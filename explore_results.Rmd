@@ -38,7 +38,7 @@ result <- SpatialPointsDataFrame(coords = cbind(sample_info$x_coord[match(res$Sa
                                  data =  res)
 
 writeOGR(result, dsn = file.path(outPath, "Spatial"), "twinspan_results", driver = "ESRI Shapefile", overwrite_layer = TRUE)
-unique(res$level6)
+table(res$level6)
 ```
 
 
