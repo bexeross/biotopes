@@ -18,14 +18,17 @@ library(rgdal, quietly = TRUE)
 library(sf, quietly = TRUE)
 library(rgeos, quietly = TRUE)
 ```
+
 ## Import other data
+Import and glance additional data
 ```{r}
 refer <- read.csv(file.path(dataPath,"reference.csv"), sep ="|")
+refer
 ```
 
 
 ## Make the matrix into wide format
-Convert from long format input to a wide format where rows are samples and columns are species
+Convert from long format input to a wide format where rows are samples and columns are species. Take a glance
 ```{r}
 trimmedwide <- trimmed %>% select(-c(TotAbu_pseudocount,TotAbu_count,density_n_100m2_count,clean_taxonomy)) %>%
   mutate(new_name = gsub(" ","",new_name)) %>%
@@ -37,10 +40,11 @@ head(trimmedwide)
 ```
 
 ## Subset stations
-### Based on data completeness
-We should use only video lines where data is complete. We determine that by looking at the total number of biological annotations relative to the towed distance. Note that total number of biological annotations depends on species richness!  
+### Assess data completeness
+We should use only video lines where data is complete. We determine that by looking at the total number of biological annotations relative to the towed distance. Note that total number of biological annotations depends on species richness, so expect large variation 
 ```{r}
-hist(refer$total_bio/refer$towed_distance)
+hist(refer$total_bio/refer$towed_distance, main = "Distribution of records:distance ratio",
+     xlab = "total records : towed distance")
 ```
 ### Make a list of "good" stations
 Check how much data we would be using/discarding
