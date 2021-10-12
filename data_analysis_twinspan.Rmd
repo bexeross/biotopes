@@ -193,7 +193,8 @@ res <- anti_join(sample_info,
           pivot_wider(spmatrix,names_from = new_name, values_from = density_n_100m2_pseudocount, values_fill = 0, values_fn = sum),by = "SampID")[,c(1,2,4)] %>%
   group_by(VL) %>%
   summarize(SampID = SampID,
-            whole_VL = length(VL)/NumSplits==1)
+            whole_VL = length(VL)/NumSplits==1,
+            .groups = "drop_last")
 
 res <- filter(res,whole_VL) %>% group_by(VL) %>% summarize(VL=min(VL))
 
