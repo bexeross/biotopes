@@ -47,21 +47,22 @@ hist(refer$total_bio/refer$towed_distance, main = "Distribution of records:dista
      xlab = "total records : towed distance")
 ```
 ### Make a list of "good" stations
-Check how much data we would be using/discarding
+Check how much data we would be using/discarding for each threshold
 ```{r}
 thres <- 5
 good <- refer$sample_no[which(refer$total_bio/refer$towed_distance<thres)]
 length(good)/length(unique(sample_info$VL))
 ```
 ### Information on discarded stations
+Gather information on discarded stations to make sure we are not discarding good data
 ```{r}
 refer %>% filter(sample_no%in%unique(sample_info$VL)) %>%
-  filter(!(sample_no%in%good)) %>%
+  filter(!(sample_no%in%good)) #%>%
   #print(n=1000)
-  View
+  #View
 ```
 
-### Based on survey area
+### Spatial selection of stations
 Load the shapefile showing the GBK-sampled areas (it will need to be updated), overlay, and select
 ```{r}
 # read shapefile
