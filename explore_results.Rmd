@@ -45,3 +45,8 @@ level = 6
 class = 71
 classreport(trimmedwide, res, level, class)
 ```
+## Species query
+```{r}
+sp = "lopheliapertusa"
+
+```
