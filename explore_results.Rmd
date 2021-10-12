@@ -45,7 +45,7 @@ table(res$level6)
 ## Classification query
 ```{r}
 level = 6
-class = 71
+class = 73
 classreport(trimmedwide, res, level, class)
 ```
 ## Species query
@@ -53,3 +53,30 @@ classreport(trimmedwide, res, level, class)
 sp = "lopheliapertusa"
 spquery(trimmedwide, res, sp)
 ```
+
+## Extract all samples in a single class
+```{r}
+level = 6
+class = 73
+extract <- res %>%
+  filter(res[paste0("level",level)]==class) %>%
+  select(SampID) %>%
+  pull()
+
+# make it into a filter
+class_filter <- match(extract,trimmedwide$SampID)
+```
+
+## Subtwinspan
+```{r}
+tw_2 <- trimmedwide %>%
+  filter(new_filter) %>%
+  filter(sample_info$VL[match(SampID, sample_info$SampID)]%in%good) %>%
+  filter(SampID%in%extract) %>%
+  select(-SampID) %>%
+  select(which(!is.na(colSums(.)))) %>%
+  #mutate_all(sqrt)%>%
+  twinspan(cutlevels = cutlevelsPaal)
+
+```
+
