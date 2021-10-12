@@ -116,11 +116,13 @@ Read in additional data
 sample_info <- read.csv(file.path(dataPath,"sample_info.csv")) %>%
   mutate(area_m2 = SegLengthM * meanFoV_m) # I forgot to export/import this column!
 
-refergood <- subset(refer, refer$sample_no%in%good)
+#refergood <- subset(refer, refer$sample_no%in%good)
+
+sample_info
 ```
 
-### Examine distribution of surveyed area
-examine the distribution of total area and length of samples
+### Examine distribution of surveyed distance and area
+Examine the distribution of total area and length of samples
 ```{r}
 par(mfrow=c(1,2))
 hist(sample_info$area_m2, main ="Surveyed area", xlab = "Area (m2)")
@@ -129,7 +131,7 @@ hist(sample_info$SegLengthM, main ="Surveyed distance", xlab = "Length (m)")
 
 ### Set thresholds for data quality
 Decide what is acceptable in terms of length of sample and picture quality. The percentages shown below are relative to the whole set of MAREANO stations (and not the "good" stations!)
-```{r}
+```{r, warning=FALSE}
 # thresholds for total surveyed area
 #survarea_upper <- 1200
 #survarea_lower <- 250
@@ -157,7 +159,7 @@ filter <- #sum(
 
 # make filter for later use
 new_filter <- data.frame(SampID = sample_info$SampID,Filter = filter) %>%
-  left_join(data.frame(SampID=trimmedwide$SampID),.)%>%
+  left_join(data.frame(SampID=trimmedwide$SampID),., by = "SampID")%>%
   select(Filter) %>%
   pull(Filter)
 
@@ -179,7 +181,8 @@ res <- anti_join(sample_info,
   group_by(VL) %>%
   summarize(SampID = SampID,
             #NumSegments = NumSplits,
-            portion_missing = paste(as.character(length(VL)), as.character(NumSplits), sep ="/"))
+            portion_missing = paste(as.character(length(VL)), as.character(NumSplits), sep ="/"),
+            .groups = "drop_last")
 
 res
 ```
