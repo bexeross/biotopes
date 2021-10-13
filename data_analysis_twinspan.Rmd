@@ -51,6 +51,8 @@ Check how much data we would be using/discarding for each threshold
 ```{r}
 thres <- 5
 good <- refer$sample_no[which(refer$total_bio/refer$towed_distance<thres)]
+
+sample_info<-read.csv(file.path(dataPath,"sample_info.csv"))
 length(good)/length(unique(sample_info$VL))
 ```
 ### Information on discarded stations
@@ -113,7 +115,8 @@ refer_spat %>% subset(sample_no%in%fjord$sample_no) %>%
 ### Import necessary data
 Read in additional data
 ```{r}
-sample_info <- read.csv(file.path(dataPath,"sample_info.csv")) %>%
+sample_info<-sample_info %>%
+  
   mutate(area_m2 = SegLengthM * meanFoV_m) # I forgot to export/import this column!
 
 #refergood <- subset(refer, refer$sample_no%in%good)
