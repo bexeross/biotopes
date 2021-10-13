@@ -1,0 +1,90 @@
+---
+title: "Bex explorations - R Notebook"
+output: html_notebook
+---
+Will be copied into data explore later if any of this is useful
+
+Assumes you have run data_analysis_twinspan beforehand and have tw_1 loaded in the environment.
+
+#twintable
+```{r}
+tw_1.xl<-twintable(tw_1)
+
+capture.output(twintable(tw_1), file = file.path(outPath,"twintable_tw1.csv"))
+
+lapply(tw_1.xl, function(x) write.table( data.frame(x), file.path(outPath,"twintable_tw1.csv")  , append= T, sep=',' ))
+
+write.csv(tw_1.xl[["table"]],file.path(outPath,"twintable_tw1.csv"))
+```
+
+
+#dendrogram
+samples
+```{r}
+plot(tw_1, "quadrat")
+
+pdf(file.path(outPath,"miniDendro_tw1.pdf"), width=20, height=10)
+
+# Do some plotting
+plot(tw_1,"quadrat")
+
+# Close the PDF file's associated graphics device (necessary to finalize the output)
+dev.off()
+```
+
+species
+```{r}
+plot(tw_1,"species")
+
+pdf(file.path(outPath,"miniDendro_tw1_spp.pdf"), width=20, height=10)
+
+# Do some plotting
+plot(tw_1,"species")
+
+# Close the PDF file's associated graphics device (necessary to finalize the output)
+dev.off()
+```
+
+detailed pdfs (just massive so can zoom in)
+```{r}
+pdf(file.path(outPath,"giantDendro_tw1_triangle.pdf"), width=100, height=10)
+par(cex=0.1)
+# Do some plotting
+plot(as.dendrogram(tw_1,"quadrat"),type="triangle")
+
+# Close the PDF file's associated graphics device (necessary to finalize the output)
+dev.off()
+
+
+pdf(file.path(outPath,"giantDendro_tw1_triangle_spp.pdf"), width=100, height=10)
+par(cex=1)
+# Do some plotting
+plot(as.dendrogram(tw_1,"species"),type="triangle")
+
+# Close the PDF file's associated graphics device (necessary to finalize the output)
+dev.off()
+
+
+pdf(file.path(outPath,"giantDendro_tw1.pdf"), width=100, height=10)
+par(cex=0.1)
+# Do some plotting
+plot(as.dendrogram(tw_1,"quadrat"))
+
+# Close the PDF file's associated graphics device (necessary to finalize the output)
+dev.off()
+
+
+pdf(file.path(outPath,"giantDendro_tw1_spp.pdf"), width=100, height=10)
+par(cex=1)
+# Do some plotting
+plot(as.dendrogram(tw_1,"species"))
+
+# Close the PDF file's associated graphics device (necessary to finalize the output)
+dev.off()
+```
+#Understanding indicators
+subset to eucratea samples to cross check with rules
+```{r}
+eu.samps<-subset(trimmedwide, eucratealoricata>0)
+```
+
