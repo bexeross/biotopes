@@ -6,6 +6,18 @@ Will be copied into data explore later if any of this is useful
 
 Assumes you have run data_analysis_twinspan beforehand and have tw_1 loaded in the environment.
 
+# input table
+```{r}
+in.data<-trimmedwide %>%
+  filter(new_filter) %>%
+  filter(sample_info$VL[match(SampID, sample_info$SampID)]%in%good) %>%
+  select(-SampID) %>%
+  select(which(!is.na(colSums(.))))
+```
+
+
+
+
 #twintable
 ```{r}
 tw_1.xl<-twintable(tw_1)
@@ -56,7 +68,7 @@ plot(as.dendrogram(tw_1,"quadrat"),type="triangle")
 dev.off()
 
 
-pdf(file.path(outPath,"giantDendro_tw1_triangle_spp.pdf"), width=100, height=10)
+pdf(file.path(outPath,"giantDendro_tw1_triangle_spp.pdf"), width=100, height=15)
 par(cex=1)
 # Do some plotting
 plot(as.dendrogram(tw_1,"species"),type="triangle")
@@ -88,3 +100,87 @@ subset to eucratea samples to cross check with rules
 eu.samps<-subset(trimmedwide, eucratealoricata>0)
 ```
 
+
+
+-----------
+
+
+
+#deeper twinspan
+Currently stops at 6 levels, maximu is 15, so could try 15, but make sure there are at least 5 samples in each terminus? Then can collapse back up
+
+```{r}
+cutlevelsPaal = c(0,1,2,5,10,20)
+
+tw_1_15lev <- trimmedwide %>%
+  filter(new_filter) %>%
+  filter(sample_info$VL[match(SampID, sample_info$SampID)]%in%good) %>%
+  select(-SampID) %>%
+  select(which(!is.na(colSums(.)))) %>%
+  #mutate_all(sqrt)%>%
+  twinspan(cutlevels = cutlevelsPaal, levmax=15, groupmin=5)
+```
+#dendrogram
+samples
+```{r}
+plot(tw_1_15lev, "quadrat")
+
+pdf(file.path(outPath,"miniDendro_tw1_15lev.pdf"), width=80, height=10)
+par(cex=0.5)
+# Do some plotting
+plot(tw_1_15lev,"quadrat")
+
+# Close the PDF file's associated graphics device (necessary to finalize the output)
+dev.off()
+```
+
+species
+```{r}
+plot(tw_1_15lev,"species")
+
+pdf(file.path(outPath,"miniDendro_tw1_15lev_spp.pdf"), width=20, height=10)
+
+# Do some plotting
+plot(tw_1_15lev,"species")
+
+# Close the PDF file's associated graphics device (necessary to finalize the output)
+dev.off()
+```
+
+detailed pdfs (just massive so can zoom in)
+```{r}
+pdf(file.path(outPath,"giantDendro_tw1_15lev_triangle.pdf"), width=100, height=10)
+par(cex=0.1)
+# Do some plotting
+plot(as.dendrogram(tw_1_15lev,"quadrat"),type="triangle")
+
+# Close the PDF file's associated graphics device (necessary to finalize the output)
+dev.off()
+
+
+pdf(file.path(outPath,"giantDendro_tw1_15lev_triangle_spp.pdf"), width=100, height=15)
+par(cex=1)
+# Do some plotting
+plot(as.dendrogram(tw_1_15lev,"species"),type="triangle")
+
+# Close the PDF file's associated graphics device (necessary to finalize the output)
+dev.off()
+
+
+pdf(file.path(outPath,"giantDendro_tw1_15lev.pdf"), width=100, height=10)
+par(cex=0.1)
+# Do some plotting
+plot(as.dendrogram(tw_1_15lev,"quadrat"))
+
+# Close the PDF file's associated graphics device (necessary to finalize the output)
+dev.off()
+
+
+pdf(file.path(outPath,"giantDendro_tw1_15lev_spp.pdf"), width=100, height=10)
+par(cex=1)
+# Do some plotting
+plot(as.dendrogram(tw_1_15lev,"species"))
+
+# Close the PDF file's associated graphics device (necessary to finalize the output)
+dev.off()
+```
