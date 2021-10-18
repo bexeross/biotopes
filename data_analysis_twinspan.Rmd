@@ -226,8 +226,8 @@ tw_1 <- trimmedwide %>%
   select(-SampID) %>%
   select(which(!is.na(colSums(.)))) %>%
   #mutate_all(sqrt)%>%
-  twinspan(cutlevels = cutlevelsPaal)
+  twinspan(cutlevels = cutlevelsPaal, levmax = 15, groupmin = 20)
 
-summary(tw_1)
+#summary(tw_1)
 ```
 
