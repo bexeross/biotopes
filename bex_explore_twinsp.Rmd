@@ -1,5 +1,5 @@
 ---
-title: "Bex explorations - R Notebook"
+title: "Bex's explorations - R Notebook"
 output: html_notebook
 ---
 Will be copied into data explore later if any of this is useful
@@ -7,6 +7,7 @@ Will be copied into data explore later if any of this is useful
 Assumes you have run data_analysis_twinspan beforehand and have tw_1 loaded in the environment.
 
 # input table
+Just in case you want to check something in it
 ```{r}
 in.data<-trimmedwide %>%
   filter(new_filter) %>%
@@ -19,23 +20,29 @@ in.data<-trimmedwide %>%
 
 
 #twintable
+Takes ages to run (e.g. 30mins) and the output is near unusable, suggest doing it with smaller chunks only else we need to figure out how to digest this output better/ recreate the output
 ```{r}
-tw_1.xl<-twintable(tw_1)
-
-capture.output(twintable(tw_1), file = file.path(outPath,"twintable_tw1.csv"))
-
-lapply(tw_1.xl, function(x) write.table( data.frame(x), file.path(outPath,"twintable_tw1.csv")  , append= T, sep=',' ))
-
-write.csv(tw_1.xl[["table"]],file.path(outPath,"twintable_tw1.csv"))
+#tw_1.xl<-twintable(tw_1)
+# head(twintable(tw_1))
+# capture.output(twintable(tw_1), file = file.path(outPath,"twintable_tw1.csv"))
+# 
+# lapply(tw_1.xl, function(x) write.table( data.frame(x), file.path(outPath,"twintable_tw1.csv")  , append= T, sep=',' ))
+# 
+# write.csv(tw_1.xl[["table"]],file.path(outPath,"twintable_tw1.csv"))
 ```
 
 
-#dendrogram
+#dendrograms
+
+## A. 
+
+TWINSPAN preferred output with nodes labelled as splits, and groups at the terminus with number of samples. Best output as pdf where you can adjust the size of the paper and then zoom in. May need to adjust widths when rerun.
+
 samples
 ```{r}
 plot(tw_1, "quadrat")
 
-pdf(file.path(outPath,"miniDendro_tw1.pdf"), width=20, height=10)
+pdf(file.path(outPath,"miniDendro_tw1.pdf"), width=60, height=10) #adjust width as necessary
 
 # Do some plotting
 plot(tw_1,"quadrat")
@@ -57,6 +64,11 @@ plot(tw_1,"species")
 dev.off()
 ```
 
+## B.
+
+The as.dendrogram plots do not label the nodes with splits, but they do have the quadrats (internal sample numbers) at the terminus (or the species in the species dendrogram). Again best output with large pdf pages (1 m wide, lol) so that you can zoom in or print out.
+
+
 detailed pdfs (just massive so can zoom in)
 ```{r}
 pdf(file.path(outPath,"giantDendro_tw1_triangle.pdf"), width=100, height=10)
@@ -77,23 +89,25 @@ plot(as.dendrogram(tw_1,"species"),type="triangle")
 dev.off()
 
 
-pdf(file.path(outPath,"giantDendro_tw1.pdf"), width=100, height=10)
-par(cex=0.1)
-# Do some plotting
-plot(as.dendrogram(tw_1,"quadrat"))
-
-# Close the PDF file's associated graphics device (necessary to finalize the output)
-dev.off()
-
-
-pdf(file.path(outPath,"giantDendro_tw1_spp.pdf"), width=100, height=10)
-par(cex=1)
-# Do some plotting
-plot(as.dendrogram(tw_1,"species"))
-
-# Close the PDF file's associated graphics device (necessary to finalize the output)
-dev.off()
+# pdf(file.path(outPath,"giantDendro_tw1.pdf"), width=100, height=10)
+# par(cex=0.1)
+# # Do some plotting
+# plot(as.dendrogram(tw_1,"quadrat"))
+# 
+# # Close the PDF file's associated graphics device (necessary to finalize the output)
+# dev.off()
+# 
+# 
+# pdf(file.path(outPath,"giantDendro_tw1_spp.pdf"), width=100, height=10)
+# par(cex=1)
+# # Do some plotting
+# plot(as.dendrogram(tw_1,"species"))
+# 
+# # Close the PDF file's associated graphics device (necessary to finalize the output)
+# dev.off()
 ```
+
+
 #Understanding indicators
 subset to eucratea samples to cross check with rules
 ```{r}
@@ -167,16 +181,9 @@ plot(as.dendrogram(tw_1_15lev,"species"),type="triangle")
 dev.off()
 
 
-pdf(file.path(outPath,"giantDendro_tw1_15lev.pdf"), width=100, height=10)
-par(cex=0.1)
-# Do some plotting
-plot(as.dendrogram(tw_1_15lev,"quadrat"))
-
-# Close the PDF file's associated graphics device (necessary to finalize the output)
-dev.off()
 
 
-pdf(file.path(outPath,"giantDendro_tw1_15lev_spp.pdf"), width=100, height=10)
+pdf(file.path(outPath,"giantDendro_tw1_15lev_square_spp.pdf"), width=100, height=10)
 par(cex=1)
 # Do some plotting
 plot(as.dendrogram(tw_1_15lev,"species"))
