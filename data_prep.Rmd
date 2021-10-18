@@ -49,8 +49,38 @@ idx <- which(is.na(match(spmatrix$clean_taxonomy,editrem$original_name)))
 trimmed <- spmatrix[idx,]
 ```
 
+## Aditional changes to species list
+```{r}
+# replace Baltina sp with Halipteris
+
+spmatrix <- spmatrix %>% mutate(new_name = gsub("Balticina sp.",
+                                                  "Halipteris sp.",
+                                                  new_name))
+
+# -	Gracilechinusacutus is split from Gracilechinusacutus;juvenile should we keep split?
+
+spmatrix <- spmatrix %>% mutate(new_name = gsub("Gracilechinusacutus",
+                                                  "Gracilechinusacutus;juvenile",
+                                                  new_name))
+
+
+# -	Suspect tunicatatrunk and ascidiaceasolitarybig are the same (could leave split, Pål to decide?)
+# -	Should we remove buccinidae?
+# -	Should we remove paralithodescamtschaticus? (they migrate long distances so are not associated with any particular habitat)
+
+```
+
 ## Result
 ```{r}
 unique(data.frame(sort(trimmed$new_name)))
 write.csv(trimmed,file.path(outPath,"species_densities_trimmed.csv"),row.names = FALSE)
+```
+```{r}
+```
+```{r}
+
+```
+
+
+```{r}
 ```
