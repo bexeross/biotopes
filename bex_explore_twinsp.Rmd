@@ -6,6 +6,16 @@ Will be copied into data explore later if any of this is useful
 
 Assumes you have run data_analysis_twinspan beforehand and have tw_1 loaded in the environment.
 
+#additional libraries
+```{r}
+library(RColorBrewer)
+# library(viridis)
+# library(wesanderson)
+```
+
+
+
+
 # input table
 Just in case you want to check something in it
 ```{r}
@@ -29,7 +39,15 @@ Takes ages to run (e.g. 30mins) and the output is near unusable, suggest doing i
 # lapply(tw_1.xl, function(x) write.table( data.frame(x), file.path(outPath,"twintable_tw1.csv")  , append= T, sep=',' ))
 # 
 # write.csv(tw_1.xl[["table"]],file.path(outPath,"twintable_tw1.csv"))
+
 ```
+
+## example smaller chunk twintable
+
+```{r}
+twintable(tw_1, subset = cut(tw_1, 1) == 3, goodspecies = "both")
+```
+
 
 
 #dendrograms
@@ -72,7 +90,7 @@ The as.dendrogram plots do not label the nodes with splits, but they do have the
 detailed pdfs (just massive so can zoom in)
 ```{r}
 pdf(file.path(outPath,"giantDendro_tw1_triangle.pdf"), width=100, height=10)
-par(cex=0.1)
+par(cex=0.1, mar=c(10,0,0,0))
 # Do some plotting
 plot(as.dendrogram(tw_1,"quadrat"),type="triangle")
 
@@ -81,7 +99,7 @@ dev.off()
 
 
 pdf(file.path(outPath,"giantDendro_tw1_triangle_spp.pdf"), width=100, height=15)
-par(cex=1)
+par(cex=1,mar=c(10,0,0,0))
 # Do some plotting
 plot(as.dendrogram(tw_1,"species"),type="triangle")
 
@@ -112,19 +130,33 @@ Going to start by subsetting to a cut to see what we can do with smaller subsets
 ## Image
 
 ```{r}
-image(tw_1, reorder=T)
-par(cex=0.2)
+colrmp<-rev(brewer.pal(6,"OrRd"))
+image(tw_1, reorder=T,col=colrmp)
+
+par(cexCol=0.2, cexRow=10)
 pdf(file.path(outPath,"giant_heatmap_tw1.pdf"), width=100, height=100)
-image(tw_1, reorder=T)
+image(tw_1, reorder=T, col=colrmp)
 dev.off()
+```
+## subset heatmap
+
+```{r}
+cucu<- cut(tw_1, 1)
+
+colrmp<-rev(brewer.pal(6,"OrRd"))
+image(cucu, reorder=T, col=colrmp)
 ```
 
 
 
 
+## exploring an interactive heatmap
+```{r}
+mat<-twin2mat(tw_1)
+```
 
-## Subtwinspan
-69
+
+#subsets
  
 ```{r}
 
