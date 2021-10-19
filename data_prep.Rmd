@@ -46,8 +46,8 @@ spmatrix <- spmatrix %>% mutate(new_name = gsub("Balticina sp.",
                                                   new_name))
 
 # Gracilechinusacutus is split from Gracilechinusacutus;juvenile should we keep split?
-spmatrix <- spmatrix %>% mutate(new_name = gsub("Gracilechinusacutus",
-                                                  "Gracilechinusacutus;juvenile",
+spmatrix <- spmatrix %>% mutate(new_name = gsub("Gracilechinus acutus;juvenile",
+                                                  "Gracilechinus acutus",
                                                   new_name))
 
 # ?	Suspect tunicatatrunk and ascidiaceasolitarybig are the same (could leave split, Pål to decide?)
