@@ -229,5 +229,6 @@ tw_1 <- trimmedwide %>%
   twinspan(cutlevels = cutlevelsPaal, levmax = 15, groupmin = 20)
 
 #summary(tw_1)
+misclassified(tw_1)
 ```
 
