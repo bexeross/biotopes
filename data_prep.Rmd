@@ -76,9 +76,9 @@ trimmed <- trimmed %>% mutate(SampID = gsub("2120_00", "2121_B", SampID)) %>%
             density_n_100m2_pseudocount = sum(density_n_100m2_pseudocount),
             density_n_100m2_count = sum(density_n_100m2_count))
 
-sample_info$SegLengthM <- with(sample_info, replace(SegLengthM, which(SampID == "2121_B"), sum(57.4500,114.4500)))
-sample_info$area_m2 <- with(sample_info, replace(area_m2, which(SampID == "2121_B"), sum(123.1584,413.2917)))
-sample_info$NumSplits <- with(sample_info, replace(NumSplits, which(SampID == "2121_B"), -1))
+# sample_info$SegLengthM <- with(sample_info, replace(SegLengthM, which(SampID == "2121_B"), sum(57.4500,114.4500)))
+# sample_info$area_m2 <- with(sample_info, replace(area_m2, which(SampID == "2121_B"), sum(123.1584,413.2917)))
+# sample_info$NumSplits <- with(sample_info, replace(NumSplits, which(SampID == "2121_B"), -1))
 
 # 1920_00 and 1920_01 (R station 1861) I honestly don't know why this was split in the first place. data can be combined
 
@@ -89,11 +89,11 @@ trimmed <- trimmed %>% mutate(SampID = gsub("1920_01", "1920_00", SampID)) %>%
             density_n_100m2_pseudocount = sum(density_n_100m2_pseudocount),
             density_n_100m2_count = sum(density_n_100m2_count))
 
-sample_info$SegLengthM <- with(sample_info, replace(SegLengthM, which(SampID == "1920_00"), sum(135.5369,135.5369)))
-sample_info$area_m2 <- with(sample_info, replace(area_m2, which(SampID == "1920_00"), sum(210.6630,236.5845)))
-sample_info$NumSplits <- with(sample_info, replace(NumSplits, which(SampID == "1920_00"), -1))
-sample_info$ok_vision <- with(sample_info, replace(ok_vision, which(SampID == "1920_00"), mean(0.2235294,0.6363636)))
-sample_info$poor_vision <- with(sample_info, replace(poor_vision, which(SampID == "1920_00"), mean(0.7764706,0.3636364)))
+# sample_info$SegLengthM <- with(sample_info, replace(SegLengthM, which(SampID == "1920_00"), sum(135.5369,135.5369)))
+# sample_info$area_m2 <- with(sample_info, replace(area_m2, which(SampID == "1920_00"), sum(210.6630,236.5845)))
+# sample_info$NumSplits <- with(sample_info, replace(NumSplits, which(SampID == "1920_00"), -1))
+# sample_info$ok_vision <- with(sample_info, replace(ok_vision, which(SampID == "1920_00"), mean(0.2235294,0.6363636)))
+# sample_info$poor_vision <- with(sample_info, replace(poor_vision, which(SampID == "1920_00"), mean(0.7764706,0.3636364)))
 
 
 ```
