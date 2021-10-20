@@ -150,7 +150,7 @@ Decide what is acceptable in terms of length of sample and picture quality. The 
 
 # alternative, set thresholds for survey length (maybe better)
 length_lower <- 150
-length_upper <- 400
+length_upper <- 400 # is this too much?
 
 # threshold for picture quality
 # in English, Doc: "either unknown, or not more than half with no vision, or not more than one quarter with poor vision"
