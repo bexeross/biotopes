@@ -64,6 +64,40 @@ trimmed <- spmatrix[idx,]
 ```
 
 
+## Merge samples when possible
+When looking at KF I realized that some samples were falling out of the analysis but could be merged beacuse they were paired with another one. I should look for other cases like this more systematically...
+```{r}
+# 2120_00 and 2121_B (R station 2065) Second line was taken because of a crash during the first one. data can be combined
+
+trimmed <- trimmed %>% mutate(SampID = gsub("2120_00", "2121_B", SampID)) %>%
+  group_by(., SampID, new_name) %>%
+  summarise(., TotAbu_pseudocount = sum(TotAbu_pseudocount),
+            TotAbu_count = sum(TotAbu_count),
+            density_n_100m2_pseudocount = sum(density_n_100m2_pseudocount),
+            density_n_100m2_count = sum(density_n_100m2_count))
+
+sample_info$SegLengthM <- with(sample_info, replace(SegLengthM, which(SampID == "2121_B"), sum(57.4500,114.4500)))
+sample_info$area_m2 <- with(sample_info, replace(area_m2, which(SampID == "2121_B"), sum(123.1584,413.2917)))
+sample_info$NumSplits <- with(sample_info, replace(NumSplits, which(SampID == "2121_B"), -1))
+
+# 1920_00 and 1920_01 (R station 1861) I honestly don't know why this was split in the first place. data can be combined
+
+trimmed <- trimmed %>% mutate(SampID = gsub("1920_01", "1920_00", SampID)) %>%
+  group_by(., SampID, new_name) %>%
+  summarise(., TotAbu_pseudocount = sum(TotAbu_pseudocount),
+            TotAbu_count = sum(TotAbu_count),
+            density_n_100m2_pseudocount = sum(density_n_100m2_pseudocount),
+            density_n_100m2_count = sum(density_n_100m2_count))
+
+sample_info$SegLengthM <- with(sample_info, replace(SegLengthM, which(SampID == "1920_00"), sum(135.5369,135.5369)))
+sample_info$area_m2 <- with(sample_info, replace(area_m2, which(SampID == "1920_00"), sum(210.6630,236.5845)))
+sample_info$NumSplits <- with(sample_info, replace(NumSplits, which(SampID == "1920_00"), -1))
+sample_info$ok_vision <- with(sample_info, replace(ok_vision, which(SampID == "1920_00"), mean(0.2235294,0.6363636)))
+sample_info$poor_vision <- with(sample_info, replace(poor_vision, which(SampID == "1920_00"), mean(0.7764706,0.3636364)))
+
+
+```
+
 ## Result
 ```{r}
 unique(data.frame(sort(trimmed$new_name)))
