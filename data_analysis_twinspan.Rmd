@@ -30,7 +30,7 @@ refer
 ## Make the matrix into wide format
 Convert from long format input to a wide format where rows are samples and columns are species. Take a glance
 ```{r}
-trimmedwide <- trimmed %>% select(-c(TotAbu_pseudocount,TotAbu_count,density_n_100m2_count,clean_taxonomy)) %>%
+trimmedwide <- trimmed %>% select(-c(TotAbu_pseudocount,TotAbu_count,density_n_100m2_count)) %>%
   mutate(new_name = gsub(" ","",new_name)) %>%
   mutate(new_name = gsub("\\.","",new_name)) %>%
   mutate(new_name = tolower(new_name)) %>%
