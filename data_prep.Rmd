@@ -53,6 +53,7 @@ spmatrix <- spmatrix %>% mutate(new_name = gsub("Gracilechinus acutus;juvenile",
 # ?	Suspect tunicatatrunk and ascidiaceasolitarybig are the same (could leave split, Pål to decide?)
 # ?	Should we remove buccinidae?
 # ?	Should we remove paralithodescamtschaticus? (they migrate long distances so are not associated with any particular habitat)
+# I think we should merge Pandalus and pandalidae
 
 # remove species
 editrem <- edits %>% subset(Delete == "x")
