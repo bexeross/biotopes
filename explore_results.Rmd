@@ -15,6 +15,7 @@ library(rgdal)
 ## Derive classifications
 ```{r}
 samples <- trimmedwide %>%
+  data.frame() %>%
   filter(new_filter) %>%
   filter(sample_info$VL[match(SampID, sample_info$SampID)]%in%good) %>%
   select(SampID)
