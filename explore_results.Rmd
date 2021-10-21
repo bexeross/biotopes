@@ -14,12 +14,6 @@ library(rgdal)
  
 ## Derive classifications
 ```{r}
-samples <- trimmedwide %>%
-  data.frame() %>%
-  filter(new_filter) %>%
-  filter(sample_info$VL[match(SampID, sample_info$SampID)]%in%good) %>%
-  select(SampID)
-
 res <- data.frame(SampID = samples, level1 = NA, level2= NA, level3 = NA, level4 = NA, level5 = NA, level6 = NA, level7 = NA, level8= NA, level9 = NA, level10 = NA, level11 = NA, level12 = NA, level13 = NA, level14= NA, level15 = NA)
 
 for(i in 1:15){
