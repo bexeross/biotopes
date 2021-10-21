@@ -247,6 +247,7 @@ tw_1 <- trimmedwide %>%
 
 #summary(tw_1)
 eval <- misclassified(tw_1)
-eval <- mutate(index = samples$SampID)
+eval <- with(eval,  data.frame(SampID = samples$SampID[index], class = class, predicted = predicted))
+eval
 ```
 
