@@ -230,6 +230,7 @@ Turn on or off the filters as you wish
 cutlevelsPaal = c(0,1,2,5,10,20)
 
 tw_1 <- trimmedwide %>%
+  data.frame() %>%
   filter(new_filter) %>%
   filter(sample_info$VL[match(SampID, sample_info$SampID)]%in%good) %>%
   select(-SampID) %>%
