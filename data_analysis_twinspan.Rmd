@@ -233,14 +233,14 @@ samples <- trimmedwide %>%
   filter(sample_info$VL[match(SampID, sample_info$SampID)]%in%good) %>%
   select(SampID)
 
+coredata <- left_join(samples, trimmedwide)
+coredata <- coredata %>% select(-SampID)
+row.names(coredata) <- samples$SampID
+
 #cutlevels = c(0,100,200,400,1000)
 cutlevelsPaal = c(0,1,2,5,10,20)
 
-tw_1 <- trimmedwide %>%
-  data.frame() %>%
-  filter(new_filter) %>%
-  filter(sample_info$VL[match(SampID, sample_info$SampID)]%in%good) %>%
-  select(-SampID) %>%
+tw_1 <- coredata %>%
   select(which(!is.na(colSums(.)))) %>%
   #mutate_all(sqrt)%>%
   twinspan(cutlevels = cutlevelsPaal, levmax = 15, groupmin = 20)
