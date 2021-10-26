@@ -1,0 +1,18 @@
+---
+title: "Classification Trees"
+output: html_notebook
+---
+## Libraries
+```{r}
+library(party)
+library(rpart)
+library(treeheatr)
+```
+
+## Parameters
+```{r}
+data <- sub.coredata
+predictors <- paste(colnames(data), collapse="+")
+fmla <- as.formula(paste("class", predictors,sep="~"))
+
+```
