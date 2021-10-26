@@ -10,6 +10,7 @@ library(twinspan)
 library(dplyr)
 library(RColorBrewer)
 library(heatmaply)
+library(tibble)
 
 ```
 
@@ -36,27 +37,50 @@ tw_kr <- sub.coredata%>%
 
 twintable(tw_kr, goodspecies = "both")
 
+pdf(file.path(outPath,"twintableKR.pdf"), width=10, height=40)
+twintable(tw_kr, goodspecies = "both")
+dev.off()
+
+
+capture.output(twintable(tw_kr, goodspecies = "both"), file = file.path(outPath,"twintableKR.pdf"), append = FALSE,
+               type = c("output", "message"), split = FALSE)
 ```
 
 ## dendrograms
 ```{r}
+#MINI WITH LABELLED NODES AND GROUPS
+
+plot(tw_kr, "quadrat")
+plot(tw_kr,"species")
+
+# pdfs
+
+pdf(file.path(outPath,"miniDendro_tw_kr.pdf"), width=20, height=10) #adjust width as necessary
+par(cex=1)
+plot(tw_kr,"quadrat")
+dev.off()
+
+pdf(file.path(outPath,"miniDendro_tw_kr_spp.pdf"), width=20, height=10)
+plot(tw_kr,"species")
+dev.off()
+
+
+# TRIANGLE QUADRAT OR SPECIES LABELS
+plot(as.dendrogram(tw_kr,"species"),type="triangle")
+
+#pdfs
+
 pdf(file.path(outPath,"Dendro_tw_kr_triangle_sampleID.pdf"), width=20, height=10)
 par(cex=1, mar=c(10,0,0,0))
-# Do some plotting
 plot(as.dendrogram(tw_kr,"quadrat"),type="triangle")
-
-# Close the PDF file's associated graphics device (necessary to finalize the output)
 dev.off()
 
 
 pdf(file.path(outPath,"Dendro_tw_kr_triangle_spp.pdf"), width=20, height=15)
 par(cex=1,mar=c(10,0,0,0))
-# Do some plotting
 plot(as.dendrogram(tw_kr,"species"),type="triangle")
-
-# Close the PDF file's associated graphics device (necessary to finalize the output)
 dev.off()
-plot(as.dendrogram(tw_kr,"species"),type="triangle")
+
 ```
 # Image (heatmap/dendrogram set)
 
@@ -71,3 +95,46 @@ pdf(file.path(outPath,"heatmap_tw_kr.pdf"), width=20, height=20)
 image(tw_kr, reorder=T, col=colrmp, margins=c(10,10))
 dev.off()
 ```
+# Match KR to megacut15
+
+match to "res" from the tw_1 analysis
+```{r}
+# res <- data.frame(SampID = samples, level1 = NA, level2= NA, level3 = NA, level4 = NA, level5 = NA, level6 = NA, level7 = NA, level8= NA, level9 = NA, level10 = NA, level11 = NA, level12 = NA, level13 = NA, level14= NA, level15 = NA)
+# 
+# for(i in 1:15){
+#   res[,i+1]<-cut(tw_1, level = i)
+# }
+# 
+# f = function(x) length(unique(x))
+# lapply(res, FUN = f)
+```
+
+make a similar list for KR
+```{r}
+
+subcore.sel<-sub.coredata%>%
+  data.frame()%>%
+  select(which(!is.na(colSums(.))))
+  
+sites.sel<-rownames_to_column(subcore.sel, "sites.sel") %>%
+  select(sites.sel)
+
+
+
+
+
+resKR<-data.frame(SampID = sites.sel, level1 = NA, level2= NA, level3 = NA, level4 = NA, level5 = NA, level6 = NA, level7 = NA, level8= NA, level9 = NA, level10 = NA, level11 = NA, level12 = NA, level13 = NA, level14= NA, level15 = NA)
+ 
+ for(i in 1:15){
+   resKR[,i+1]<-cut(tw_kr, level = i)
+ }
+ 
+ f = function(x) length(unique(x))
+ lapply(resKR, FUN = f)
+```
+
+match res and resKR
+```{r}
+res.match<-left_join(resKR, res, by = c("sites.sel"="SampID"))
+```
+
