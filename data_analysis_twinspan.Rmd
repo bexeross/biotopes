@@ -93,10 +93,10 @@ refer_spat <- refer %>%
 # specify areas
 areas <-c("Kongsfjorden indre indre",
           "Kongsfjorden indre indre rest",
-          "Kongsfjorden ytre indre"#,
-          #"Rijpfjorden indre indre rest",
-          #"Rijpfjorden indre-indre",
-          #"Rijpfjorden indre-indre_ny"
+          "Kongsfjorden ytre indre",
+          "Rijpfjorden indre indre rest",
+          "Rijpfjorden indre-indre",
+          "Rijpfjorden indre-indre_ny"
           )
 
 aoi <- gbk %>% 
