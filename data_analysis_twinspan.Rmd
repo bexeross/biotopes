@@ -243,7 +243,7 @@ cutlevelsPaal = c(0,1,2,5,10,20)
 tw_1 <- coredata %>%
   select(which(!is.na(colSums(.)))) %>%
   #mutate_all(sqrt)%>%
-  twinspan(cutlevels = cutlevelsPaal, levmax = 15, groupmin = 20)
+  twinspan(cutlevels = cutlevelsPaal, levmax = 15, groupmin = 3)
 
 #summary(tw_1)
 eval <- misclassified(tw_1)
