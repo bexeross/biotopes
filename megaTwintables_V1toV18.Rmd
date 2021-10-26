@@ -14,6 +14,40 @@ library(twinspan)
 #Twintabling
 Uses the output from data_analysis_twinspan - need to have looked at the heatmap to decide which branches of the quadrat tree to prune off as possible biotopes/for further exploration
 
+# V1
+```{r}
+twintable(tw_1, subset = cut(tw_1samp, 6) == 71, goodspecies = "both")
+```
+
+# V2
+```{r}
+twintable(tw_1, subset = cut(tw_1samp, 6) == 70, goodspecies = "both")
+```
+
+# V3
+```{r}
+twintable(tw_1, subset = cut(tw_1samp, 4) == 16, goodspecies = "both")
+```
+
+# V4
+```{r}
+twintable(tw_1, subset = cut(tw_1samp, 5) == 36, goodspecies = "both")
+```
+
+# V5
+```{r}
+twintable(tw_1, subset = cut(tw_1samp, 7) == 148, goodspecies = "both")
+```
+
+
+
+
+
+
+
+
+
+
 
 
 ## V18
