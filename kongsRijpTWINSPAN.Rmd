@@ -1,0 +1,73 @@
+---
+title: "KongsRijp TWINSPAN - R Notebook"
+output: html_notebook
+---
+
+Assumes you've been working with the megamatrix/TWINSPAN first as subsetting from that dataset.
+## libraries
+```{r}
+library(twinspan)
+library(dplyr)
+library(RColorBrewer)
+library(heatmaply)
+
+```
+
+
+## SUB TWINSPAN
+e.g. kongsfjorden/rijpfjorden set
+```{r}
+sites<-sample_info %>%
+  filter(VL %in% fjord$sample_no) %>%
+  select(SampID)
+
+sub.coredata<-coredata %>%
+  filter(row.names(coredata) %in% sites$SampID)
+
+tw_kr <- sub.coredata%>%
+  select(which(!is.na(colSums(.)))) %>%
+  #mutate_all(sqrt)%>%
+  twinspan(cutlevels = cutlevelsPaal, levmax = 15, groupmin = 3)
+```
+
+
+## twintable of selected sites subset
+```{r}
+
+twintable(tw_kr, goodspecies = "both")
+
+```
+
+## dendrograms
+```{r}
+pdf(file.path(outPath,"Dendro_tw_kr_triangle_sampleID.pdf"), width=20, height=10)
+par(cex=1, mar=c(10,0,0,0))
+# Do some plotting
+plot(as.dendrogram(tw_kr,"quadrat"),type="triangle")
+
+# Close the PDF file's associated graphics device (necessary to finalize the output)
+dev.off()
+
+
+pdf(file.path(outPath,"Dendro_tw_kr_triangle_spp.pdf"), width=20, height=15)
+par(cex=1,mar=c(10,0,0,0))
+# Do some plotting
+plot(as.dendrogram(tw_kr,"species"),type="triangle")
+
+# Close the PDF file's associated graphics device (necessary to finalize the output)
+dev.off()
+plot(as.dendrogram(tw_kr,"species"),type="triangle")
+```
+# Image (heatmap/dendrogram set)
+
+```{r}
+colrmp<-rev(brewer.pal(6,"OrRd"))
+image(tw_kr, reorder=T,col=colrmp)
+
+# better output to a giant pdf where you can see all quadrats listed
+#par(cexCol=0.2, cexRow=10)
+#par(cex=0.2)
+pdf(file.path(outPath,"heatmap_tw_kr.pdf"), width=20, height=20)
+image(tw_kr, reorder=T, col=colrmp, margins=c(10,10))
+dev.off()
+```
