@@ -14,14 +14,16 @@ Manually create a class column with the desired classification. Needs "resKR"
 ```{r}
 data <- cbind(data.frame(class = NA), sub.coredata)
 
-# Make reclassification table
+# Set number of classes needed
+n<-7
 
+# Make reclassification table
 reclassify <- data.frame(level=c(1,4,5,5,3,3,3),
                          class=c(3,18,38,39,8,11,10),
-                         new_class=sprintf("KR%s",seq(1:7)))
+                         new_class=sprintf("KR%s",seq(1:n)))
 
 # Reclassify
-for(i in 1:7){
+for(i in 1:n){
   data[getsamplesingrp(resKR,reclassify$level[i],reclassify$class[i]),"class"]<-as.character(reclassify$new_class[i])
 }
 
