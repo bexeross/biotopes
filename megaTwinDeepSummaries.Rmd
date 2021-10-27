@@ -1,0 +1,39 @@
+---
+title: "megaTwin deep summaries - R Notebook"
+output: html_notebook
+---
+As even splitting into smaller twintables can result in some being too big to digest, we want to try and summarise groups at different levels for their average pseudospp., n, max pseudospp? to be better able to compare sub-branches.
+
+#library
+```{r}
+library(twinspan)
+library(dplyr, quietly = TRUE)
+library(tibble)
+
+```
+
+
+
+# matrix
+we need the twintable matrix to work with, which we can get with twin2mat and this needs to be merged with res
+```{r}
+tw_1.df<-rownames_to_column(as.data.frame(twin2mat(tw_1)))
+
+
+#make res again if need be
+res <- data.frame(SampID = samples, level1 = NA, level2= NA, level3 = NA, level4 = NA, level5 = NA, level6 = NA, level7 = NA, level8= NA, level9 = NA, level10 = NA, level11 = NA, level12 = NA, level13 = NA, level14= NA, level15 = NA)
+
+for(i in 1:15){
+  res[,i+1]<-cut(tw_1, level = i)
+}
+
+f = function(x) length(unique(x))
+lapply(res, FUN = f)
+
+
+
+
+res.mat<-left_join(res, tw_1.df, by = c("SampID"="rowname"))
+```
+
+
