@@ -5,8 +5,15 @@ output: html_notebook
 ## Libraries
 ```{r}
 library(party)
+library(partykit)
+library(ggparty)
 library(rpart)
 library(treeheatr)
+library(pROC)
+```
+## Import other data
+```{r}
+env <- read.csv(file.path(dataPath,"KF50_samples_env.csv"))
 ```
 
 ## Arrange the data
@@ -66,8 +73,51 @@ tree_full_pruned <- rpart(fmla,
 tree_full_pruned$variable.importance
 
 ```
+## Calculate M-AUC
+Calculate multiclass area under the curve
+```{r}
+predictions <- predict(tree_full_pruned,type = "class")
+
+crosscheck <- predictions %>%
+  as.character() %>%
+  cbind(.,data$class) %>%
+  data.frame() %>%
+  rename("predicted" = ".", "observed" = "V2") %>%
+  mutate_all(as.factor) %>%
+  mutate_all(as.integer)
+
+accuracy<-pROC::auc(multiclass.roc(observed~predicted,crosscheck))
+accuracy
+```
 
 ## Plot it
+### As party
 ```{r}
+library(devtools)
+source_url("https://raw.githubusercontent.com/martin-borkovec/ggparty/martin/R/add_splitvar_breaks_index_new.R")
+
+ap_tree_full_pruned <- as.party(tree_full_pruned)
+
+rounded_labels <- add_splitvar_breaks_index_new(party_object = ap_tree_full_pruned,
+                                                plot_data = ggparty:::get_plot_data(ap_tree_full_pruned), 
+                                                round_digits = 2)
+
+
+ggparty(ap_tree_full_pruned) +
+  geom_edge() +
+  geom_edge_label(mapping = aes(label = unlist(rounded_labels)),
+                  data = rounded_labels) +
+  geom_node_splitvar()+
+  geom_node_label(aes(label = class), ids = "terminal")
+
+
+```
+### As heat tree
+```{r}
+
+
+#jpeg("CT_minpruning.jpg", width = 2000 , height = 2000)
+heat_tree(ap_tree_full_pruned,label_map = levels(data$class))
+#dev.off()
 
 ```
