@@ -39,3 +39,13 @@ spquery <- function(data, classifications, sp){
     pull()
   return(classifications %>% filter(SampID%in%extr))
 }
+
+# give me all the samples in a given class
+
+getsamplesingrp <- function(classifications, level, class){
+extract <- classifications %>%
+  filter(classifications[paste0("level",level)]==class) %>%
+  select(1) %>%
+  pull()
+return(extract)
+}
