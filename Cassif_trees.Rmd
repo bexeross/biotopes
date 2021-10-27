@@ -10,21 +10,21 @@ library(treeheatr)
 ```
 
 ## Arrange the data
-Manually create a class (as factor) column with the desired classification. Needs "resKR"
+Manually create a class column with the desired classification. Needs "resKR"
 ```{r}
-data <- cbind(data.frame(class = as.factor(NA)), sub.coredata)
+data <- cbind(data.frame(class = NA), sub.coredata)
 
-# check
-all(c(getsamplesingrp(resKR, 1, 3),
-  getsamplesingrp(resKR, 4, 18),
-  getsamplesingrp(resKR, 5, 38),
-  getsamplesingrp(resKR, 5, 39),
-  getsamplesingrp(resKR, 3, 8),
-  getsamplesingrp(resKR, 3, 11),
-  getsamplesingrp(resKR, 3, 10))%in%sites.sel)
+# Make reclassification table
 
-# reclassify
-data$class[getsamplesingrp(resKR, 1, 3)] <- "KR1"
+reclassify <- data.frame(level=c(1,4,5,5,3,3,3),
+                         class=c(3,18,38,39,8,11,10),
+                         new_class=sprintf("KR%s",seq(1:7)))
+
+# Reclassify
+for(i in 1:7){
+  data[getsamplesingrp(resKR,reclassify$level[i],reclassify$class[i]),"class"]<-as.character(reclassify$new_class[i])
+}
+
 
 
 ```
