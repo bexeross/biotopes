@@ -27,8 +27,7 @@ for(i in 1:n){
   data[getsamplesingrp(resKR,reclassify$level[i],reclassify$class[i]),"class"]<-as.character(reclassify$new_class[i])
 }
 
-
-
+table(data$class)
 ```
 
 ## Parameters
