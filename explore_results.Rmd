@@ -53,10 +53,8 @@ spquery(trimmedwide, res, sp)
 ```{r}
 level = 6
 class = 73
-extract <- res %>%
-  filter(res[paste0("level",level)]==class) %>%
-  select(SampID) %>%
-  pull()
+
+getsamplesingrp(res, level, class)
 
 ```
 
