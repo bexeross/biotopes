@@ -46,7 +46,7 @@ my.subs<-subset(res.mat,level8 ==298)
 ```{r}
 piv.my.subs<-my.subs %>%
   group_by(level11)%>%
-  summarise(across(c(17:50),mean)) %>%
+  summarise(across(c(17:343),mean)) %>%
   t()%>%
   `colnames<-`(.[1, ])%>%
   .[-1, ]
@@ -61,7 +61,7 @@ round_df <- function(x, digits) {
     x
 }
 
-round_df(piv.my.subs, 1)
+piv.my.subs<-round_df(piv.my.subs, 1)
 ```
 
 
