@@ -14,6 +14,18 @@ Manually create a class (as factor) column with the desired classification. Need
 ```{r}
 data <- cbind(data.frame(class = as.factor(NA)), sub.coredata)
 
+# check
+all(c(getsamplesingrp(resKR, 1, 3),
+  getsamplesingrp(resKR, 4, 18),
+  getsamplesingrp(resKR, 5, 38),
+  getsamplesingrp(resKR, 5, 39),
+  getsamplesingrp(resKR, 3, 8),
+  getsamplesingrp(resKR, 3, 11),
+  getsamplesingrp(resKR, 3, 10))%in%sites.sel)
+
+# reclassify
+data$class[getsamplesingrp(resKR, 1, 3)] <- "KR1"
+
 
 ```
 
