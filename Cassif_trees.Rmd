@@ -8,9 +8,12 @@ library(party)
 library(rpart)
 library(treeheatr)
 ```
+
 ## Arrange the data
+Manually create a class (as factor) column with the desired classification. Needs "resKR"
 ```{r}
-data <- cbind(data.frame(class = NA), sub.coredata)
+data <- cbind(data.frame(class = as.factor(NA)), sub.coredata)
+
 
 ```
 
