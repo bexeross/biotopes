@@ -19,7 +19,10 @@ env <- read.csv(file.path(dataPath,"KF50_samples_env.csv"))
 ## Arrange the data
 Manually create a class column with the desired classification. Needs "resKR"
 ```{r}
-data <- cbind(data.frame(class = NA), sub.coredata)
+data <- data %>% cbind(data.frame(class = NA), sub.coredata) %>%
+  add_column(SampID = row.names(.)) %>%
+  left_join(., env) %>%
+  select(-1)
 
 # Set number of classes needed
 n<-7
@@ -39,7 +42,7 @@ table(data$class)
 
 ## Parameters
 ```{r}
-predictors <- paste(colnames(data)[-1], collapse="+")
+predictors <- paste(colnames(data)[1:332], collapse="+")
 fmla <- as.formula(paste("class", predictors,sep="~"))
 ```
 
@@ -114,10 +117,10 @@ ggparty(ap_tree_full_pruned) +
 ```
 ### As heat tree
 ```{r}
-
-
-#jpeg("CT_minpruning.jpg", width = 2000 , height = 2000)
-heat_tree(ap_tree_full_pruned,label_map = levels(data$class))
-#dev.off()
-
+pdf(file.path(outPath,"CT_fjord_env.pdf"), width=20, height=10) #adjust width as necessary
+par(cex=50)
+heat_tree(ap_tree_full_pruned,label_map = levels(data$class)
+          #, show = "tree-only"
+          )
+dev.off()
 ```
