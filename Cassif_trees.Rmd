@@ -32,9 +32,42 @@ table(data$class)
 
 ## Parameters
 ```{r}
-
-predictors <- paste(colnames(data), collapse="+")
+predictors <- paste(colnames(data)[-1], collapse="+")
 fmla <- as.formula(paste("class", predictors,sep="~"))
+```
 
+## Fit tree
+```{r}
+# Fit full tree
+tree_full <- rpart(fmla,
+                   data=data,
+                   method="class",
+                   control=rpart.control(xval = 10,
+                                         minbucket = 2, cp = 0)
+)
+
+# Select pruning depth (complexity paramter)
+cp.select <- function(big.tree) {
+  min.x <- which.min(big.tree$cptable[, 4]) #column 4 is xerror
+  for(i in 1:nrow(big.tree$cptable)) {
+    if(big.tree$cptable[i, 4] < big.tree$cptable[min.x, 4] + big.tree$cptable[min.x, 5]) return(big.tree$cptable[i, 1]) 
+  }
+}
+
+cp <-cp.select(tree_full)
+
+# Prune Tree
+tree_full_pruned <- rpart(fmla,
+                          data=data,
+                          method="class",
+                          control=rpart.control(xval = 10,
+                                                minbucket = 2, cp = cp))
+
+tree_full_pruned$variable.importance
+
+```
+
+## Plot it
+```{r}
 
 ```
