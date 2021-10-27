@@ -9,7 +9,6 @@ As even splitting into smaller twintables can result in some being too big to di
 library(twinspan)
 library(dplyr, quietly = TRUE)
 library(tibble)
-
 ```
 
 
@@ -35,5 +34,35 @@ lapply(res, FUN = f)
 
 res.mat<-left_join(res, tw_1.df, by = c("SampID"="rowname"))
 ```
+
+# Subset to group at given cut level
+
+```{r}
+my.subs<-subset(res.mat,level8 ==298)
+```
+
+# pivot at given cut level
+
+```{r}
+piv.my.subs<-my.subs %>%
+  group_by(level11)%>%
+  summarise(across(c(17:50),mean)) %>%
+  t()%>%
+  `colnames<-`(.[1, ])%>%
+  .[-1, ]
+
+
+round_df <- function(x, digits) {
+    # round all numeric variables
+    # x: data frame 
+    # digits: number of digits to round
+    numeric_columns <- sapply(x, mode) == 'numeric'
+    x[numeric_columns] <-  round(x[numeric_columns], digits)
+    x
+}
+
+round_df(piv.my.subs, 1)
+```
+
 
 
