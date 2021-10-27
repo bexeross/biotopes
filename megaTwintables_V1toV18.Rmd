@@ -1,0 +1,57 @@
+---
+title: "MegaTwinTables V1 to 18 - R Notebook"
+output: html_notebook
+---
+
+Making twintables for each of the V1-V18 clusters that we would like to prune off and explore further (first draft biotopes, but expect some to split down further).
+
+#libraries
+```{r}
+library(twinspan)
+```
+
+
+#Twintabling
+Uses the output from data_analysis_twinspan - need to have looked at the heatmap to decide which branches of the quadrat tree to prune off as possible biotopes/for further exploration
+
+# V1
+```{r}
+twintable(tw_1, subset = cut(tw_1samp, 6) == 71, goodspecies = "both")
+```
+
+# V2
+```{r}
+twintable(tw_1, subset = cut(tw_1samp, 6) == 70, goodspecies = "both")
+```
+
+# V3
+```{r}
+twintable(tw_1, subset = cut(tw_1samp, 4) == 16, goodspecies = "both")
+```
+
+# V4
+```{r}
+twintable(tw_1, subset = cut(tw_1samp, 5) == 36, goodspecies = "both")
+```
+
+# V5
+```{r}
+twintable(tw_1, subset = cut(tw_1samp, 7) == 148, goodspecies = "both")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+## V18
+```{r}
+twintable(tw_1, subset = cut(tw_1samp, 1) == 3, goodspecies = "both")
+```
+

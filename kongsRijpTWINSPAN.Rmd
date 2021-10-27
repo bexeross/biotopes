@@ -33,17 +33,18 @@ tw_kr <- sub.coredata%>%
 
 
 ## twintable of selected sites subset
+best to just copy and paste output from screen to text file - does not easily capture with automated methods
 ```{r}
 
 twintable(tw_kr, goodspecies = "both")
 
-pdf(file.path(outPath,"twintableKR.pdf"), width=10, height=40)
-twintable(tw_kr, goodspecies = "both")
-dev.off()
-
-
-capture.output(twintable(tw_kr, goodspecies = "both"), file = file.path(outPath,"twintableKR.pdf"), append = FALSE,
-               type = c("output", "message"), split = FALSE)
+# pdf(file.path(outPath,"twintableKR.pdf"), width=10, height=40)
+# twintable(tw_kr, goodspecies = "both")
+# dev.off()
+# 
+# 
+# capture.output(twintable(tw_kr, goodspecies = "both"), file = file.path(outPath,"twintableKR.pdf"), append = FALSE,
+#                type = c("output", "message"), split = FALSE)
 ```
 
 ## dendrograms
@@ -97,7 +98,7 @@ dev.off()
 ```
 # Match KR to megacut15
 
-match to "res" from the tw_1 analysis
+match to "res" from the tw_1 analysis (here in case you need to re-run it - copied from explore_results.Rmd)
 ```{r}
 # res <- data.frame(SampID = samples, level1 = NA, level2= NA, level3 = NA, level4 = NA, level5 = NA, level6 = NA, level7 = NA, level8= NA, level9 = NA, level10 = NA, level11 = NA, level12 = NA, level13 = NA, level14= NA, level15 = NA)
 # 
