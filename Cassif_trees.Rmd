@@ -124,6 +124,7 @@ ap_tree_full_pruned <- as.party(tree_full_pruned)
 pdf(file.path(outPath,"CT_fjord_env.pdf"), width=20, height=10) #adjust width as necessary
 par(cex=50)
 heat_tree(ap_tree_full_pruned,label_map = levels(data$class)
+          #, data_test = data[,which(grepl("KF50", colnames(data)))]
           , show = "tree-only"
           )
 dev.off()
