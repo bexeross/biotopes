@@ -25,20 +25,18 @@ res <- data.frame(SampID = samples, level1 = NA, level2= NA, level3 = NA, level4
 for(i in 1:15){
   res[,i+1]<-cut(tw_1, level = i)
 }
-
+# check levels look sensible
 f = function(x) length(unique(x))
 lapply(res, FUN = f)
 
-
-
-
+#join together
 res.mat<-left_join(res, tw_1.df, by = c("SampID"="rowname"))
 ```
 
 # Subset to group at given cut level
 
 ```{r}
-my.subs<-subset(res.mat,level8 ==298)
+my.subs<-subset(res.mat,level8 ==298) #change as needed
 ```
 
 # pivot at given cut level
@@ -95,7 +93,7 @@ round_df <- function(x, digits) {
 
 piv.av<-round_df(piv.av, 1)
 ```
-Make table of proportion of n pseudospp/n samples per group
+Make table of proportion of n spp obs (non zero pseudospp)/n samples per group
 
 ```{r}
 piv.n<-my.subs %>%
@@ -112,14 +110,7 @@ piv.prop<-round_df(piv.prop,2)
 
 ```
 
-r bind to piv.meta
-
-```{r}
-piv.meta<-rbind(piv.meta.a,piv.meta.15,piv.meta.g)
-```
-
 #output csvs
-
 
 ```{r}
 write.csv(piv.av, 
