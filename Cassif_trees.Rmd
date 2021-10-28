@@ -46,8 +46,9 @@ table(data$class)
 
 ## Parameters
 ```{r}
-predictors <- paste(colnames(data)[1:332], collapse="+")
+predictors <- paste(colnames(data)[2:333], collapse="+") # careful with col numbers!
 fmla <- as.formula(paste("class", predictors,sep="~"))
+fmla
 ```
 
 ## Fit tree
