@@ -43,8 +43,9 @@ my.subs<-subset(res.mat,level8 ==298)
 
 # pivot at given cut level
 
+Make table of average psuedospp per group
 ```{r}
-piv.my.subs<-my.subs %>%
+piv.av<-my.subs %>%
   group_by(level11)%>%
   summarise(across(c(17:343),mean)) %>%
   t()%>%
@@ -61,7 +62,17 @@ round_df <- function(x, digits) {
     x
 }
 
-piv.my.subs<-round_df(piv.my.subs, 1)
+piv.av<-round_df(piv.av, 1)
+```
+Make second table of n pseudospp per group
+
+```{r}
+piv.n<-my.subs %>%
+  group_by(level11)%>%
+  summarise(across(c(17:343),sum)) %>%
+  t()%>%
+  `colnames<-`(.[1, ])%>%
+  .[-1, ]
 ```
 
 
