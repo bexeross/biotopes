@@ -70,7 +70,7 @@ cp.select <- function(big.tree) {
 }
 
 cp <-cp.select(tree_full)
-cp <- 0.06
+cp <- 0.03
 
 # Prune Tree
 tree_full_pruned <- rpart(fmla,
@@ -102,31 +102,29 @@ accuracy
 ## Plot it
 ### As party
 ```{r}
-library(devtools)
-source_url("https://raw.githubusercontent.com/martin-borkovec/ggparty/martin/R/add_splitvar_breaks_index_new.R")
-
+# library(devtools)
+# source_url("https://raw.githubusercontent.com/martin-borkovec/ggparty/martin/R/add_splitvar_breaks_index_new.R")
+# 
 ap_tree_full_pruned <- as.party(tree_full_pruned)
-
-rounded_labels <- add_splitvar_breaks_index_new(party_object = ap_tree_full_pruned,
-                                                plot_data = ggparty:::get_plot_data(ap_tree_full_pruned), 
-                                                round_digits = 2)
-
-
-ggparty(ap_tree_full_pruned) +
-  geom_edge() +
-  geom_edge_label(mapping = aes(label = unlist(rounded_labels)),
-                  data = rounded_labels) +
-  geom_node_splitvar()+
-  geom_node_label(aes(label = class), ids = "terminal")
-
-
+# 
+# rounded_labels <- add_splitvar_breaks_index_new(party_object = ap_tree_full_pruned,
+#                                                 plot_data = ggparty:::get_plot_data(ap_tree_full_pruned), 
+#                                                 round_digits = 2)
+# 
+# 
+# ggparty(ap_tree_full_pruned) +
+#   geom_edge() +
+#   geom_edge_label(mapping = aes(label = unlist(rounded_labels)),
+#                   data = rounded_labels) +
+#   geom_node_splitvar()+
+#   geom_node_label(aes(label = class), ids = "terminal")
 ```
 ### As heat tree
 ```{r}
 pdf(file.path(outPath,"CT_fjord_env.pdf"), width=20, height=10) #adjust width as necessary
 par(cex=50)
 heat_tree(ap_tree_full_pruned,label_map = levels(data$class)
-          #, show = "tree-only"
+          , show = "tree-only"
           )
 dev.off()
 ```
