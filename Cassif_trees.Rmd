@@ -4,6 +4,9 @@ output: html_notebook
 ---
 ## Libraries
 ```{r}
+library(tidyr)
+library(tidyverse)
+library(dplyr)
 library(party)
 library(partykit)
 library(ggparty)
@@ -19,10 +22,11 @@ env <- read.csv(file.path(dataPath,"KF50_samples_env.csv"))
 ## Arrange the data
 Manually create a class column with the desired classification. Needs "resKR"
 ```{r}
-data <- data %>% cbind(data.frame(class = NA), sub.coredata) %>%
+data <- cbind(data.frame(class = NA), sub.coredata) %>%
   add_column(SampID = row.names(.)) %>%
   left_join(., env) %>%
-  select(-1)
+  column_to_rownames(., var = "SampID")
+  
 
 # Set number of classes needed
 n<-7
