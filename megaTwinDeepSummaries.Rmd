@@ -43,38 +43,7 @@ my.subs<-subset(res.mat,level8 ==298)
 
 # pivot at given cut level
 
-Make table of average psuedospp per group
-```{r}
-piv.av<-my.subs %>%
-  group_by(level11)%>%
-  summarise(across(c(17:343),mean)) %>%
-  t()%>%
-  `colnames<-`(.[1, ])%>%
-  .[-1, ]
-
-
-round_df <- function(x, digits) {
-    # round all numeric variables
-    # x: data frame 
-    # digits: number of digits to round
-    numeric_columns <- sapply(x, mode) == 'numeric'
-    x[numeric_columns] <-  round(x[numeric_columns], digits)
-    x
-}
-
-piv.av<-round_df(piv.av, 1)
-```
-Make second table of n pseudospp per group
-
-```{r}
-piv.n<-my.subs %>%
-  group_by(level11)%>%
-  summarise(across(c(17:343),nnzero)) %>%
-  t()%>%
-  `colnames<-`(.[1, ])%>%
-  .[-1, ]
-```
-Make third table of metadata (parent groups, n sub groups at level 15, and n samples per group)
+Make table of metadata (parent groups, n sub groups at level 15, and n samples per group)
 
 ```{r}
 #parent groups
@@ -104,6 +73,45 @@ piv.meta.g<-my.subs %>%
   .[-1, ]
 
 ```
+
+Make table of average psuedospp per group
+```{r}
+piv.av<-my.subs %>%
+  group_by(level11)%>%
+  summarise(across(c(17:343),mean)) %>%
+  t()%>%
+  `colnames<-`(.[1, ])%>%
+  .[-1, ]
+
+
+round_df <- function(x, digits) {
+    # round all numeric variables
+    # x: data frame 
+    # digits: number of digits to round
+    numeric_columns <- sapply(x, mode) == 'numeric'
+    x[numeric_columns] <-  round(x[numeric_columns], digits)
+    x
+}
+
+piv.av<-round_df(piv.av, 1)
+```
+Make table of proportion of n pseudospp/n samples per group
+
+```{r}
+piv.n<-my.subs %>%
+  group_by(level11)%>%
+  summarise(across(c(17:343),nnzero)) %>%
+  t()%>%
+  as.data.frame() %>%
+  `colnames<-`(.[1, ])%>%
+  .[-1, ]
+
+piv.prop<-mapply('/',piv.n,piv.meta.g)
+rownames(piv.prop)<-rownames(piv.n)
+piv.prop<-round_df(piv.prop,2)
+
+```
+
 r bind to piv.meta
 
 ```{r}
@@ -117,8 +125,8 @@ piv.meta<-rbind(piv.meta.a,piv.meta.15,piv.meta.g)
 write.csv(piv.av, 
           file = file.path(outPath, ("V6_av_pseudoSpp.csv"))) #change label
 
-write.csv(piv.n, 
-          file = file.path(outPath, ("V6_n_pseudoSpp.csv"))) #change label
+write.csv(piv.prop, 
+          file = file.path(outPath, ("V6_prop_obs.csv"))) #change label
 
 write.csv(piv.meta, 
           file = file.path(outPath, ("V6_metadata.csv"))) #change label
