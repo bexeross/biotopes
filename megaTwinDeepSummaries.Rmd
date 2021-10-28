@@ -74,23 +74,40 @@ piv.n<-my.subs %>%
   `colnames<-`(.[1, ])%>%
   .[-1, ]
 ```
-Make third table of n subgroups per group
+Make third table of metadata (parent groups, n sub groups at level 15, and n samples per group)
 
 ```{r}
-piv.g<-my.subs %>%
+#parent groups
+piv.meta.a<-my.subs %>%
   group_by(level11)%>%
-  summarise(n=n()) %>%
+  summarise(across(c(9:11),mean)) %>%
+  t()%>%
+  `colnames<-`(.[1, ])%>%
+  .[-1, ]
+
+# n lev 15 groups
+piv.meta.15<-my.subs %>%
+  group_by(level11)%>%
+  summarise(nSubGpL15 = n_distinct(level15)) %>%
   t()%>%
   as.data.frame() %>%
   `colnames<-`(.[1, ])%>%
   .[-1, ]
 
-piv.g
+# n samples
+piv.meta.g<-my.subs %>%
+  group_by(level11)%>%
+  summarise(nSamp=n()) %>%
+  t()%>%
+  as.data.frame() %>%
+  `colnames<-`(.[1, ])%>%
+  .[-1, ]
+
 ```
-r bind piv.g to piv.n
+r bind piv.meta
 
 ```{r}
-piv.n.g<-rbind(piv.g,piv.n)
+piv.meta<-rbind(piv.meta.a,piv.meta.15,piv.meta.g)
 ```
 
 
