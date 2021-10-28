@@ -61,7 +61,7 @@ tree_full <- rpart(fmla,
                                          minbucket = 2, cp = 0)
 )
 
-# Select pruning depth (complexity paramter)
+# Select pruning depth (complexity parameter)
 cp.select <- function(big.tree) {
   min.x <- which.min(big.tree$cptable[, 4]) #column 4 is xerror
   for(i in 1:nrow(big.tree$cptable)) {
@@ -70,6 +70,7 @@ cp.select <- function(big.tree) {
 }
 
 cp <-cp.select(tree_full)
+cp <- 0.06
 
 # Prune Tree
 tree_full_pruned <- rpart(fmla,
