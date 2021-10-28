@@ -9,8 +9,8 @@ As even splitting into smaller twintables can result in some being too big to di
 library(twinspan)
 library(dplyr, quietly = TRUE)
 library(tibble)
+library(Matrix)
 ```
-
 
 
 # matrix
@@ -69,7 +69,7 @@ Make second table of n pseudospp per group
 ```{r}
 piv.n<-my.subs %>%
   group_by(level11)%>%
-  summarise(across(c(17:343),sum)) %>%
+  summarise(across(c(17:343),nnzero)) %>%
   t()%>%
   `colnames<-`(.[1, ])%>%
   .[-1, ]
@@ -97,17 +97,32 @@ piv.meta.15<-my.subs %>%
 # n samples
 piv.meta.g<-my.subs %>%
   group_by(level11)%>%
-  summarise(nSamp=n()) %>%
+  summarise(nSamp=n_distinct(SampID)) %>%
   t()%>%
   as.data.frame() %>%
   `colnames<-`(.[1, ])%>%
   .[-1, ]
 
 ```
-r bind piv.meta
+r bind to piv.meta
 
 ```{r}
 piv.meta<-rbind(piv.meta.a,piv.meta.15,piv.meta.g)
+```
+
+#output csvs
+
+
+```{r}
+write.csv(piv.av, 
+          file = file.path(outPath, ("V6_av_pseudoSpp.csv"))) #change label
+
+write.csv(piv.n, 
+          file = file.path(outPath, ("V6_n_pseudoSpp.csv"))) #change label
+
+write.csv(piv.meta, 
+          file = file.path(outPath, ("V6_metadata.csv"))) #change label
+
 ```
 
 
