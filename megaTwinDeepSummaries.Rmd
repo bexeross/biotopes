@@ -119,6 +119,24 @@ out.piv<-rbind(values, out.piv)
 ```
 
 
+#heatmap
+average
+```{r}
+heatmap(piv.av,scale='column',Colv = NA, Rowv = NA)
+
+pdf(file.path(outPath,"heat_V6_averagePseudospp.pdf"), width=40, height=40)
+heatmap(piv.av,scale='column',Colv = NA, Rowv = NA)
+dev.off()
+```
+evenness
+```{r}
+heatmap(piv.prop,scale='column',Colv = NA, Rowv = NA)
+
+pdf(file.path(outPath,"heat_V6_evenness.pdf"), width=20, height=20)
+heatmap(piv.prop,scale='column',Colv = NA, Rowv = NA)
+dev.off()
+```
+
 
 
 
