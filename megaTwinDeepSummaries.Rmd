@@ -74,6 +74,23 @@ piv.n<-my.subs %>%
   `colnames<-`(.[1, ])%>%
   .[-1, ]
 ```
+Make third table of n subgroups per group
 
+```{r}
+piv.g<-my.subs %>%
+  group_by(level11)%>%
+  summarise(n=n()) %>%
+  t()%>%
+  as.data.frame() %>%
+  `colnames<-`(.[1, ])%>%
+  .[-1, ]
+
+piv.g
+```
+r bind piv.g to piv.n
+
+```{r}
+piv.n.g<-rbind(piv.g,piv.n)
+```
 
 
