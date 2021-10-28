@@ -102,24 +102,22 @@ accuracy
 ## Plot it
 ### As party
 ```{r}
-library(devtools)
-source_url("https://raw.githubusercontent.com/martin-borkovec/ggparty/martin/R/add_splitvar_breaks_index_new.R")
-
-ap_tree_full_pruned <- as.party(tree_full_pruned)
-
-rounded_labels <- add_splitvar_breaks_index_new(party_object = ap_tree_full_pruned,
-                                                plot_data = ggparty:::get_plot_data(ap_tree_full_pruned), 
-                                                round_digits = 2)
-
-
-ggparty(ap_tree_full_pruned) +
-  geom_edge() +
-  geom_edge_label(mapping = aes(label = unlist(rounded_labels)),
-                  data = rounded_labels) +
-  geom_node_splitvar()+
-  geom_node_label(aes(label = class), ids = "terminal")
-
-
+# library(devtools)
+# source_url("https://raw.githubusercontent.com/martin-borkovec/ggparty/martin/R/add_splitvar_breaks_index_new.R")
+# 
+# ap_tree_full_pruned <- as.party(tree_full_pruned)
+# 
+# rounded_labels <- add_splitvar_breaks_index_new(party_object = ap_tree_full_pruned,
+#                                                 plot_data = ggparty:::get_plot_data(ap_tree_full_pruned), 
+#                                                 round_digits = 2)
+# 
+# 
+# ggparty(ap_tree_full_pruned) +
+#   geom_edge() +
+#   geom_edge_label(mapping = aes(label = unlist(rounded_labels)),
+#                   data = rounded_labels) +
+#   geom_node_splitvar()+
+#   geom_node_label(aes(label = class), ids = "terminal")
 ```
 ### As heat tree
 ```{r}
