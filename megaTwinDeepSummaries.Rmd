@@ -109,15 +109,31 @@ rownames(piv.prop)<-rownames(piv.n)
 piv.prop<-round_df(piv.prop,2)
 
 ```
+cbind av pseudospp and evenness tables
+
+```{r}
+out.piv<-cbind(piv.av, piv.prop)
+values<-c(rep("av",ncol(piv.av)), rep("prop",ncol(piv.prop)))
+
+out.piv<-rbind(values, out.piv)
+```
+
+
+
+
+
 
 #output csvs
 
 ```{r}
-write.csv(piv.av, 
-          file = file.path(outPath, ("V6_av_pseudoSpp.csv"))) #change label
+# write.csv(piv.av, 
+#           file = file.path(outPath, ("V6_av_pseudoSpp.csv"))) #change label
+# 
+# write.csv(piv.prop, 
+#           file = file.path(outPath, ("V6_prop_obs.csv"))) #change label
 
-write.csv(piv.prop, 
-          file = file.path(outPath, ("V6_prop_obs.csv"))) #change label
+write.csv(out.piv, 
+          file = file.path(outPath, ("V6_av_proportion.csv"))) #change label
 
 write.csv(piv.meta, 
           file = file.path(outPath, ("V6_metadata.csv"))) #change label
