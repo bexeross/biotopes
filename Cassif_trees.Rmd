@@ -17,6 +17,7 @@ library(pROC)
 ## Import other data
 ```{r}
 env <- read.csv(file.path(dataPath,"KF50_samples_env.csv"))
+
 ```
 
 ## Arrange the data
@@ -44,12 +45,31 @@ for(i in 1:n){
 table(data$class)
 ```
 
+
 ## Parameters
 ```{r}
 predictors <- paste(colnames(data)[2:333], collapse="+") # careful with col numbers!
+
 fmla <- as.formula(paste("class", predictors,sep="~"))
 fmla
 ```
+## OR Filter spp to show only >1
+And add some env var
+```{r}
+main<-data %>%
+  select_if(~max(.)>1)%>%
+  add_column(SampID = row.names(.)) %>%
+  left_join(., env) %>%
+  column_to_rownames(., var = "SampID")
+
+predictors <- paste(colnames(main)[-1], collapse="+") # careful with col numbers!
+
+fmla <- as.formula(paste("class", predictors,sep="~"))
+fmla
+```
+
+
+
 
 ## Fit tree
 ```{r}
@@ -125,7 +145,18 @@ pdf(file.path(outPath,"CT_fjord_env.pdf"), width=20, height=10) #adjust width as
 par(cex=50)
 heat_tree(ap_tree_full_pruned,label_map = levels(data$class)
           #, data_test = data[,which(grepl("KF50", colnames(data)))]
-          , show = "tree-only"
+           , show = "tree-only"
+           )
+dev.off()
+```
+### As heat tree with heatmap
+```{r}
+pdf(file.path(outPath,"CT_fjord_env_heat.pdf"), width=20, height=40) #adjust width as necessary
+par(cex=0.5)
+heat_tree(ap_tree_full_pruned,label_map = levels(data$class)
+          #, data_test = data[,which(grepl("KF50", colnames(data)))]
+          , show = "heat-tree"
+          , heat_rel_height =0.5
           )
 dev.off()
 ```
