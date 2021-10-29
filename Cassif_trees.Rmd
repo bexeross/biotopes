@@ -16,9 +16,50 @@ library(pROC)
 ```
 ## Import other data
 ```{r}
-env <- read.csv(file.path(dataPath,"KF50_samples_env.csv"))
+envK <- read.csv(file.path(dataPath,"KF50_samples_env.csv"))
+envR <- read.csv(file.path(dataPath,"RF50_samples_env.csv"))
 
+colnames(envK)
+colnames(envR)
 ```
+##Select some env var
+```{r}
+envK.sel<-envK %>%
+  select(SampID,
+           KF50_bathy_fmn3,
+           KF50_slope3_fmn3,
+           KF50_Sv800_SALTmin_fmn3,
+           KF50_Sv800_TEMPmean_fmn3,
+           KF50_Sv800_SPDmax_fmn3,
+           sedClass50)
+colnames(envK.sel)<-c("SampID",
+           "F50_bathy_fmn3",
+           "F50_slope3_fmn3",
+           "F50_Sv800_SALTmin_fmn3",
+           "F50_Sv800_TEMPmean_fmn3",
+           "F50_Sv800_SPDmax_fmn3",
+           "sedClass50")
+
+envR.sel<-envR %>%
+  select(SampID,
+           KF50_bathy_fmn3,
+           RF50_slope3_fmn3,
+           RF50_Sv800_SALTmin_fmn3,
+           RF50_Sv800_TEMPmean_fmn3,
+           RF50_Sv800_SPDmax_fmn3,
+           sedClass50)
+colnames(envR.sel)<-c("SampID",
+           "F50_bathy_fmn3",
+           "F50_slope3_fmn3",
+           "F50_Sv800_SALTmin_fmn3",
+           "F50_Sv800_TEMPmean_fmn3",
+           "F50_Sv800_SPDmax_fmn3",
+           "sedClass50")
+
+env<-envK.sel %>%
+  bind_rows(envR.sel)
+```
+
 
 ## Arrange the data
 Manually create a class column with the desired classification. Needs "resKR"
@@ -53,24 +94,6 @@ predictors <- paste(colnames(data)[2:333], collapse="+") # careful with col numb
 fmla <- as.formula(paste("class", predictors,sep="~"))
 fmla
 ```
-## OR Filter spp to show only >1
-And add some env var
-```{r}
-main<-data %>%
-  select_if(~max(.)>1)%>%
-  add_column(SampID = row.names(.)) %>%
-  left_join(., env) %>%
-  column_to_rownames(., var = "SampID")
-
-predictors <- paste(colnames(main)[-1], collapse="+") # careful with col numbers!
-
-fmla <- as.formula(paste("class", predictors,sep="~"))
-fmla
-```
-
-
-
-
 ## Fit tree
 ```{r}
 # Fit full tree
@@ -102,6 +125,73 @@ tree_full_pruned <- rpart(fmla,
 tree_full_pruned$variable.importance
 
 ```
+
+## OR Filter spp to show only >1
+And add some env var, then fit tree
+```{r}
+main<-data %>%
+  select_if(~max(.)>1)%>%
+  add_column(SampID = row.names(.)) %>%
+  left_join(., env) %>%
+  column_to_rownames(., var = "SampID")
+
+# Reclassify
+for(i in 1:n){
+  main[getsamplesingrp(resKR,reclassify$level[i],reclassify$class[i]),"class"]<-as.character(reclassify$new_class[i])
+}
+
+table(main$class)
+
+
+
+
+
+
+predictors <- paste(colnames(main)[-1], collapse="+") # careful with col numbers!
+
+fmla <- as.formula(paste("class", predictors,sep="~"))
+fmla
+
+
+
+# Fit full tree
+tree_full <- rpart(fmla,
+                   data=main,
+                   method="class",
+                   control=rpart.control(xval = 10,
+                                         minbucket = 2, cp = 0)
+)
+
+# Select pruning depth (complexity parameter)
+cp.select <- function(big.tree) {
+  min.x <- which.min(big.tree$cptable[, 4]) #column 4 is xerror
+  for(i in 1:nrow(big.tree$cptable)) {
+    if(big.tree$cptable[i, 4] < big.tree$cptable[min.x, 4] + big.tree$cptable[min.x, 5]) return(big.tree$cptable[i, 1]) 
+  }
+}
+
+cp <-cp.select(tree_full)
+cp <- 0.03
+
+# Prune Tree
+tree_full_pruned <- rpart(fmla,
+                          data=main,
+                          method="class",
+                          control=rpart.control(xval = 10,
+                                                minbucket = 2, cp = cp))
+
+tree_full_pruned$variable.importance
+
+
+
+
+
+
+
+
+```
+
+
 ## Calculate M-AUC
 Calculate multiclass area under the curve
 ```{r}
@@ -151,7 +241,7 @@ dev.off()
 ```
 ### As heat tree with heatmap
 ```{r}
-pdf(file.path(outPath,"CT_fjord_env_heat.pdf"), width=20, height=40) #adjust width as necessary
+pdf(file.path(outPath,"CT_fjord_env_heat_envinc.pdf"), width=50, height=40) #adjust width as necessary
 par(cex=0.5)
 heat_tree(ap_tree_full_pruned,label_map = levels(data$class)
           #, data_test = data[,which(grepl("KF50", colnames(data)))]
