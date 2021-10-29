@@ -36,7 +36,9 @@ res.mat<-left_join(res, tw_1.df, by = c("SampID"="rowname"))
 # Subset to group at given cut level
 
 ```{r}
-my.subs<-subset(res.mat,level8 ==298) #change as needed
+my.subs<-res.mat
+#my.subs<-subset(res.mat,level8 ==298) #change as needed
+
 ```
 
 # pivot at given cut level
@@ -46,15 +48,15 @@ Make table of metadata (parent groups, n sub groups at level 15, and n samples p
 ```{r}
 #parent groups
 piv.meta.a<-my.subs %>%
-  group_by(level11)%>%
-  summarise(across(c(9:11),mean)) %>%
+  group_by(level4)%>% # change to level you want to see groups at
+  summarise(across(c(2:15),mean)) %>%
   t()%>%
   `colnames<-`(.[1, ])%>%
   .[-1, ]
 
 # n lev 15 groups
 piv.meta.15<-my.subs %>%
-  group_by(level11)%>%
+  group_by(level4)%>% # change to level you want to see groups at
   summarise(nSubGpL15 = n_distinct(level15)) %>%
   t()%>%
   as.data.frame() %>%
@@ -63,19 +65,21 @@ piv.meta.15<-my.subs %>%
 
 # n samples
 piv.meta.g<-my.subs %>%
-  group_by(level11)%>%
+  group_by(level4)%>% # change to level you want to see groups at
   summarise(nSamp=n_distinct(SampID)) %>%
   t()%>%
   as.data.frame() %>%
   `colnames<-`(.[1, ])%>%
   .[-1, ]
 
+
+piv.meta<-rbind(piv.meta.a,piv.meta.15,piv.meta.g)
 ```
 
 Make table of average psuedospp per group
 ```{r}
 piv.av<-my.subs %>%
-  group_by(level11)%>%
+  group_by(level4)%>% # change to level you want to see groups at
   summarise(across(c(17:343),mean)) %>%
   t()%>%
   `colnames<-`(.[1, ])%>%
@@ -97,7 +101,7 @@ Make table of proportion of n spp obs (non zero pseudospp)/n samples per group
 
 ```{r}
 piv.n<-my.subs %>%
-  group_by(level11)%>%
+  group_by(level4)%>% # change to level you want to see groups at
   summarise(across(c(17:343),nnzero)) %>%
   t()%>%
   as.data.frame() %>%
@@ -109,11 +113,22 @@ rownames(piv.prop)<-rownames(piv.n)
 piv.prop<-round_df(piv.prop,2)
 
 ```
+Make table of maximum pseudospp per group
+```{r}
+piv.mx<-my.subs %>%
+  group_by(level4)%>% # change to level you want to see groups at
+  summarise(across(c(17:343),max)) %>%
+  t()%>%
+  `colnames<-`(.[1, ])%>%
+  .[-1, ]
+```
+
+
 cbind av pseudospp and evenness tables
 
 ```{r}
-out.piv<-cbind(piv.av, piv.prop)
-values<-c(rep("av",ncol(piv.av)), rep("prop",ncol(piv.prop)))
+out.piv<-cbind(piv.av, piv.prop, piv.mx)
+values<-c(rep("av",ncol(piv.av)), rep("prop",ncol(piv.prop)), rep("max", ncol(piv.mx)))
 
 out.piv<-rbind(values, out.piv)
 ```
@@ -151,10 +166,10 @@ dev.off()
 #           file = file.path(outPath, ("V6_prop_obs.csv"))) #change label
 
 write.csv(out.piv, 
-          file = file.path(outPath, ("V6_av_proportion.csv"))) #change label
+          file = file.path(outPath, ("ALL_lev4_av_proportion_max.csv"))) #change label
 
 write.csv(piv.meta, 
-          file = file.path(outPath, ("V6_metadata.csv"))) #change label
+          file = file.path(outPath, ("ALL_lev4_metadata.csv"))) #change label
 
 ```
 
