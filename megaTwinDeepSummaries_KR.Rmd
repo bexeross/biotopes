@@ -1,0 +1,205 @@
+---
+title: "megaTwin deep summaries - R Notebook"
+output: html_notebook
+---
+As even splitting into smaller twintables can result in some being too big to digest, we want to try and summarise groups at different levels for their average pseudospp., n, max pseudospp? to be better able to compare sub-branches.
+
+#library
+```{r}
+library(twinspan)
+library(dplyr, quietly = TRUE)
+library(tibble)
+library(Matrix)
+```
+
+
+# matrix
+we need the twintable matrix to work with, which we can get with twin2mat and this needs to be merged with res
+```{r}
+tw_kr.df<-rownames_to_column(as.data.frame(twin2mat(tw_kr)))
+
+
+#make res again if need be
+resKR<-data.frame(SampID = sites.sel, level1 = NA, level2= NA, level3 = NA, level4 = NA, level5 = NA, level6 = NA, level7 = NA, level8= NA, level9 = NA, level10 = NA, level11 = NA, level12 = NA, level13 = NA, level14= NA, level15 = NA)
+ 
+ for(i in 1:15){
+   resKR[,i+1]<-cut(tw_kr, level = i)
+ }
+ 
+ f = function(x) length(unique(x))
+ lapply(resKR, FUN = f)
+ 
+#join together
+res.matKR<-left_join(resKR, tw_kr.df, by = c("sites.sel"="rowname"))
+res.matKRREF<-res.matKR
+
+rownames(res.matKR) <- res.matKR[,1]
+```
+
+# Subset to group at given cut level
+
+```{r}
+# Set number of classes needed
+n<-7
+
+# Make reclassification table
+reclassify <- data.frame(level=c(1,4,5,5,3,3,3),
+                         class=c(3,18,38,39,8,11,10),
+                         new_class=sprintf("KR%s",seq(1:n)))
+
+
+
+
+
+# Reclassify
+for(i in 1:n){
+  res.matKR[getsamplesingrp(res.matKRREF,reclassify$level[i],reclassify$class[i]),"class"]<-as.character(reclassify$new_class[i])
+}
+
+table(res.matKR$class)
+
+my.subs<-res.matKR
+#my.subs<-subset(res.mat,level8 ==298) #change as needed
+
+```
+
+# pivot at given cut level
+
+Make table of metadata (parent groups, n sub groups at level 15, and n samples per group)
+
+```{r}
+#parent groups
+piv.meta.a<-my.subs %>%
+  group_by(class)%>% # change to level you want to see groups at
+  summarise(across(c(2:15),mean)) %>%
+  t()%>%
+  `colnames<-`(.[1, ])%>%
+  .[-1, ]
+
+# n lev 15 groups
+piv.meta.15<-my.subs %>%
+  group_by(class)%>% # change to level you want to see groups at
+  summarise(nSubGpL15 = n_distinct(level15)) %>%
+  t()%>%
+  as.data.frame() %>%
+  `colnames<-`(.[1, ])%>%
+  .[-1, ]
+
+# n samples
+piv.meta.g<-my.subs %>%
+  group_by(class)%>% # change to level you want to see groups at
+  summarise(nSamp=n_distinct(sites.sel)) %>%
+  t()%>%
+  as.data.frame() %>%
+  `colnames<-`(.[1, ])%>%
+  .[-1, ]
+
+
+piv.meta<-rbind(piv.meta.a,piv.meta.15,piv.meta.g)
+```
+
+Make table of average psuedospp per group
+```{r}
+piv.av<-my.subs %>%
+  group_by(class)%>% # change to level you want to see groups at
+  summarise(across(c(17:140),mean)) %>%
+  t()%>%
+  `colnames<-`(.[1, ])%>%
+  .[-1, ] %>%
+  type.convert()
+
+#piv.av[,] <- sapply(piv.av[,], as.numeric)
+
+
+round_df <- function(x, digits) {
+    # round all numeric variables
+    # x: data frame 
+    # digits: number of digits to round
+    numeric_columns <- sapply(x, mode) == 'numeric'
+    x[numeric_columns] <-  round(x[numeric_columns], digits)
+    x
+}
+
+piv.av<-round_df(piv.av, 1)
+```
+Make table of proportion of n spp obs (non zero pseudospp)/n samples per group
+
+```{r}
+piv.n<-my.subs %>%
+  group_by(class)%>% # change to level you want to see groups at
+  summarise(across(c(17:140),nnzero)) %>%
+  t()%>%
+  as.data.frame() %>%
+  `colnames<-`(.[1, ])%>%
+  .[-1, ] %>%
+  type.convert()
+
+piv.meta.g[,] <- sapply(piv.meta.g[,], as.numeric)
+#piv.n[,] <- sapply(piv.n[,], as.numeric)
+
+piv.prop<-mapply('/',piv.n,piv.meta.g)
+rownames(piv.prop)<-rownames(piv.n)
+piv.prop<-round_df(piv.prop,2)
+
+```
+Make table of maximum pseudospp per group
+```{r}
+piv.mx<-my.subs %>%
+  group_by(class)%>% # change to level you want to see groups at
+  summarise(across(c(17:140),max)) %>%
+  t()%>%
+  `colnames<-`(.[1, ])%>%
+  .[-1, ]
+```
+
+
+cbind av pseudospp, evenness, max pseudospp tables
+
+```{r}
+out.piv<-cbind(piv.av, piv.prop, piv.mx)
+values<-c(rep("av",ncol(piv.av)), rep("prop",ncol(piv.prop)), rep("max", ncol(piv.mx)))
+
+out.piv<-rbind(values, out.piv)
+```
+
+
+<!-- #heatmap -->
+<!-- average -->
+<!-- ```{r} -->
+<!-- heatmap(piv.av,scale='column',Colv = NA, Rowv = NA) -->
+
+<!-- pdf(file.path(outPath,"heat_V6_averagePseudospp.pdf"), width=40, height=40) -->
+<!-- heatmap(piv.av,scale='column',Colv = NA, Rowv = NA) -->
+<!-- dev.off() -->
+<!-- ``` -->
+<!-- evenness -->
+<!-- ```{r} -->
+<!-- heatmap(piv.prop,scale='column',Colv = NA, Rowv = NA) -->
+
+<!-- pdf(file.path(outPath,"heat_V6_evenness.pdf"), width=20, height=20) -->
+<!-- heatmap(piv.prop,scale='column',Colv = NA, Rowv = NA) -->
+<!-- dev.off() -->
+<!-- ``` -->
+
+
+
+
+
+#output csvs
+
+```{r}
+# write.csv(piv.av, 
+#           file = file.path(outPath, ("V6_av_pseudoSpp.csv"))) #change label
+# 
+# write.csv(piv.prop, 
+#           file = file.path(outPath, ("V6_prop_obs.csv"))) #change label
+
+write.csv(out.piv, 
+          file = file.path(outPath, ("KR_av_proportion_max.csv"))) #change label
+
+write.csv(piv.meta, 
+          file = file.path(outPath, ("KR_metadata.csv"))) #change label
+
+```
+
+
