@@ -12,8 +12,17 @@ library(tibble)
 library(Matrix)
 ```
 
+# Load environmental data for later
 
-# matrix
+```{r}
+envK <- read.csv(file.path(dataPath,"KF50_samples_env.csv"))
+envR <- read.csv(file.path(dataPath,"RF50_samples_env.csv"))
+
+colnames(envK)
+colnames(envR)
+```
+
+# Create matrix
 we need the twintable matrix to work with, which we can get with twin2mat and this needs to be merged with res
 ```{r}
 tw_kr.df<-rownames_to_column(as.data.frame(twin2mat(tw_kr)))
@@ -31,10 +40,57 @@ resKR<-data.frame(SampID = sites.sel, level1 = NA, level2= NA, level3 = NA, leve
  
 #join together
 res.matKR<-left_join(resKR, tw_kr.df, by = c("sites.sel"="rowname"))
-res.matKRREF<-res.matKR
+
 
 rownames(res.matKR) <- res.matKR[,1]
 ```
+# merge matrix with selected env var
+```{r}
+#select var
+envK.sel<-envK %>%
+  select(SampID,
+           KF50_bathy_fmn3,
+           KF50_slope3_fmn3,
+           KF50_Sv800_SALTmin_fmn3,
+           KF50_Sv800_TEMPmean_fmn3,
+           KF50_Sv800_SPDmax_fmn3,
+           sedClass50)
+colnames(envK.sel)<-c("SampID",
+           "F50_bathy_fmn3",
+           "F50_slope3_fmn3",
+           "F50_Sv800_SALTmin_fmn3",
+           "F50_Sv800_TEMPmean_fmn3",
+           "F50_Sv800_SPDmax_fmn3",
+           "sedClass50")
+
+envR.sel<-envR %>%
+  select(SampID,
+           KF50_bathy_fmn3,
+           RF50_slope3_fmn3,
+           RF50_Sv800_SALTmin_fmn3,
+           RF50_Sv800_TEMPmean_fmn3,
+           RF50_Sv800_SPDmax_fmn3,
+           sedClass50)
+colnames(envR.sel)<-c("SampID",
+           "F50_bathy_fmn3",
+           "F50_slope3_fmn3",
+           "F50_Sv800_SALTmin_fmn3",
+           "F50_Sv800_TEMPmean_fmn3",
+           "F50_Sv800_SPDmax_fmn3",
+           "sedClass50")
+
+env<-envK.sel %>%
+  bind_rows(envR.sel)
+
+#merge with dataset
+
+res.matKR<- res.matKR %>%
+  left_join(., env, by=c("sites.sel"="SampID"))
+
+rownames(res.matKR) <- res.matKR[,1]
+```
+
+
 
 # Subset to group at given cut level
 
@@ -48,7 +104,7 @@ reclassify <- data.frame(level=c(1,4,5,5,3,3,3),
                          new_class=sprintf("KR%s",seq(1:n)))
 
 
-
+res.matKRREF<-res.matKR
 
 
 # Reclassify
@@ -94,8 +150,48 @@ piv.meta.g<-my.subs %>%
   `colnames<-`(.[1, ])%>%
   .[-1, ]
 
+my.subs.noNA<-na.omit(my.subs)
 
-piv.meta<-rbind(piv.meta.a,piv.meta.15,piv.meta.g)
+
+
+piv.meta.env<-my.subs.noNA %>%
+  group_by(class)%>% # change to level you want to see groups at
+  #summarise(across(c(141:145),mean)) %>%
+  summarise(bathy_av= mean(F50_bathy_fmn3),
+            bathy_min= min(F50_bathy_fmn3),
+            bathy_max= max(F50_bathy_fmn3),
+            slope3_av=mean(F50_slope3_fmn3),
+            slope3_min=min(F50_slope3_fmn3),
+            slope3_max=max(F50_slope3_fmn3),
+            salt_av=mean(F50_Sv800_SALTmin_fmn3),
+            salt_min=min(F50_Sv800_SALTmin_fmn3),
+            salt_max=max(F50_Sv800_SALTmin_fmn3),
+            temp_av=mean(F50_Sv800_TEMPmean_fmn3),
+            temp_min=min(F50_Sv800_TEMPmean_fmn3),
+            temp_max=max(F50_Sv800_TEMPmean_fmn3),
+            cspeed_av=mean(F50_Sv800_SPDmax_fmn3),
+            cspeed_min=min(F50_Sv800_SPDmax_fmn3),
+            cspeed_max=max(F50_Sv800_SPDmax_fmn3))%>%
+  t()%>%
+  as.data.frame() %>%
+  `colnames<-`(.[1, ])%>%
+  .[-1, ]
+
+getmode <- function(v) {
+   uniqv <- unique(v)
+   uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+
+piv.meta.sed<-my.subs.noNA %>%
+  group_by(class)%>% # change to level you want to see groups at
+  summarise(sedClass_mode = getmode(sedClass50),
+            sedClass_n= length(unique(sedClass50))) %>%
+  t()%>%
+  as.data.frame() %>%
+  `colnames<-`(.[1, ])%>%
+  .[-1, ]
+
+piv.meta<-rbind(piv.meta.a,piv.meta.15,piv.meta.g, piv.meta.env, piv.meta.sed)
 ```
 
 Make table of average psuedospp per group
@@ -163,23 +259,6 @@ out.piv<-rbind(values, out.piv)
 ```
 
 
-<!-- #heatmap -->
-<!-- average -->
-<!-- ```{r} -->
-<!-- heatmap(piv.av,scale='column',Colv = NA, Rowv = NA) -->
-
-<!-- pdf(file.path(outPath,"heat_V6_averagePseudospp.pdf"), width=40, height=40) -->
-<!-- heatmap(piv.av,scale='column',Colv = NA, Rowv = NA) -->
-<!-- dev.off() -->
-<!-- ``` -->
-<!-- evenness -->
-<!-- ```{r} -->
-<!-- heatmap(piv.prop,scale='column',Colv = NA, Rowv = NA) -->
-
-<!-- pdf(file.path(outPath,"heat_V6_evenness.pdf"), width=20, height=20) -->
-<!-- heatmap(piv.prop,scale='column',Colv = NA, Rowv = NA) -->
-<!-- dev.off() -->
-<!-- ``` -->
 
 
 
