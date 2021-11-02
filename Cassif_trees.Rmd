@@ -257,4 +257,8 @@ Make fagligforum data product 1.1 (so far only for KF/RF)
 # save point data to file
 write.csv(main, file.path(outPath,"KF_RF_pointdata.csv"))
 
+# save a file more suited to Margaret's needs (just the classified points)
+main %>% select(1) %>%
+  write.csv(., file.path(outPath,"KF_RF_classifiedpoints.csv"))
+
 ```
