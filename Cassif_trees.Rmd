@@ -255,6 +255,6 @@ dev.off()
 Make fagligforum data product 1.1 (so far only for KF/RF)
 ```{r}
 # save point data to file
-write.csv(data, file.path(outPath,"KF_RF_pointdata.csv"))
+write.csv(main, file.path(outPath,"KF_RF_pointdata.csv"))
 
 ```
