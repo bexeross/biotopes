@@ -74,6 +74,7 @@ refer %>% filter(sample_no%in%unique(sample_info$VL)) %>%
   filter(!(sample_no%in%good)) #%>%
   #print(n=1000)
   #View
+
 ```
 
 ### Spatial selection of stations
@@ -249,5 +250,15 @@ tw_1 <- coredata %>%
 eval <- misclassified(tw_1)
 eval <- with(eval,  data.frame(SampID = samples$SampID[index], class = class, predicted = predicted))
 eval
+```
+## check excluded samples/stations
+outputting for more detailed explorations
+```{r}
+excluded<-refer %>% filter(sample_no%in%unique(sample_info$VL)) %>%
+  filter(!(sample_no%in%good))
+
+write.csv(excluded, file = file.path(outPath, ("excluded_megaAnalysis.csv")))
+  
+
 ```
 
