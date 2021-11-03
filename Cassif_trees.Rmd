@@ -171,7 +171,7 @@ cp.select <- function(big.tree) {
 }
 
 cp <-cp.select(tree_full)
-cp <- 0.03
+#cp <- 0.03
 
 # Prune Tree
 tree_full_pruned <- rpart(fmla,
