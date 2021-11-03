@@ -13,3 +13,9 @@ trawlm <- read.csv(file.path(dataPath,"removed_observations.csv"), sep ="|")
 trawlm <- trawlm %>% separate(col=clean_taxonomy, into = c("observation_main", "observation_modifier"), sep =";") %>%
   filter(observation_main == "trawl mark")
 ```
+
+## Summarize
+```{r}
+trawlwide <- trawlm %>% pivot_wider(names_from = observation_main, values_from = density_n_100m2, values_fill = 0, values_fn = sum)
+
+```
