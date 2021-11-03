@@ -189,7 +189,7 @@ Provide explanations for missing species data
 ### Sample level
 Which samples are in sample_info and not in matrix, and are they a whole video line or just a portion? If just a portion, it is assumed that no species were detected anywhere along that segment
 ```{r}
-res <- anti_join(sample_info,
+res.missing <- anti_join(sample_info,
           pivot_wider(spmatrix,names_from = new_name, values_from = density_n_100m2_pseudocount, values_fill = 0, values_fn = sum),by = "SampID")[,c(1,2,4)] %>%
   group_by(VL) %>%
   summarize(SampID = SampID,
@@ -197,7 +197,7 @@ res <- anti_join(sample_info,
             portion_missing = paste(as.character(length(VL)), as.character(NumSplits), sep ="/"),
             .groups = "drop_last")
 
-res
+res.missing
 ```
 ### Video line level
 Explanations for missing species data
