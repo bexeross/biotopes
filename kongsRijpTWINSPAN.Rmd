@@ -78,6 +78,8 @@ Looks like:
 - 3 samples did not make it into the "good" filter i.e. the total number of observations/the total length of the dive was <5 (NB one of these was also too short 69m due to dive being aborted: 1903)
 - 39 samples were filtered out by "new filter" i.e. they had poor vision for >0.75 of the dive (there are 38 listed, one is in the 3 above (1903) and two (1920 and 1929) have two samples each i.e. 1920_00 and 1920_01, 1929_00 and 1929_01)
 =41 samples which are all that are missing.
+Later we will try and predict these into TWINSPAN classes at a level that is deemed relevant for biotope classes.
+
 
 ## twintable of selected sites subset
 best to just copy and paste output from screen to text file - does not easily capture with automated methods
