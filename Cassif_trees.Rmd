@@ -135,17 +135,6 @@ main<-data %>%
   left_join(., env) %>%
   column_to_rownames(., var = "SampID")
 
-# Reclassify
-for(i in 1:n){
-  main[getsamplesingrp(resKR,reclassify$level[i],reclassify$class[i]),"class"]<-as.character(reclassify$new_class[i])
-}
-
-table(main$class)
-
-
-
-
-
 
 predictors <- paste(colnames(main)[-1], collapse="+") # careful with col numbers!
 
