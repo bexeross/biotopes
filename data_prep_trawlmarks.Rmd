@@ -16,6 +16,10 @@ trawlm <- trawlm %>% separate(col=clean_taxonomy, into = c("observation_main", "
 
 ## Summarize
 ```{r}
-trawlwide <- trawlm %>% pivot_wider(names_from = observation_main, values_from = density_n_100m2, values_fill = 0, values_fn = sum)
+trawlwide <- trawlm %>% pivot_wider(names_from = observation_main,
+                                    values_from = density_n_100m2,
+                                    values_fill = 0,
+                                    values_fn = sum) %>%
+  select(c("SampID","Trawl mark"))
 
 ```
