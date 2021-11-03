@@ -71,11 +71,11 @@ data <- cbind(data.frame(class = NA), sub.coredata) %>%
   
 
 # Set number of classes needed
-n<-7
+n<-6
 
 # Make reclassification table
-reclassify <- data.frame(level=c(1,4,5,5,3,3,3),
-                         class=c(3,18,38,39,8,11,10),
+reclassify <- data.frame(level=c(1,4,4,3,3,3),
+                         class=c(3,18,19,8,11,10),
                          new_class=sprintf("KR%s",seq(1:n)))
 
 # Reclassify
@@ -135,17 +135,6 @@ main<-data %>%
   left_join(., env) %>%
   column_to_rownames(., var = "SampID")
 
-# Reclassify
-for(i in 1:n){
-  main[getsamplesingrp(resKR,reclassify$level[i],reclassify$class[i]),"class"]<-as.character(reclassify$new_class[i])
-}
-
-table(main$class)
-
-
-
-
-
 
 predictors <- paste(colnames(main)[-1], collapse="+") # careful with col numbers!
 
@@ -171,7 +160,7 @@ cp.select <- function(big.tree) {
 }
 
 cp <-cp.select(tree_full)
-cp <- 0.03
+#cp <- 0.03
 
 # Prune Tree
 tree_full_pruned <- rpart(fmla,
