@@ -71,11 +71,11 @@ data <- cbind(data.frame(class = NA), sub.coredata) %>%
   
 
 # Set number of classes needed
-n<-7
+n<-6
 
 # Make reclassification table
-reclassify <- data.frame(level=c(1,4,5,5,3,3,3),
-                         class=c(3,18,38,39,8,11,10),
+reclassify <- data.frame(level=c(1,4,4,3,3,3),
+                         class=c(3,18,19,8,11,10),
                          new_class=sprintf("KR%s",seq(1:n)))
 
 # Reclassify
