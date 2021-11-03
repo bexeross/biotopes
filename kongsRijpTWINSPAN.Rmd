@@ -20,10 +20,10 @@ e.g. kongsfjorden/rijpfjorden set
 ```{r}
 sites<-sample_info %>%
   filter(VL %in% fjord$sample_no) %>%
-  select(SampID)
+  select(SampID)#110 samples
 
 sub.coredata<-coredata %>%
-  filter(row.names(coredata) %in% sites$SampID)
+  filter(row.names(coredata) %in% sites$SampID)#69 samples retained
 
 tw_kr <- sub.coredata%>%
   select(which(!is.na(colSums(.)))) %>%
@@ -31,6 +31,53 @@ tw_kr <- sub.coredata%>%
   twinspan(cutlevels = cutlevelsPaal, levmax = 15, groupmin = 3)
 ```
 
+## check mega dataset for lost samples
+search for where they were removed and store the list. 
+
+```{r}
+# #list of samples to search that are in mega analysis dataset
+# core.samps<-coredata %>%
+#   rownames_to_column(var="SampID")%>%
+#   select(SampID)
+# 
+# view(core.samps)
+# #list from mega analysis of excluded samples
+# 
+# view(res.missing)
+# 
+# #list species that were na colSums (does this filter out some stations?)
+# no.selspp<-coredata %>%
+#   select(which(is.na(colSums(.)))) #? looks like these just had some vals as text
+# 
+# #check refer (the first loading in of data that came from MarVid)
+# fj.refer<-refer %>%
+#   filter((sample_no %in% fjord$sample_no))
+
+#check good
+fj.bad<-fjord %>%
+  filter(!(sample_no%in%good))
+
+fj.bad
+
+# #check new filter
+# tw.newfilt <- trimmedwide %>%
+#   data.frame() %>%
+#   filter(new_filter)
+
+#see reasons for newfilt for fjord stations
+fj.newfilt.out<-trimmedwide %>%
+  data.frame() %>%
+  filter(!(new_filter))%>%
+  select(SampID)%>%
+  left_join(sample_info)%>%
+  filter(VL %in% fjord$sample_no)
+fj.newfilt.out
+
+```
+Looks like:
+- 3 samples did not make it into the "good" filter i.e. the total number of observations/the total length of the dive was <5 (NB one of these was also too short 69m due to dive being aborted: 1903)
+- 39 samples were filtered out by "new filter" i.e. they had poor vision for >0.75 of the dive (there are 38 listed, one is in the 3 above (1903) and two (1920 and 1929) have two samples each i.e. 1920_00 and 1920_01, 1929_00 and 1929_01)
+=41 samples which are all that are missing.
 
 ## twintable of selected sites subset
 best to just copy and paste output from screen to text file - does not easily capture with automated methods
