@@ -188,3 +188,49 @@ match res and resKR
 res.match<-left_join(resKR, res, by = c("sites.sel"="SampID"))
 ```
 
+
+
+# PREDICT new data into TWINSPAN groups
+The 41 excluded samples will be treated as new data to see if they fit into a group. As 3 had issues (dive aborted, "where is it?") only the 38 in fj.newfilt.out can be used.
+
+## make new data matrix and predict
+
+```{r}
+new.data<-trimmedwide %>%
+  filter(SampID %in% fj.newfilt.out$SampID) 
+
+tw_kr.new.d<-predict(tw_kr, new.data)
+group.df<-as.data.frame(tw_kr.new.d)
+
+new.data.gp<-cbind(new.data, group.df)
+
+```
+
+## find biotope class for group (lev15)
+NB this is run after the megaTwinDeepSummaries_KR which is where my.subs comes from
+```{r}
+
+bio.lookup<-my.subs %>%
+  group_by(level15)%>%
+  select(level15, class)
+
+new.data.class<-new.data.gp %>%
+  left_join(bio.lookup, by=c("tw_kr.new.d"="level15"))
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
