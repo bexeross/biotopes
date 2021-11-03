@@ -10,6 +10,7 @@ library(twinspan)
 library(dplyr, quietly = TRUE)
 library(tibble)
 library(Matrix)
+library(rgdal)
 ```
 
 # Load environmental data for later
@@ -82,6 +83,13 @@ colnames(envR.sel)<-c("SampID",
 env<-envK.sel %>%
   bind_rows(envR.sel)
 
+# get positional info
+pos<-sample_info %>%
+  select(SampID,
+         x_coord,
+         y_coord)
+
+
 #merge with dataset
 
 res.matKR<- res.matKR %>%
@@ -118,6 +126,21 @@ my.subs<-res.matKR
 #my.subs<-subset(res.mat,level8 ==298) #change as needed
 
 ```
+# output classified shapefile
+```{r}
+my.subs<-my.subs%>%
+  left_join(pos, by=c("sites.sel"="SampID"))
+
+
+my.subs.shp <- SpatialPointsDataFrame(coords = cbind(my.subs$x_coord,
+                                                     my.subs$y_coord),
+                                      proj4string = CRS("+init=epsg:32633"),
+                                      data =  my.subs)
+
+writeOGR(my.subs.shp, dsn = file.path(outPath, "Spatial"), "KR_classified", driver = "ESRI Shapefile", overwrite_layer = TRUE)
+
+```
+
 
 # pivot at given cut level
 
@@ -259,11 +282,6 @@ out.piv<-rbind(values, out.piv)
 ```
 
 
-
-
-
-
-
 #output csvs
 
 ```{r}
@@ -281,4 +299,27 @@ write.csv(piv.meta,
 
 ```
 
+------
 
+## Extra checks
+```{r}
+subsKr3<-subset(my.subs,class=="KR3")
+subsKr4<-subset(my.subs,class=="KR4")
+
+subsKr34<-rbind(subsKr3,subsKr4)
+
+subsKr1<-subset(my.subs,class=="KR1")
+subsKr2<-subset(my.subs,class=="KR2")
+subsKr5<-subset(my.subs,class=="KR5")
+subsKr6<-subset(my.subs,class=="KR6")
+subsKr7<-subset(my.subs,class=="KR7")
+
+```
+
+
+## CHECK CLASS SAMPLE LISTS
+
+```{r}
+chk.cls.samp<-my.subs %>%
+  select(c(sites.sel, class))
+```
