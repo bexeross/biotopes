@@ -20,7 +20,7 @@ tw_1.df<-rownames_to_column(as.data.frame(twin2mat(tw_kr)))
 
 
 #make res again if need be
-res <- data.frame(SampID = sites.sel, level1 = NA, level2= NA, level3 = NA, level5 = NA, level5 = NA, level6 = NA, level7 = NA, level8= NA, level9 = NA, level10 = NA, level11 = NA, level12 = NA, level13 = NA, level14= NA, level15 = NA)
+res <- data.frame(SampID = sites.sel, level1 = NA, level2= NA, level3 = NA, level4 = NA, level5 = NA, level6 = NA, level7 = NA, level8= NA, level9 = NA, level10 = NA, level11 = NA, level12 = NA, level13 = NA, level14= NA, level15 = NA)
 
 for(i in 1:15){
   res[,i+1]<-cut(tw_kr, level = i)
@@ -30,7 +30,7 @@ f = function(x) length(unique(x))
 lapply(res, FUN = f)
 
 #join together
-res.mat<-left_join(res, tw_1.df, by = c("sites.sel"="rowname"))
+res.matKR<-left_join(res, tw_1.df, by = c("sites.sel"="rowname"))
 ```
 
 
@@ -70,7 +70,8 @@ colnames(envR.sel)<-c("SampID",
            "sedClass50")
 
 env<-envK.sel %>%
-  bind_rows(envR.sel)
+  bind_rows(envR.sel)%>%
+  type.convert()
 
 # get positional info
 pos<-sample_info %>%
@@ -93,7 +94,7 @@ rownames(res.matKR) <- res.matKR[,1]
 
 ```{r}
 #my.subs<-res.mat
-my.subs<-subset(res.mat,level3 ==8) #change as needed
+my.subs<-subset(res.matKR,level3 ==8) #change as needed
 
 ```
 
@@ -230,23 +231,23 @@ out.piv<-rbind(values, out.piv)
 ```
 
 
-#heatmap
-average
-```{r}
-heatmap(piv.av,scale='column',Colv = NA, Rowv = NA)
+<!-- #heatmap -->
+<!-- average -->
+<!-- ```{r} -->
+<!-- heatmap(piv.av,scale='column',Colv = NA, Rowv = NA) -->
 
-pdf(file.path(outPath,"heat_V6_averagePseudospp.pdf"), width=40, height=40)
-heatmap(piv.av,scale='column',Colv = NA, Rowv = NA)
-dev.off()
-```
-evenness
-```{r}
-heatmap(piv.prop,scale='column',Colv = NA, Rowv = NA)
+<!-- pdf(file.path(outPath,"heat_V6_averagePseudospp.pdf"), width=40, height=40) -->
+<!-- heatmap(piv.av,scale='column',Colv = NA, Rowv = NA) -->
+<!-- dev.off() -->
+<!-- ``` -->
+<!-- evenness -->
+<!-- ```{r} -->
+<!-- heatmap(piv.prop,scale='column',Colv = NA, Rowv = NA) -->
 
-pdf(file.path(outPath,"heat_V6_evenness.pdf"), width=20, height=20)
-heatmap(piv.prop,scale='column',Colv = NA, Rowv = NA)
-dev.off()
-```
+<!-- pdf(file.path(outPath,"heat_V6_evenness.pdf"), width=20, height=20) -->
+<!-- heatmap(piv.prop,scale='column',Colv = NA, Rowv = NA) -->
+<!-- dev.off() -->
+<!-- ``` -->
 
 
 
