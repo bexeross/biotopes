@@ -11,7 +11,7 @@ library(tidyverse)
 ```{r}
 trawlm <- read.csv(file.path(dataPath,"removed_observations.csv"), sep ="|")
 trawlm <- trawlm %>% separate(col=clean_taxonomy, into = c("observation_main", "observation_modifier"), sep =";") %>%
-  filter(observation_main == "trawl mark")
+  filter(observation_main == "Trawl mark")
 ```
 
 ## Summarize
