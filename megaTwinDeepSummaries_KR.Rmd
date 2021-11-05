@@ -45,6 +45,108 @@ res.matKR<-left_join(resKR, tw_kr.df, by = c("sites.sel"="rowname"))
 
 rownames(res.matKR) <- res.matKR[,1]
 ```
+
+
+# Subset to group at given cut level
+
+```{r}
+# Set number of classes needed
+n<-7
+
+# Make reclassification table
+reclassify <- data.frame(level=c(1,4,4,4,4,3,3),
+                         class=c(3,18,19,16,17,11,10),
+                         new_class=sprintf("KR%s",seq(1:n)))
+
+
+res.matKRREF<-res.matKR
+
+
+# Reclassify
+for(i in 1:n){
+  res.matKR[getsamplesingrp(res.matKRREF,reclassify$level[i],reclassify$class[i]),"class"]<-as.character(reclassify$new_class[i])
+}
+
+table(res.matKR$class)
+
+my.subs<-res.matKR
+#my.subs<-subset(res.mat,level8 ==298) #change as needed
+
+```
+<!-- #get pivots for parent groups -->
+
+<!-- ```{r} -->
+<!-- #parent groups -->
+<!-- piv.meta.a<-my.subs %>% -->
+<!--   group_by(class)%>% # change to level you want to see groups at -->
+<!--   summarise(across(c(2:15),mean)) %>% -->
+<!--   t()%>% -->
+<!--   `colnames<-`(.[1, ])%>% -->
+<!--   .[-1, ] -->
+
+<!-- ``` -->
+<!-- --- -->
+<!-- # DO NOT USE YET -->
+<!-- # OPTIONAL  add newdata -->
+<!-- If there are any samples with poor vis or that were too short that were excluded from the analysis they can be added back in here, with their level15 classes predicted, then all subsequent summaries can include their data -->
+
+<!-- ## predict -->
+
+<!-- The 41 excluded samples will be treated as new data to see if they fit into a group. As 3 excluded samples had issues (dive aborted, "where is it?") only the 38 in fj.newfilt.out can be used (object made in kongsRijpTWINSPAN.Rmd) -->
+
+<!-- ## make new data matrix and predict -->
+
+<!-- NB NOT READY - NEED PSEUDOSPECIES VALUES IN TABLE RATHER THAN REAL DENSITIY VALUES - NEEDS RECODING -->
+
+<!-- ```{r} -->
+<!-- new.data<-trimmedwide %>% -->
+<!--   filter(SampID %in% fj.newfilt.out$SampID) -->
+
+<!-- sites.sel.nd<-trimmedwide %>% -->
+<!--   filter(SampID %in% fj.newfilt.out$SampID)  %>% -->
+<!--   select(SampID) -->
+
+<!-- level15<-predict(tw_kr, new.data) -->
+<!-- group.df<-as.data.frame(level15) -->
+
+
+<!-- #get cutlevels -->
+<!-- new.data.pseu<-twinsform(new.data[,-1], cutlevels=cutlevelsPaal) -->
+
+<!-- new.data.gp<-cbind(sites.sel.nd,new.data.pseu, group.df) -->
+<!-- names(new.data.gp)[names(new.data.gp) == 'sites.sel.nd'] <- 'sites.sel'  -->
+
+<!-- ``` -->
+
+<!-- ## find biotope class for group (lev15) -->
+<!-- NB this is run after the megaTwinDeepSummaries_KR which is where my.subs comes from -->
+<!-- ```{r} -->
+
+<!-- bio.lookup<-my.subs %>% -->
+<!--   group_by(level15)%>% -->
+<!--   summarize (classA =names(which.max(table(class))))%>% -->
+<!--   select(level15, classA) -->
+
+<!-- names(bio.lookup)[names(bio.lookup) == 'classA'] <- 'class'  -->
+
+
+<!-- new.data.class<-new.data.gp %>% -->
+<!--   left_join(bio.lookup, by=("level15")) -->
+
+<!-- # however these are not psuedospecies values so we need to remake this table using the original cutoffs. -->
+
+
+<!-- ``` -->
+<!-- ## merge datasets -->
+
+<!-- ```{r} -->
+<!-- res.matKR<-bind_rows(res.matKR,new.data.class) -->
+
+<!-- ``` -->
+
+<!-- ------ -->
+# START AGAIN HERE
+
 # merge matrix with selected env var
 ```{r}
 #select var
@@ -98,48 +200,8 @@ res.matKR<- res.matKR %>%
 
 
 rownames(res.matKR) <- res.matKR[,1]
-```
-
-
-# Subset to group at given cut level
-
-```{r}
-# Set number of classes needed
-n<-7
-
-# Make reclassification table
-reclassify <- data.frame(level=c(1,4,4,4,4,3,3),
-                         class=c(3,18,19,16,17,11,10),
-                         new_class=sprintf("KR%s",seq(1:n)))
-
-
-res.matKRREF<-res.matKR
-
-
-# Reclassify
-for(i in 1:n){
-  res.matKR[getsamplesingrp(res.matKRREF,reclassify$level[i],reclassify$class[i]),"class"]<-as.character(reclassify$new_class[i])
-}
-
-table(res.matKR$class)
 
 my.subs<-res.matKR
-#my.subs<-subset(res.mat,level8 ==298) #change as needed
-
-```
-# output classified shapefile
-```{r}
-my.subs<-my.subs%>%
-  left_join(pos, by=c("sites.sel"="SampID"))
-
-
-my.subs.shp <- SpatialPointsDataFrame(coords = cbind(my.subs$x_coord,
-                                                     my.subs$y_coord),
-                                      proj4string = CRS("+init=epsg:32633"),
-                                      data =  my.subs)
-
-writeOGR(my.subs.shp, dsn = file.path(outPath, "Spatial"), "KR_classified", driver = "ESRI Shapefile", overwrite_layer = TRUE)
-
 ```
 
 
@@ -155,6 +217,8 @@ piv.meta.a<-my.subs %>%
   t()%>%
   `colnames<-`(.[1, ])%>%
   .[-1, ]
+
+
 
 # n lev 15 groups
 piv.meta.15<-my.subs %>%
@@ -234,12 +298,12 @@ Make table of average psuedospp per group
 ```{r}
 piv.av<-my.subs %>%
   group_by(class)%>% # change to level you want to see groups at
-  summarise(across(c(17:140),mean)) %>%
+  summarise(across(c(17:147),mean)) %>%
   t()%>%
+ # na.omit()%>%
   `colnames<-`(.[1, ])%>%
   .[-1, ] %>%
   type.convert()
-
 #piv.av[,] <- sapply(piv.av[,], as.numeric)
 
 
@@ -259,17 +323,18 @@ Make table of proportion of n spp obs (non zero pseudospp)/n samples per group
 ```{r}
 piv.n<-my.subs %>%
   group_by(class)%>% # change to level you want to see groups at
-  summarise(across(c(17:140),nnzero)) %>%
+  summarise(across(c(17:147),nnzero)) %>%
   t()%>%
+  #na.omit()%>%
   as.data.frame() %>%
   `colnames<-`(.[1, ])%>%
   .[-1, ] %>%
   type.convert()
 
-piv.meta.g[1,] <- sapply(piv.meta.g[1,], as.numeric)
+piv.tot <- sapply(piv.meta.g[1,], as.numeric)
 #piv.n[,] <- sapply(piv.n[,], as.numeric)
 
-piv.prop<-mapply('/',piv.n,piv.meta.g[1,])
+piv.prop<-mapply('/',piv.n,piv.tot)
 rownames(piv.prop)<-rownames(piv.n)
 piv.prop<-round_df(piv.prop,2)
 
@@ -278,8 +343,9 @@ Make table of maximum pseudospp per group
 ```{r}
 piv.mx<-my.subs %>%
   group_by(class)%>% # change to level you want to see groups at
-  summarise(across(c(17:140),max)) %>%
+  summarise(across(c(17:147),max)) %>%
   t()%>%
+ # na.omit()%>%
   `colnames<-`(.[1, ])%>%
   .[-1, ]
 ```
@@ -312,27 +378,105 @@ write.csv(piv.meta,
 
 ```
 
-------
 
-## Extra checks
+
+
+
+#output list of all stations with classes
+This means merging with the excluded stations and retaining only the SampID and the biotope class.
+
+##import (if not done above)
 ```{r}
-subsKr3<-subset(my.subs,class=="KR3")
-subsKr4<-subset(my.subs,class=="KR4")
+new.data<-trimmedwide %>%
+  filter(SampID %in% fj.newfilt.out$SampID)
 
-subsKr34<-rbind(subsKr3,subsKr4)
+#sites.sel.nd<-trimmedwide %>%
+ # filter(SampID %in% fj.newfilt.out$SampID)  %>%
+ # select(SampID)
 
-subsKr1<-subset(my.subs,class=="KR1")
-subsKr2<-subset(my.subs,class=="KR2")
-subsKr5<-subset(my.subs,class=="KR5")
-subsKr6<-subset(my.subs,class=="KR6")
-subsKr7<-subset(my.subs,class=="KR7")
+level15<-predict(tw_kr, new.data)
+group.df<-as.data.frame(level15)
+
+
+new.data.gp<-cbind(new.data, group.df)#,sites.sel.nd)
+#names(new.data.gp)[names(new.data.gp) == 'sites.sel.nd'] <- 'sites.sel'
+
+```
+
+## find biotope class for group (lev15)
+NB this is run after the megaTwinDeepSummaries_KR which is where my.subs comes from
+```{r}
+
+bio.lookup<-my.subs %>%
+  group_by(level15)%>%
+  summarize (classA =names(which.max(table(class))))%>%
+  select(level15, classA)
+
+names(bio.lookup)[names(bio.lookup) == 'classA'] <- 'class'
+
+
+new.data.class<-new.data.gp %>%
+  left_join(bio.lookup, by=("level15"))%>% #nb inc density vals not pseudospp
+ 
+
+  
+```
+## merge datasets
+
+```{r}
+
+IDclass.nd<-new.data.class %>%
+  select(SampID, class)
+
+IDclass.main<-res.matKR %>%
+  select(sites.sel, class) %>%
+  rename(SampID=sites.sel)
+
+
+sites.class<-bind_rows(IDclass.main,IDclass.nd)
 
 ```
 
 
-## CHECK CLASS SAMPLE LISTS
-
+# output classified shapefile
 ```{r}
-chk.cls.samp<-my.subs %>%
-  select(c(sites.sel, class))
+sites.class<-sites.class%>%
+  left_join(pos)
+
+
+sites.class.shp <- SpatialPointsDataFrame(coords = cbind(sites.class$x_coord,
+                                                     sites.class$y_coord),
+                                      proj4string = CRS("+init=epsg:32633"),
+                                      data =  sites.class)
+
+writeOGR(sites.class.shp, dsn = file.path(outPath, "Spatial"), "KR_classified", driver = "ESRI Shapefile", overwrite_layer = TRUE)
+
 ```
+
+
+
+
+<!-- ------ -->
+
+<!-- ## Extra checks -->
+<!-- ```{r} -->
+<!-- subsKr3<-subset(my.subs,class=="KR3") -->
+<!-- subsKr4<-subset(my.subs,class=="KR4") -->
+
+<!-- subsKr34<-rbind(subsKr3,subsKr4) -->
+
+<!-- subsKr1<-subset(my.subs,class=="KR1") -->
+<!-- subsKr2<-subset(my.subs,class=="KR2") -->
+<!-- subsKr5<-subset(my.subs,class=="KR5") -->
+<!-- subsKr6<-subset(my.subs,class=="KR6") -->
+<!-- subsKr7<-subset(my.subs,class=="KR7") -->
+
+<!-- ``` -->
+
+
+<!-- ## CHECK CLASS SAMPLE LISTS -->
+
+<!-- ```{r} -->
+<!-- chk.cls.samp<-my.subs %>% -->
+<!--   select(c(sites.sel, class)) -->
+<!-- ``` -->
