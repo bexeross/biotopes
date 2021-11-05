@@ -95,9 +95,10 @@ pos<-sample_info %>%
 res.matKR<- res.matKR %>%
   left_join(., env, by=c("sites.sel"="SampID"))
 
+
+
 rownames(res.matKR) <- res.matKR[,1]
 ```
-
 
 
 # Subset to group at given cut level
@@ -107,8 +108,8 @@ rownames(res.matKR) <- res.matKR[,1]
 n<-7
 
 # Make reclassification table
-reclassify <- data.frame(level=c(1,4,5,5,3,3,3),
-                         class=c(3,18,38,39,8,11,10),
+reclassify <- data.frame(level=c(1,4,4,4,4,3,3),
+                         class=c(3,18,19,16,17,11,10),
                          new_class=sprintf("KR%s",seq(1:n)))
 
 
@@ -164,18 +165,7 @@ piv.meta.15<-my.subs %>%
   `colnames<-`(.[1, ])%>%
   .[-1, ]
 
-# n samples
-piv.meta.g<-my.subs %>%
-  group_by(class)%>% # change to level you want to see groups at
-  summarise(nSamp=n_distinct(sites.sel)) %>%
-  t()%>%
-  as.data.frame() %>%
-  `colnames<-`(.[1, ])%>%
-  .[-1, ]
-
 my.subs.noNA<-na.omit(my.subs)
-
-
 
 piv.meta.env<-my.subs.noNA %>%
   group_by(class)%>% # change to level you want to see groups at
@@ -213,6 +203,29 @@ piv.meta.sed<-my.subs.noNA %>%
   as.data.frame() %>%
   `colnames<-`(.[1, ])%>%
   .[-1, ]
+
+
+#merge trawl mark data (make ure you have run "data_prep_trawlmarks.Rmd" first) Need to do this after summarising env var as there are too many NAs in trawl marks to get goo summaries
+trawlwide.cln<-trawlwide %>%
+  group_by(SampID) %>%
+  summarise(TrawlmarkDens=max(`Trawl mark`))
+
+
+res.matKR<- res.matKR %>%
+  left_join(., trawlwide.cln, by =c("sites.sel"="SampID"))
+
+my.subs<-res.matKR
+
+# n samples
+piv.meta.g<-my.subs %>%
+  group_by(class)%>% # change to level you want to see groups at
+  summarise(nSamp=n_distinct(sites.sel),
+            trawlm_Max=max(TrawlmarkDens)) %>%
+  t()%>%
+  as.data.frame() %>%
+  `colnames<-`(.[1, ])%>%
+  .[-1, ]
+
 
 piv.meta<-rbind(piv.meta.a,piv.meta.15,piv.meta.g, piv.meta.env, piv.meta.sed)
 ```
@@ -253,10 +266,10 @@ piv.n<-my.subs %>%
   .[-1, ] %>%
   type.convert()
 
-piv.meta.g[,] <- sapply(piv.meta.g[,], as.numeric)
+piv.meta.g[1,] <- sapply(piv.meta.g[1,], as.numeric)
 #piv.n[,] <- sapply(piv.n[,], as.numeric)
 
-piv.prop<-mapply('/',piv.n,piv.meta.g)
+piv.prop<-mapply('/',piv.n,piv.meta.g[1,])
 rownames(piv.prop)<-rownames(piv.n)
 piv.prop<-round_df(piv.prop,2)
 
@@ -292,10 +305,10 @@ out.piv<-rbind(values, out.piv)
 #           file = file.path(outPath, ("V6_prop_obs.csv"))) #change label
 
 write.csv(out.piv, 
-          file = file.path(outPath, ("KR_av_proportion_max.csv"))) #change label
+          file = file.path(outPath, ("KR_FINAL_av_proportion_max.csv"))) #change label
 
 write.csv(piv.meta, 
-          file = file.path(outPath, ("KR_metadata.csv"))) #change label
+          file = file.path(outPath, ("KR_FINAL_metadata.csv"))) #change label
 
 ```
 
