@@ -185,12 +185,6 @@ colnames(envR.sel)<-c("SampID",
 env<-envK.sel %>%
   bind_rows(envR.sel)
 
-# get positional info
-pos<-sample_info %>%
-  select(SampID,
-         x_coord,
-         y_coord)
-
 
 #merge with dataset
 
@@ -440,6 +434,14 @@ sites.class<-bind_rows(IDclass.main,IDclass.nd)
 
 # output classified shapefile
 ```{r}
+# get positional info
+pos<-sample_info %>%
+  select(SampID,
+         x_coord,
+         y_coord,
+         VL)
+
+
 sites.class<-sites.class%>%
   left_join(pos)
 
