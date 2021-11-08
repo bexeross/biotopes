@@ -2,7 +2,7 @@
 title: "megaTwin deep summaries - R Notebook"
 output: html_notebook
 ---
-USE WITH A PRIORI CLASS ALLOCATIONS
+USE WITH PROVISIONAL CLASS ALLOCATIONS
 
 As even splitting into smaller twintables can result in some being too big to digest, we want to try and summarise groups at different levels for their average pseudospp., n, max pseudospp? to be better able to compare sub-branches.
 
@@ -14,14 +14,15 @@ library(tibble)
 library(Matrix)
 ```
 
-#a priori classes
+#provisional classes
+likely identified from the heatmap analysis. These will be labelled from 1 (left) to n with the prefix listed below (currently "V").
 ```{r}
 # Set number of classes needed
-n<-18
+n<-19
 
 # Make reclassification table
-reclassify <- data.frame(level=c(6,6,4,5,7,8,8,6,5,5,4,5,6,6,5,5,4,1),
-                         class=c(71,70,16,36,148,298,299,75,38,39,23,45,89,88,40,41,21,3),
+reclassify <- data.frame(level=c(6,6,4,5,7,8,8,6,5,5,4,5,6,6,5,5,4,1,5),
+                         class=c(71,70,16,36,148,298,299,75,38,39,23,45,89,88,40,41,21,3,34),
                          new_class=sprintf("V%s",seq(1:n)))
 ```
 
@@ -49,8 +50,7 @@ res.matREF<-res.mat
 rownames(res.mat) <- res.mat[,1]
 ```
 
-# Subset to group at given cut level
-
+# Reclassify dataset
 ```{r}
 # Reclassify
 for(i in 1:n){
@@ -64,8 +64,9 @@ my.subs<-res.mat
 
 ```
 
-# pivot at given cut level
+# pivot at given class level
 
+## metadata
 Make table of metadata (parent groups, n sub groups at level 15, and n samples per group)
 
 ```{r}
@@ -100,7 +101,10 @@ piv.meta.g<-my.subs %>%
 piv.meta<-rbind(piv.meta.a,piv.meta.15,piv.meta.g)
 ```
 
-Make table of average psuedospp per group
+## full summary dataset
+Make tables of average psuedospp per class/proportion of obs per class/max pseudospp per class
+
+*Average pseudospp*
 ```{r}
 piv.av<-my.subs %>%
   group_by(class)%>% # change to level you want to see groups at
@@ -124,8 +128,9 @@ round_df <- function(x, digits) {
 
 piv.av<-round_df(piv.av, 1)
 ```
-Make table of proportion of n spp obs (non zero pseudospp)/n samples per group
 
+*proportion obs*
+i.e. proportion of n spp obs (non zero pseudospp)/n samples per group
 ```{r}
 piv.n<-my.subs %>%
   group_by(class)%>% # change to level you want to see groups at
@@ -144,6 +149,8 @@ rownames(piv.prop)<-rownames(piv.n)
 piv.prop<-round_df(piv.prop,2)
 
 ```
+
+*Max pseudospp*
 Make table of maximum pseudospp per group
 ```{r}
 piv.mx<-my.subs %>%
@@ -154,9 +161,7 @@ piv.mx<-my.subs %>%
   .[-1, ]
 ```
 
-
-cbind av pseudospp, evenness, max pseudospp tables
-
+Combine for outputting
 ```{r}
 out.piv<-cbind(piv.av, piv.prop, piv.mx)
 values<-c(rep("av",ncol(piv.av)), rep("prop",ncol(piv.prop)), rep("max", ncol(piv.mx)))
@@ -164,27 +169,31 @@ values<-c(rep("av",ncol(piv.av)), rep("prop",ncol(piv.prop)), rep("max", ncol(pi
 out.piv<-rbind(values, out.piv)
 ```
 
+## short form summary
+I.e. dominant spp (av >1pseudospp) and consistent spp (present in >50% samples).
 
-<!-- #heatmap -->
-<!-- average -->
-<!-- ```{r} -->
-<!-- heatmap(piv.av,scale='column',Colv = NA, Rowv = NA) -->
+*Dominant*
+```{r}
+dom.av<-piv.av%>%
+  as.data.frame() %>%
+  filter_all(any_vars(. > 1))
+```
 
-<!-- pdf(file.path(outPath,"heat_V6_averagePseudospp.pdf"), width=40, height=40) -->
-<!-- heatmap(piv.av,scale='column',Colv = NA, Rowv = NA) -->
-<!-- dev.off() -->
-<!-- ``` -->
-<!-- evenness -->
-<!-- ```{r} -->
-<!-- heatmap(piv.prop,scale='column',Colv = NA, Rowv = NA) -->
+*Consistent*
+```{r}
+hi.prop<-piv.prop%>%
+  as.data.frame() %>%
+  filter_all(any_vars(. > 0.5))
+```
 
-<!-- pdf(file.path(outPath,"heat_V6_evenness.pdf"), width=20, height=20) -->
-<!-- heatmap(piv.prop,scale='column',Colv = NA, Rowv = NA) -->
-<!-- dev.off() -->
-<!-- ``` -->
+combine
 
+```{r}
+short.sum<-cbind(dom.av,hi.prop)
+values2<-c(rep("av>1",ncol(dom.av)), rep("prop>.5",ncol(hi.prop)))
 
-
+out.piv.short<-rbind(values2, short.sum)
+```
 
 
 #output csvs
@@ -198,6 +207,10 @@ out.piv<-rbind(values, out.piv)
 
 write.csv(out.piv, 
           file = file.path(outPath, ("Mega_Vgroups_av_proportion_max.csv"))) #change label
+
+write.csv(out.piv.short, 
+          file = file.path(outPath, ("Mega_Vgroups_avGT1_propGT50pc.csv"))) #change label
+
 
 write.csv(piv.meta, 
           file = file.path(outPath, ("Mega_Vgroups_metadata.csv"))) #change label
