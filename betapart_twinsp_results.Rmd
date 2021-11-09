@@ -1,0 +1,6 @@
+---
+title: "betapart - R Notebook"
+output: html_notebook
+---
+
+Checking what we can do with some beta diversity metrics when assessing potential biotopes. Requires that you have already done a twinspan analysis (making the object tw_1) and have decided on some provisional biotopes/classes. Currently developed to run after you have done some megaTwinDeepSummaries and have object "my.subs"
