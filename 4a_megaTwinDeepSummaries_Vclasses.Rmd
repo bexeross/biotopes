@@ -18,12 +18,25 @@ library(Matrix)
 likely identified from the heatmap analysis. These will be labelled from 1 (left) to n with the prefix listed below (currently "V").
 ```{r}
 # Set number of classes needed
-n<-19
+#n<-19
 
 # Make reclassification table
-reclassify <- data.frame(level=c(6,6,4,5,7,8,8,6,5,5,4,5,6,6,5,5,4,1,5),
-                         class=c(71,70,16,36,148,298,299,75,38,39,23,45,89,88,40,41,21,3,34),
-                         new_class=sprintf("V%s",seq(1:n)))
+#reclassify <- data.frame(level=c(6,6,4,5,7,8,8,6,5,5,4,5,6,6,5,5,4,1,5),
+#                         class=c(71,70,16,36,148,298,299,75,38,39,23,45,89,88,40,41,21,3,34),
+#                         new_class=sprintf("V%s",seq(1:n)))
+
+
+#Pål classes
+n<-26
+
+# Make reclassification table
+reclassify <- data.frame(level=c(6,6,5,4,7,7,6,7,8,8,6,5,5,4,5,6,6,6,6,7,7,5,6,6,1,6),
+                         class=c(71,70,34,16,147,146,72,148,298,299,75,38,39,23,45,89,88,81,80,164,165,43,84,85,3,83),
+                         new_class=sprintf("P%s",seq(1:n)))
+
+
+
+
 ```
 
 
@@ -206,14 +219,14 @@ out.piv.short<-rbind(values2, short.sum)
 #           file = file.path(outPath, ("V6_prop_obs.csv"))) #change label
 
 write.csv(out.piv, 
-          file = file.path(outPath, ("Mega_Vgroups_av_proportion_max.csv"))) #change label
+          file = file.path(outPath, ("Mega_Pgroups_av_proportion_max.csv"))) #change label
 
 write.csv(out.piv.short, 
           file = file.path(outPath, ("Mega_Vgroups_avGT1_propGT50pc.csv"))) #change label
 
 
 write.csv(piv.meta, 
-          file = file.path(outPath, ("Mega_Vgroups_metadata.csv"))) #change label
+          file = file.path(outPath, ("Mega_Pgroups_metadata.csv"))) #change label
 
 ```
 
