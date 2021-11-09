@@ -3,4 +3,89 @@ title: "betapart - R Notebook"
 output: html_notebook
 ---
 
-Checking what we can do with some beta diversity metrics when assessing potential biotopes. Requires that you have already done a twinspan analysis (making the object tw_1) and have decided on some provisional biotopes/classes. Currently developed to run after you have done some megaTwinDeepSummaries and have object "my.subs"
+Checking what we can do with some beta diversity metrics when assessing potential biotopes. Requires that you have already done a twinspan analysis (making the object tw_1) and have decided on some provisional biotopes/classes. Currently developed to run after you have done some megaTwinDeepSummaries and have object "piv.av" (pseudospecies averaged per class with class columns, species rows, and average pseudospecies values in th matrix)
+
+```{r}
+library(dplyr)
+library(tibble)
+library(tidyr)
+library(betapart)
+
+```
+
+## format data
+needs to be in the format of a matrix (x) codifying the presence (1) or absence (0) of m species (columns) in n sites (rows).
+We want the columns sorted to avoid a disorganised table at the end.
+
+```{r}
+beta.in <-piv.av %>%
+  as.data.frame()%>%
+  select("P1","P2","P3","P4","P5","P6","P7","P8","P9","P10",
+                "P11","P12","P13","P14","P15","P16","P17","P18","P19","P26",
+                "P20","P21","P22","P23","P24","P25")
+
+beta.in[beta.in>0]=1
+beta.in<-t(beta.in)
+```
+
+## run betapart
+```{r}
+beta.out<-betapart.core(beta.in)
+beta.share<-beta.out[["shared"]]
+```
+
+## find union of samples
+total number of taxa for each pair
+```{r}
+#rowSumes
+rsum.beta.in<-rowSums(beta.in) %>%
+  as.data.frame()
+
+#for relabelling lost rownames
+name.lookup <- data.frame(class=rownames(beta.in),
+                          V =c(1:length(rownames(beta.in))))
+
+#pairwise sums of rowsums
+pair.sums.beta.in<-t(combn(nrow(rsum.beta.in), 2))
+pair.sums.beta.calc <- apply(pair.sums.beta.in, 1, function(x) sum(rsum.beta.in[x[1],] + rsum.beta.in[x[2],]))
+pair.sums.beta.out<-cbind(pair.sums.beta.in, pair.sums.beta.calc)
+
+#re-add class names
+pair.sums.beta.out.labelled<-pair.sums.beta.out%>%
+  as.data.frame()%>%
+  inner_join(name.lookup, by =c('V1'='V'))%>%
+  inner_join(name.lookup, by =c('V2'='V'))%>%
+  select(class.x, class.y, pair.sums.beta.calc)
+
+unions<-pair.sums.beta.out.labelled %>%
+  as.data.frame()%>%
+  pivot_wider(names_from = class.y,
+              values_from= pair.sums.beta.calc)%>%
+  column_to_rownames(var="class.x")
+```
+
+
+
+## find proportion shared
+```{r}
+
+beta.share.out<-beta.out[["shared"]]/unions#/(beta.out[["shared"]]+beta.out[["not.shared"]])
+
+round_df <- function(x, digits) {
+    # round all numeric variables
+    # x: data frame 
+    # digits: number of digits to round
+    numeric_columns <- sapply(x, mode) == 'numeric'
+    x[numeric_columns] <-  round(x[numeric_columns], digits)
+    x
+}
+
+beta.share.out<-round_df(beta.share.out, 2)
+```
+
+## write to csv
+```{r}
+write.csv(beta.share.out, 
+          file = file.path(outPath, ("Pclasses_beta_sharePropOfUnion.csv"))) #change label
+```
+
