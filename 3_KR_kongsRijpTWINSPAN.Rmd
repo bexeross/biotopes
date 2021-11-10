@@ -23,7 +23,9 @@ sites<-sample_info %>%
   select(SampID)#110 samples
 
 sub.coredata<-coredata %>%
-  filter(row.names(coredata) %in% sites$SampID)#69 samples retained
+  filter(row.names(coredata) %in% sites$SampID)%>%#69 samples retained
+  filter(!(row.names(.) %in% c("2108_B","2109_B","2110_B","2111_B","2113_B",
+                                     "2114_B", "2115_B","2121_B","2122_B","2123_B")))
 
 tw_kr <- sub.coredata%>%
   select(which(!is.na(colSums(.)))) %>%
