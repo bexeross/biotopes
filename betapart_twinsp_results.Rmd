@@ -18,11 +18,14 @@ needs to be in the format of a matrix (x) codifying the presence (1) or absence 
 We want the columns sorted to avoid a disorganised table at the end.
 
 ```{r}
-beta.in <-piv.av %>%
-  as.data.frame()%>%
-  select("P1","P2","P3","P4","P5","P6","P7","P8","P9","P10",
+
+class.ls<-c("P1","P2","P3","P4","P5","P6","P7","P8","P9","P10",
                 "P11","P12","P13","P14","P15","P16","P17","P18","P19","P26",
                 "P20","P21","P22","P23","P24","P25")
+
+beta.in <-piv.av %>%
+  as.data.frame()%>%
+  select(class.ls)
 
 beta.in[beta.in>0]=1
 beta.in<-t(beta.in)
@@ -62,6 +65,16 @@ unions<-pair.sums.beta.out.labelled %>%
   pivot_wider(names_from = class.y,
               values_from= pair.sums.beta.calc)%>%
   column_to_rownames(var="class.x")
+
+#make match shape of beta.share (add P1 column and P25 row both filled with NA)
+unions<-unions %>%
+  mutate(P1=NA)%>%
+  select(P1, everything())%>%
+  add_row()%>%
+  `rownames<-`(class.ls)
+
+
+
 ```
 
 
@@ -69,7 +82,7 @@ unions<-pair.sums.beta.out.labelled %>%
 ## find proportion shared
 ```{r}
 
-beta.share.out<-beta.out[["shared"]]/unions#/(beta.out[["shared"]]+beta.out[["not.shared"]])
+beta.share.out<-beta.share/unions#/(beta.out[["shared"]]+beta.out[["not.shared"]])
 
 round_df <- function(x, digits) {
     # round all numeric variables
@@ -86,6 +99,6 @@ beta.share.out<-round_df(beta.share.out, 2)
 ## write to csv
 ```{r}
 write.csv(beta.share.out, 
-          file = file.path(outPath, ("Pclasses_beta_sharePropOfUnion.csv"))) #change label
+          file = file.path(outPath, ("Pclasses_beta_sharePropOfUnion_TOPCOPY.csv"))) #change label
 ```
 
