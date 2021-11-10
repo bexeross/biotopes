@@ -292,7 +292,7 @@ Make table of average psuedospp per group
 ```{r}
 piv.av<-my.subs %>%
   group_by(class)%>% # change to level you want to see groups at
-  summarise(across(c(17:147),mean)) %>%
+  summarise(across(c(17:133),mean)) %>%
   t()%>%
  # na.omit()%>%
   `colnames<-`(.[1, ])%>%
@@ -317,7 +317,7 @@ Make table of proportion of n spp obs (non zero pseudospp)/n samples per group
 ```{r}
 piv.n<-my.subs %>%
   group_by(class)%>% # change to level you want to see groups at
-  summarise(across(c(17:147),nnzero)) %>%
+  summarise(across(c(17:133),nnzero)) %>%
   t()%>%
   #na.omit()%>%
   as.data.frame() %>%
@@ -337,7 +337,7 @@ Make table of maximum pseudospp per group
 ```{r}
 piv.mx<-my.subs %>%
   group_by(class)%>% # change to level you want to see groups at
-  summarise(across(c(17:147),max)) %>%
+  summarise(across(c(17:133),max)) %>%
   t()%>%
  # na.omit()%>%
   `colnames<-`(.[1, ])%>%
@@ -365,10 +365,10 @@ out.piv<-rbind(values, out.piv)
 #           file = file.path(outPath, ("V6_prop_obs.csv"))) #change label
 
 write.csv(out.piv, 
-          file = file.path(outPath, ("KR_FINAL_av_proportion_max.csv"))) #change label
+          file = file.path(outPath, ("KR_FINAL_av_proportion_max-10.csv"))) #change label
 
 write.csv(piv.meta, 
-          file = file.path(outPath, ("KR_FINAL_metadata.csv"))) #change label
+          file = file.path(outPath, ("KR_FINAL_metadata-10.csv"))) #change label
 
 ```
 
@@ -410,7 +410,7 @@ names(bio.lookup)[names(bio.lookup) == 'classA'] <- 'class'
 
 
 new.data.class<-new.data.gp %>%
-  left_join(bio.lookup, by=("level15"))%>% #nb inc density vals not pseudospp
+  left_join(bio.lookup, by=("level15")) #nb inc density vals not pseudospp
  
 
   
@@ -451,11 +451,9 @@ sites.class.shp <- SpatialPointsDataFrame(coords = cbind(sites.class$x_coord,
                                       proj4string = CRS("+init=epsg:32633"),
                                       data =  sites.class)
 
-writeOGR(sites.class.shp, dsn = file.path(outPath, "Spatial"), "KR_classified", driver = "ESRI Shapefile", overwrite_layer = TRUE)
+writeOGR(sites.class.shp, dsn = file.path(outPath, "Spatial"), "KR_classified-10", driver = "ESRI Shapefile", overwrite_layer = TRUE)
 
 ```
-
-
 
 
 <!-- ------ -->
@@ -482,3 +480,19 @@ writeOGR(sites.class.shp, dsn = file.path(outPath, "Spatial"), "KR_classified", 
 <!-- chk.cls.samp<-my.subs %>% -->
 <!--   select(c(sites.sel, class)) -->
 <!-- ``` -->
+
+## check rogue sample
+2119_B moved group - what species are in there?
+
+```{r}
+
+rogue<-my.subs %>%
+  filter(sites.sel=="2119_B")%>%
+  select (c(17:133))%>%
+  t()
+```
+
+```{r}
+
+```
+
