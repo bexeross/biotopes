@@ -24,7 +24,7 @@ colnames(envR)
 ```
 
 # Create matrix
-we need the twintable matrix to work with, which we can get with twin2mat and this needs to be merged with res
+we need the twintable matrix to work with, which we can get with twin2mat and this needs to be merged with resKR
 ```{r}
 tw_kr.df<-rownames_to_column(as.data.frame(twin2mat(tw_kr)))
 
@@ -54,8 +54,12 @@ rownames(res.matKR) <- res.matKR[,1]
 n<-7
 
 # Make reclassification table
-reclassify <- data.frame(level=c(1,4,4,4,4,3,3),
-                         class=c(3,18,19,16,17,11,10),
+# reclassify <- data.frame(level=c(1,4,4,4,4,3,3),
+#                          class=c(3,18,19,16,17,11,10),
+#                          new_class=sprintf("KR%s",seq(1:n)))
+
+reclassify <- data.frame(level=c(2,4,4,4,4,2,2),
+                         class=c(7,27,26,24,25,5,4),
                          new_class=sprintf("KR%s",seq(1:n)))
 
 
@@ -379,7 +383,7 @@ write.csv(piv.meta,
 #output list of all stations with classes
 This means merging with the excluded stations and retaining only the SampID and the biotope class.
 
-##import (if not done above)
+##import (if not done above) and predict to excluded samples
 ```{r}
 new.data<-trimmedwide %>%
   filter(SampID %in% fj.newfilt.out$SampID)
@@ -451,7 +455,7 @@ sites.class.shp <- SpatialPointsDataFrame(coords = cbind(sites.class$x_coord,
                                       proj4string = CRS("+init=epsg:32633"),
                                       data =  sites.class)
 
-writeOGR(sites.class.shp, dsn = file.path(outPath, "Spatial"), "KR_classified-10", driver = "ESRI Shapefile", overwrite_layer = TRUE)
+writeOGR(sites.class.shp, dsn = file.path(outPath, "Spatial"), "KR_classified-10_corrected", driver = "ESRI Shapefile", overwrite_layer = TRUE)
 
 ```
 
