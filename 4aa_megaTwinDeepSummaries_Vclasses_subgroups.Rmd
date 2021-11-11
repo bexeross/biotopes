@@ -72,10 +72,27 @@ for(i in 1:n){
 
 table(res.mat$class)
 
-my.subs<-res.mat
-#my.subs<-subset(res.mat,level8 ==298) #change as needed
+#my.subs<-res.mat
+#
 
 ```
+
+# select class to subset & level to subgroup
+
+CURRENTLY QUITE MANUAL, LOOK INTO AUTOMATING FURTHER
+i.e. subset to class, look for level at which there become multiple group numbers, then use 2?/3? levels below that for groups (could use "reclassify" look up table to find the same class, look for the cut level and add 2?)
+
+```{r}
+my.subs<-subset(res.mat,class =="P1") #change as needed
+
+```
+
+
+
+
+
+
+
 
 # pivot at given class level
 
@@ -85,7 +102,7 @@ Make table of metadata (parent groups, n sub groups at level 15, and n samples p
 ```{r}
 #parent groups
 piv.meta.a<-my.subs %>%
-  group_by(class)%>% # change to level you want to see groups at
+  group_by(level9)%>% # change to level you want to see groups at
   summarise(across(c(2:15),mean)) %>%
   t()%>%
   `colnames<-`(.[1, ])%>%
@@ -93,7 +110,7 @@ piv.meta.a<-my.subs %>%
 
 # n lev 15 groups
 piv.meta.15<-my.subs %>%
-  group_by(class)%>% # change to level you want to see groups at
+  group_by(level9)%>% # change to level you want to see groups at
   summarise(nSubGpL15 = n_distinct(level15)) %>%
   t()%>%
   as.data.frame() %>%
@@ -102,7 +119,7 @@ piv.meta.15<-my.subs %>%
 
 # n samples
 piv.meta.g<-my.subs %>%
-  group_by(class)%>% # change to level you want to see groups at
+  group_by(level9)%>% # change to level you want to see groups at
   summarise(nSamp=n_distinct(SampID)) %>%
   t()%>%
   as.data.frame() %>%
@@ -120,7 +137,7 @@ Make tables of average psuedospp per class/proportion of obs per class/max pseud
 *Average pseudospp*
 ```{r}
 piv.av<-my.subs %>%
-  group_by(class)%>% # change to level you want to see groups at
+  group_by(level9)%>% # change to level you want to see groups at
   summarise(across(c(17:343),mean)) %>%
   t()%>%
   `colnames<-`(.[1, ])%>%
@@ -146,7 +163,7 @@ piv.av<-round_df(piv.av, 1)
 i.e. proportion of n spp obs (non zero pseudospp)/n samples per group
 ```{r}
 piv.n<-my.subs %>%
-  group_by(class)%>% # change to level you want to see groups at
+  group_by(level9)%>% # change to level you want to see groups at
   summarise(across(c(17:343),nnzero)) %>%
   t()%>%
   as.data.frame() %>%
@@ -167,7 +184,7 @@ piv.prop<-round_df(piv.prop,2)
 Make table of maximum pseudospp per group
 ```{r}
 piv.mx<-my.subs %>%
-  group_by(class)%>% # change to level you want to see groups at
+  group_by(level9)%>% # change to level you want to see groups at
   summarise(across(c(17:343),max)) %>%
   t()%>%
   `colnames<-`(.[1, ])%>%
@@ -184,34 +201,42 @@ out.piv<-rbind(values, out.piv)
 
 ## short form summary
 I.e. dominant spp (av >1pseudospp) and consistent spp (present in >50% samples).
+IN DEVELOPMENT
 
-*Dominant*
-```{r}
-dom.av<-piv.av%>%
-  as.data.frame() %>%
-  filter_all(any_vars(. > 1))
-```
+<!-- *Dominant* -->
+<!-- ```{r} -->
+<!-- dom.av<-piv.av%>% -->
+<!--   as.data.frame() %>% -->
+<!--   filter_all(any_vars(. > 1)) -->
+<!-- ``` -->
 
-*Consistent*
-```{r}
-hi.prop<-piv.prop%>%
-  as.data.frame() %>%
-  filter_all(any_vars(. > 0.5))
-```
+<!-- *Consistent* -->
+<!-- ```{r} -->
+<!-- hi.prop<-piv.prop%>% -->
+<!--   as.data.frame() %>% -->
+<!--   filter_all(any_vars(. > 0.5)) -->
+<!-- ``` -->
 
-combine
+<!-- combine -->
 
-```{r}
-short.sum<-cbind(dom.av,hi.prop)
-values2<-c(rep("av>1",ncol(dom.av)), rep("prop>.5",ncol(hi.prop)))
+<!-- ```{r} -->
+<!-- short.sum<-cbind(dom.av,hi.prop) -->
+<!-- values2<-c(rep("av>1",ncol(dom.av)), rep("prop>.5",ncol(hi.prop))) -->
 
-out.piv.short<-rbind(values2, short.sum)
-```
+<!-- out.piv.short<-rbind(values2, short.sum) -->
+
+
+<!-- ``` -->
 
 
 #output csvs
 
 ```{r}
+
+# write.csv(out.piv.short, 
+#           file = file.path(outPath, ("Mega_P1_avGT1_propGT50pc.csv"))) #change label
+
+
 # write.csv(piv.av, 
 #           file = file.path(outPath, ("V6_av_pseudoSpp.csv"))) #change label
 # 
@@ -219,14 +244,13 @@ out.piv.short<-rbind(values2, short.sum)
 #           file = file.path(outPath, ("V6_prop_obs.csv"))) #change label
 
 write.csv(out.piv, 
-          file = file.path(outPath, ("Mega_Vgroups_av_proportion_max.csv"))) #change label
-
-write.csv(out.piv.short, 
-          file = file.path(outPath, ("Mega_Vgroups_avGT1_propGT50pc.csv"))) #change label
-
+          file = file.path(outPath, ("Mega_P1_av_proportion_max.csv"))) #change label
 
 write.csv(piv.meta, 
-          file = file.path(outPath, ("Mega_Vgroups_metadata.csv"))) #change label
+          file = file.path(outPath, ("Mega_P1_metadata.csv"))) #change label
+
+
+
 
 ```
 
