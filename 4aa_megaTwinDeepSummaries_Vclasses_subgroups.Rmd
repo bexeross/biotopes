@@ -77,21 +77,22 @@ table(res.mat$class)
 
 ```
 
+
+
+
+
+
+
+
 # select class to subset & level to subgroup
 
 CURRENTLY QUITE MANUAL, LOOK INTO AUTOMATING FURTHER
 i.e. subset to class, look for level at which there become multiple group numbers, then use 2?/3? levels below that for groups (could use "reclassify" look up table to find the same class, look for the cut level and add 2?)
 
 ```{r}
-my.subs<-subset(res.mat,class =="P1") #change as needed
+my.subs<-subset(res.mat,class =="P26") #change as needed
 
 ```
-
-
-
-
-
-
 
 
 # pivot at given class level
@@ -102,7 +103,7 @@ Make table of metadata (parent groups, n sub groups at level 15, and n samples p
 ```{r}
 #parent groups
 piv.meta.a<-my.subs %>%
-  group_by(level9)%>% # change to level you want to see groups at
+  group_by(level8)%>% # change to level you want to see groups at
   summarise(across(c(2:15),mean)) %>%
   t()%>%
   `colnames<-`(.[1, ])%>%
@@ -110,7 +111,7 @@ piv.meta.a<-my.subs %>%
 
 # n lev 15 groups
 piv.meta.15<-my.subs %>%
-  group_by(level9)%>% # change to level you want to see groups at
+  group_by(level8)%>% # change to level you want to see groups at
   summarise(nSubGpL15 = n_distinct(level15)) %>%
   t()%>%
   as.data.frame() %>%
@@ -119,7 +120,7 @@ piv.meta.15<-my.subs %>%
 
 # n samples
 piv.meta.g<-my.subs %>%
-  group_by(level9)%>% # change to level you want to see groups at
+  group_by(level8)%>% # change to level you want to see groups at
   summarise(nSamp=n_distinct(SampID)) %>%
   t()%>%
   as.data.frame() %>%
@@ -137,7 +138,7 @@ Make tables of average psuedospp per class/proportion of obs per class/max pseud
 *Average pseudospp*
 ```{r}
 piv.av<-my.subs %>%
-  group_by(level9)%>% # change to level you want to see groups at
+  group_by(level8)%>% # change to level you want to see groups at
   summarise(across(c(17:343),mean)) %>%
   t()%>%
   `colnames<-`(.[1, ])%>%
@@ -163,7 +164,7 @@ piv.av<-round_df(piv.av, 1)
 i.e. proportion of n spp obs (non zero pseudospp)/n samples per group
 ```{r}
 piv.n<-my.subs %>%
-  group_by(level9)%>% # change to level you want to see groups at
+  group_by(level8)%>% # change to level you want to see groups at
   summarise(across(c(17:343),nnzero)) %>%
   t()%>%
   as.data.frame() %>%
@@ -184,7 +185,7 @@ piv.prop<-round_df(piv.prop,2)
 Make table of maximum pseudospp per group
 ```{r}
 piv.mx<-my.subs %>%
-  group_by(level9)%>% # change to level you want to see groups at
+  group_by(level8)%>% # change to level you want to see groups at
   summarise(across(c(17:343),max)) %>%
   t()%>%
   `colnames<-`(.[1, ])%>%
@@ -244,10 +245,10 @@ IN DEVELOPMENT
 #           file = file.path(outPath, ("V6_prop_obs.csv"))) #change label
 
 write.csv(out.piv, 
-          file = file.path(outPath, ("Mega_P1_av_proportion_max.csv"))) #change label
+          file = file.path(outPath, ("Mega_P26_av_proportion_max.csv"))) #change label
 
 write.csv(piv.meta, 
-          file = file.path(outPath, ("Mega_P1_metadata.csv"))) #change label
+          file = file.path(outPath, ("Mega_P26_metadata.csv"))) #change label
 
 
 
