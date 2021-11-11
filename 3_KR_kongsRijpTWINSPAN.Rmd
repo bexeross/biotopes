@@ -151,14 +151,14 @@ dev.off()
 
 match to "res" from the tw_1 analysis (here in case you need to re-run it - copied from explore_results.Rmd)
 ```{r}
-# res <- data.frame(SampID = samples, level1 = NA, level2= NA, level3 = NA, level4 = NA, level5 = NA, level6 = NA, level7 = NA, level8= NA, level9 = NA, level10 = NA, level11 = NA, level12 = NA, level13 = NA, level14= NA, level15 = NA)
-# 
-# for(i in 1:15){
-#   res[,i+1]<-cut(tw_1, level = i)
-# }
-# 
-# f = function(x) length(unique(x))
-# lapply(res, FUN = f)
+res <- data.frame(SampID = samples, level1 = NA, level2= NA, level3 = NA, level4 = NA, level5 = NA, level6 = NA, level7 = NA, level8= NA, level9 = NA, level10 = NA, level11 = NA, level12 = NA, level13 = NA, level14= NA, level15 = NA)
+
+for(i in 1:15){
+  res[,i+1]<-cut(tw_1, level = i)
+}
+
+f = function(x) length(unique(x))
+lapply(res, FUN = f)
 ```
 
 make a similar list for KR
@@ -188,38 +188,6 @@ resKR<-data.frame(SampID = sites.sel, level1 = NA, level2= NA, level3 = NA, leve
 match res and resKR
 ```{r}
 res.match<-left_join(resKR, res, by = c("sites.sel"="SampID"))
-```
-
-
-
-# PREDICT new data into TWINSPAN groups
-The 41 excluded samples will be treated as new data to see if they fit into a group. As 3 had issues (dive aborted, "where is it?") only the 38 in fj.newfilt.out can be used.
-
-## make new data matrix and predict
-
-```{r}
-new.data<-trimmedwide %>%
-  filter(SampID %in% fj.newfilt.out$SampID) 
-
-tw_kr.new.d<-predict(tw_kr, new.data)
-group.df<-as.data.frame(tw_kr.new.d)
-
-new.data.gp<-cbind(new.data, group.df)
-
-```
-
-## find biotope class for group (lev15)
-NB this is run after the megaTwinDeepSummaries_KR which is where my.subs comes from
-```{r}
-
-bio.lookup<-my.subs %>%
-  group_by(level15)%>%
-  select(level15, class)
-
-new.data.class<-new.data.gp %>%
-  left_join(bio.lookup, by=c("tw_kr.new.d"="level15"))
-
-
 ```
 
 
