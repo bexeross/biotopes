@@ -1,0 +1,277 @@
+---
+title: "classes vs environment - R Notebook"
+output: html_notebook
+---
+
+For now envrionmental data was obtained by outputting the sample info from 4a_megaTwinDeepSummariesVclasses with the P class info attached, and using arcGIS to sample the rasters used in the seaPen study. This can be redone with the best available data after Margaret has collected it and the sampling can be performed in R.
+
+#Libraries
+```{r}
+library(ggplot2)
+```
+
+
+
+#Temporary Load Data
+```{r}
+class.env <- read.csv( "F://Projects/PROJECT MegaDataset TWINSPAN/Mega_Pclass_shape_small_envVar.csv")
+
+```
+
+#reorder levels of class to be in order
+
+```{r}
+class.ls<-c("P1","P2","P3","P4","P5","P6","P7","P8","P9","P30",
+                "P11","P12","P13","P14","P15","P16","P17","P18","P19","P26",
+                "P20","P21","P22","P23","P24","P25")
+
+class.env$class <- factor(class.env$class, levels = class.ls)
+
+class.env$level1<-as.factor(class.env$level1)
+class.env$level2<-as.factor(class.env$level2)
+class.env$level3<-as.factor(class.env$level3)
+class.env$level4<-as.factor(class.env$level4)
+class.env$level5<-as.factor(class.env$level5)
+class.env$level6<-as.factor(class.env$level6)
+class.env$level7<-as.factor(class.env$level7)
+class.env$level8<-as.factor(class.env$level8)
+class.env$level9<-as.factor(class.env$level9)
+class.env$level10<-as.factor(class.env$level10)
+class.env$level11<-as.factor(class.env$level11)
+class.env$level12<-as.factor(class.env$level12)
+class.env$level13<-as.factor(class.env$level13)
+class.env$level14<-as.factor(class.env$level14)
+class.env$level15<-as.factor(class.env$level15)
+
+
+summary(class.env)
+
+```
+
+
+
+
+#Plots
+
+Depth (Bathy)
+```{r}
+ggplot(class.env, aes(x=class, y=Bathy))+
+  geom_boxplot()
+```
+Temp Av (T_Av)
+```{r}
+ggplot(class.env, aes(x=class, y=T_Av))+
+  geom_boxplot()
+```
+Temp Min (T_Min)
+```{r}
+ggplot(class.env, aes(x=class, y=T_Min))+
+  geom_boxplot()
+```
+
+Salt Av(Salt_Av)
+```{r}
+ggplot(class.env, aes(x=class, y=Salt_Av))+
+  geom_boxplot()
+```
+
+Salt Min (Salt_Min)
+```{r}
+ggplot(class.env, aes(x=class, y=Salt_Min))+
+  geom_boxplot()
+```
+
+SedMud (Sed_Mud)
+```{r}
+ggplot(class.env, aes(x=class, y=Sed_Mud))+
+  geom_boxplot()
+```
+ 
+SedSand (Sed_Sand)
+```{r}
+ggplot(class.env, aes(x=class, y=Sed_Sand))+
+  geom_boxplot()
+```
+
+SedGravel (Sed_Gravel)
+```{r}
+ggplot(class.env, aes(x=class, y=Sed_Grav))+
+  geom_boxplot()
+```
+
+
+Cspd_Av
+```{r}
+ggplot(class.env, aes(x=class, y=Cspd_Av))+
+  geom_boxplot()
+```
+
+Cspd_Mx
+```{r}
+ggplot(class.env, aes(x=class, y=Cspd_Mx))+
+  geom_boxplot()
+```
+
+dO2_Av
+```{r}
+ggplot(class.env, aes(x=class, y=dO2_Av))+
+  geom_boxplot()
+```
+
+Valleyness
+```{r}
+ggplot(class.env, aes(x=class, y=Valleyness))+
+  geom_boxplot()
+```
+
+TPI_f3
+```{r}
+ggplot(class.env, aes(x=class, y=TPI_f3))+
+  geom_boxplot()
+```
+
+Slope_3
+```{r}
+ggplot(class.env, aes(x=class, y=Slope_3))+
+  geom_boxplot()
+```
+
+TxSav
+```{r}
+ggplot(class.env, aes(x=class, y=TxSav))+
+  geom_boxplot()
+```
+
+
+-----------
+
+# CHECK subgroups
+Need to find and replace the P number and the level each time
+
+## Subset
+```{r}
+class.env.subs<-subset(class.env,class=="P17")
+```
+
+## Plots
+NB you need to find and replace x= for the appropriate level
+
+Depth (Bathy)
+```{r}
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P17/bathy_P17.png")
+ggplot(class.env.subs, aes(x=level9, y=Bathy))+
+  geom_boxplot()
+dev.off()
+```
+Temp Av (T_Av)
+```{r}
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P17/T_Av_P17.png")
+ggplot(class.env.subs, aes(x=level9, y=T_Av))+
+  geom_boxplot()
+dev.off()
+```
+Temp Min (T_Min)
+```{r}
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P17/T_Min_P17.png")
+ggplot(class.env.subs, aes(x=level9, y=T_Min))+
+  geom_boxplot()
+dev.off()
+```
+
+Salt Av(Salt_Av)
+```{r}
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P17/Salt_Av_P17.png")
+ggplot(class.env.subs, aes(x=level9, y=Salt_Av))+
+  geom_boxplot()
+dev.off()
+```
+
+Salt Min (Salt_Min)
+```{r}
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P17/Salt_Min_P17.png")
+ggplot(class.env.subs, aes(x=level9, y=Salt_Min))+
+  geom_boxplot()
+dev.off()
+```
+
+SedMud (Sed_Mud)
+```{r}
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P17/Sed_Mud_P17.png")
+ggplot(class.env.subs, aes(x=level9, y=Sed_Mud))+
+  geom_boxplot()
+dev.off()
+```
+ 
+SedSand (Sed_Sand)
+```{r}
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P17/Sed_Sand_P17.png")
+ggplot(class.env.subs, aes(x=level9, y=Sed_Sand))+
+  geom_boxplot()
+dev.off()
+```
+
+SedGravel (Sed_Gravel)
+```{r}
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P17/Sed_Gravel_P17.png")
+ggplot(class.env.subs, aes(x=level9, y=Sed_Grav))+
+  geom_boxplot()
+dev.off()
+```
+
+Cspd_Av
+```{r}
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P17/Cspd_Av_P17.png")
+ggplot(class.env.subs, aes(x=level9, y=Cspd_Av))+
+  geom_boxplot()
+dev.off()
+```
+
+Cspd_Mx
+```{r}
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P17/Cspd_Mx_P17.png")
+ggplot(class.env.subs, aes(x=level9, y=Cspd_Mx))+
+  geom_boxplot()
+dev.off()
+```
+
+dO2_Av
+```{r}
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P17/dO2_Av_P17.png")
+ggplot(class.env.subs, aes(x=level9, y=dO2_Av))+
+  geom_boxplot()
+dev.off()
+```
+
+Valleyness
+```{r}
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P17/Valleyness_P17.png")
+ggplot(class.env.subs, aes(x=level9, y=Valleyness))+
+  geom_boxplot()
+dev.off()
+```
+
+TPI_f3
+```{r}
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P17/TPI_f3_P17.png")
+ggplot(class.env.subs, aes(x=level9, y=TPI_f3))+
+  geom_boxplot()
+dev.off()
+```
+
+Slope_3
+```{r}
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P17/Slope_3_P17.png")
+ggplot(class.env.subs, aes(x=level9, y=Slope_3))+
+  geom_boxplot()
+dev.off()
+```
+
+TxSav
+```{r}
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P17/TxSav_P17.png")
+ggplot(class.env.subs, aes(x=level9, y=TxSav))+
+  geom_boxplot()
+dev.off()
+```
+
+
