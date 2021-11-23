@@ -12,6 +12,7 @@ library(twinspan)
 library(dplyr, quietly = TRUE)
 library(tibble)
 library(Matrix)
+library(rgdal)
 ```
 
 #provisional classes
@@ -76,6 +77,31 @@ my.subs<-res.mat
 #my.subs<-subset(res.mat,level8 ==298) #change as needed
 
 ```
+# make shapefile
+
+```{r}
+my.shp <- SpatialPointsDataFrame(coords = cbind(sample_info$x_coord[match(my.subs$SampID,sample_info$SampID)],                                 sample_info$y_coord[match(my.subs$SampID,sample_info$SampID)]),
+                                 proj4string = CRS("+init=epsg:32633"),
+                                 data = my.subs)
+
+writeOGR(my.shp, dsn = file.path(outPath, "Spatial"), "Mega_Pclass_shape_big", driver = "ESRI Shapefile", overwrite_layer = TRUE)
+
+
+#smaller shp
+my.subs.small<-my.subs %>%
+  select(SampID,class,level1,level2,level3,level4,level5,level6,level7,level8,level9,level10,level11,level12,level13,level14,level15)
+
+my.shp.s <- SpatialPointsDataFrame(coords = cbind(sample_info$x_coord[match(my.subs.small$SampID,sample_info$SampID)],                           sample_info$y_coord[match(my.subs.small$SampID,sample_info$SampID)]),
+                                 proj4string = CRS("+init=epsg:32633"),
+                                 data = my.subs.small)
+
+writeOGR(my.shp.s, dsn = file.path(outPath, "Spatial"), "Mega_Pclass_shape_small", driver = "ESRI Shapefile", overwrite_layer = TRUE)
+
+```
+
+
+
+
 
 # pivot at given class level
 
