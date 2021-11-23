@@ -458,6 +458,18 @@ sites.class.shp <- SpatialPointsDataFrame(coords = cbind(sites.class$x_coord,
 writeOGR(sites.class.shp, dsn = file.path(outPath, "Spatial"), "KR_classified-10_corrected", driver = "ESRI Shapefile", overwrite_layer = TRUE)
 
 ```
+with R number
+```{r}
+sites.class.R<-sites.class%>%
+  left_join(refer, by=c("VL"="sample_no"))%>%
+  select(SampID,
+         x_coord,
+         y_coord,
+         VL,
+         refstation_no)
+write.csv(sites.class.R, 
+          file = file.path(outPath, ("KR_sample_class_Rstation.csv")))
+```
 
 
 <!-- ------ -->
