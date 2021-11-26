@@ -512,7 +512,7 @@ check vs mega
 ```{r}
 sites.class.mega<-sites.class%>%
   left_join(res.match, by=c("SampID"="sites.sel")) %>%
-  select(SampID, class, x_coord,y_coord,VL,level4.y,level5.y,level6.y,level7.y,level8.y)
+  select(SampID, class, x_coord,y_coord,VL,level4.y,level5.y,level6.y,level7.y,level8.y,level9.y,level10.y,level11.y,level12.y,level13.y)
 
 write.csv(sites.class.mega, 
           file = file.path(outPath, ("KR_class_megaLevel.csv"))) #change label
