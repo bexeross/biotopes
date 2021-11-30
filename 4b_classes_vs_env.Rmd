@@ -8,44 +8,114 @@ For now envrionmental data was obtained by outputting the sample info from 4a_me
 #Libraries
 ```{r}
 library(ggplot2)
+library(raster)
+library(rgdal)
+library(tibble)
+library(dplyr)
+```
+# Load env rasters
+```{r}
+pathEnv <- "F:/Data/PredictorVariables/TOPCOPIES/CorrectNames/"
+
+sp.env <- stack(paste0(pathEnv,"Bathy.tif"),
+            paste0(pathEnv,"Cspd_Mx.tif"),
+            paste0(pathEnv,"Ice_Av.tif"),
+            paste0(pathEnv,"Salt_Rng.tif"),
+            paste0(pathEnv,"Sed_Grav.tif"),
+            paste0(pathEnv,"Sed_Mud.tif"),
+            paste0(pathEnv,"Sed_Sand.tif"),
+            paste0(pathEnv,"Slope_3.tif"),
+            paste0(pathEnv,"T_Rng.tif"),
+            paste0(pathEnv,"TPI_f3.tif"),
+            paste0(pathEnv,"TxSav.tif"),
+            paste0(pathEnv,"Valleyness.tif"))
+
+pathEnv2 <- "F:/Data/PredictorVariables/TOPCOPIES/CorrectNames/notSelected/"
+
+sp.envXtra <- stack(paste0(pathEnv2,"Cspd_Av.tif"),
+            paste0(pathEnv2,"dO2_Av.tif"),
+            paste0(pathEnv2,"Salt_Av.tif"),
+            paste0(pathEnv2,"Salt_Min.tif"),
+            paste0(pathEnv2,"Sed_Biogn.tif"),
+            paste0(pathEnv2,"Sed_Clay.tif"),
+            paste0(pathEnv2,"Sed_Hard.tif"),
+            paste0(pathEnv2,"Sed_Silt.tif"),
+            paste0(pathEnv2,"Si_Av.tif"),
+            paste0(pathEnv2,"T_Av.tif"),
+            paste0(pathEnv2,"T_Min.tif"))
+
+envVar<-stack(sp.env, sp.envXtra)
+```
+
+#make shapefile of classes/samples
+```{r}
+samp.clss<-my.subs %>%
+  dplyr::select(SampID, class)
+
+
+class.shp <- SpatialPointsDataFrame(coords = cbind(sample_info$x_coord[match(samp.clss$SampID,sample_info$SampID)],
+                                                sample_info$y_coord[match(samp.clss$SampID,sample_info$SampID)]),
+                                 proj4string = CRS("+init=epsg:32633"),
+                                 data =  samp.clss)
+
+writeOGR(class.shp, dsn = file.path(outPath, "Spatial"), "class_shp_64Psubgroups", driver = "ESRI Shapefile", overwrite_layer = TRUE)
 ```
 
 
 
+#Sample Env Rasters
+Takes a couple of minutes
+```{r}
+class.env.shp<-extract(envVar, class.shp, sp=T)
+#summary(class.env.shp)
+writeOGR(class.env.shp, dsn = file.path(outPath, "Spatial"), "class_shp_64Psubgroups_envVar", driver = "ESRI Shapefile", overwrite_layer = TRUE)
+```
+
+
 #Temporary Load Data
 ```{r}
-class.env <- read.csv( "F://Projects/PROJECT MegaDataset TWINSPAN/Mega_Pclass_shape_small_envVarMore.csv")
-
+#class.env <- read.csv( "F://Projects/PROJECT MegaDataset TWINSPAN/Mega_Pclass_shape_small_envVarMore.csv")
+class.env<-as.data.frame(class.env.shp)
 ```
 
 #reorder levels of class to be in order
 
 ```{r}
-class.ls<-c("P1","P2","P3","P4","P5","P6","P7","P8","P9","P30",
-                "P11","P12","P13","P14","P15","P16","P17","P18","P19","P26",
-                "P20","P21","P22","P23","P24","P25")
+#class.ls<-c("P1","P2","P3","P4","P5","P6","P7","P8","P9","P10",
+#            "P11","P12","P13","P14","P15","P16","P17","P18","P19","P26",
+#            "P20","P21","P22","P23","P24","P25")
+
+class.ls<-c("P1","P2","P3","P4","P5","P6","P7","P8","P9","P10",
+            "P11","P12","P13","P14","P15","P16","P17","P18","P19","P20",
+            "P21","P22","P23","P24","P25","P26","P27","P28","P29","P30",
+            "P31","P32","P33","P34","P35","P36","P37","P38","P39","P40",
+            "P41","P42","P43","P44","P45","P46","P47","P48","P49","P50",
+            "P51","P52","P53","P54","P55","P56","P57","P58","P59","P60",
+            "P61","P62","P63","P64")
 
 class.env$class <- factor(class.env$class, levels = class.ls)
 
-class.env$level1<-as.factor(class.env$level1)
-class.env$level2<-as.factor(class.env$level2)
-class.env$level3<-as.factor(class.env$level3)
-class.env$level4<-as.factor(class.env$level4)
-class.env$level5<-as.factor(class.env$level5)
-class.env$level6<-as.factor(class.env$level6)
-class.env$level7<-as.factor(class.env$level7)
-class.env$level8<-as.factor(class.env$level8)
-class.env$level9<-as.factor(class.env$level9)
-class.env$level10<-as.factor(class.env$level10)
-class.env$level11<-as.factor(class.env$level11)
-class.env$level12<-as.factor(class.env$level12)
-class.env$level13<-as.factor(class.env$level13)
-class.env$level14<-as.factor(class.env$level14)
-class.env$level15<-as.factor(class.env$level15)
+# class.env$level1<-as.factor(class.env$level1)
+# class.env$level2<-as.factor(class.env$level2)
+# class.env$level3<-as.factor(class.env$level3)
+# class.env$level4<-as.factor(class.env$level4)
+# class.env$level5<-as.factor(class.env$level5)
+# class.env$level6<-as.factor(class.env$level6)
+# class.env$level7<-as.factor(class.env$level7)
+# class.env$level8<-as.factor(class.env$level8)
+# class.env$level9<-as.factor(class.env$level9)
+# class.env$level10<-as.factor(class.env$level10)
+# class.env$level11<-as.factor(class.env$level11)
+# class.env$level12<-as.factor(class.env$level12)
+# class.env$level13<-as.factor(class.env$level13)
+# class.env$level14<-as.factor(class.env$level14)
+# class.env$level15<-as.factor(class.env$level15)
 
 class.env[class.env==-9999]<-NA
 
 summary(class.env)
+
+summary(class.env$class)
 
 ```
 
@@ -56,21 +126,21 @@ summary(class.env)
 
 Depth (Bathy)
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/bathy.png")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/bathy.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=Bathy))+
   geom_boxplot()
 dev.off()
 ```
 Temp Av (T_Av)
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/T_Av.png")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/T_Av.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=T_Av))+
   geom_boxplot()
 dev.off()
 ```
 Temp Min (T_Min)
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/T_Min.png")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/T_Min.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=T_Min))+
   geom_boxplot()
 dev.off()
@@ -78,7 +148,7 @@ dev.off()
 
 Salt Av(Salt_Av)
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/Salt_Av.png")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/Salt_Av.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=Salt_Av))+
   geom_boxplot()
 dev.off()
@@ -86,7 +156,7 @@ dev.off()
 
 Salt Min (Salt_Min)
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/Salt_Min.png")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/Salt_Min.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=Salt_Min))+
   geom_boxplot()
 dev.off()
@@ -94,7 +164,7 @@ dev.off()
 
 SedMud (Sed_Mud)
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/Sed_Mud.png")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/Sed_Mud.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=Sed_Mud))+
   geom_boxplot()
 dev.off()
@@ -102,7 +172,7 @@ dev.off()
  
 SedSand (Sed_Sand)
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/Sed_Sand.png")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/Sed_Sand.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=Sed_Sand))+
   geom_boxplot()
 dev.off()
@@ -110,7 +180,7 @@ dev.off()
 
 SedGravel (Sed_Gravel)
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/Sed_Gravel.png")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/Sed_Gravel.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=Sed_Grav))+
   geom_boxplot()
 dev.off()
@@ -119,7 +189,7 @@ dev.off()
 
 Cspd_Av
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/Cspd_Av.png")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/Cspd_Av.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=Cspd_Av))+
   geom_boxplot()
 dev.off()
@@ -127,7 +197,7 @@ dev.off()
 
 Cspd_Mx
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/Cspd_Mx.png")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/Cspd_Mx.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=Cspd_Mx))+
   geom_boxplot()
 dev.off()
@@ -135,7 +205,7 @@ dev.off()
 
 dO2_Av
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/dO2_Av.png")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/dO2_Av.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=dO2_Av))+
   geom_boxplot()
 dev.off()
@@ -143,7 +213,7 @@ dev.off()
 
 Valleyness
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/Valleyness.png")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/Valleyness.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=Valleyness))+
   geom_boxplot()
 dev.off()
@@ -151,7 +221,7 @@ dev.off()
 
 TPI_f3
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/TPI_f3.png")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/TPI_f3.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=TPI_f3))+
   geom_boxplot()
 dev.off()
@@ -159,7 +229,7 @@ dev.off()
 
 Slope_3
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/Slope_3.png")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/Slope_3.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=Slope_3))+
   geom_boxplot()
 dev.off()
@@ -167,7 +237,7 @@ dev.off()
 
 TxSav
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/TxSav.png")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/TxSav.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=TxSav))+
   geom_boxplot()
 dev.off()
@@ -175,7 +245,7 @@ dev.off()
 
 Sed_Biogn 
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/Sed_Biogn.png")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/Sed_Biogn.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=Sed_Biogn))+
   geom_boxplot()
 dev.off()
@@ -183,7 +253,7 @@ dev.off()
 
 Sed_Clay   
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/Sed_Clay .png")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/Sed_Clay .png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=Sed_Clay ))+
   geom_boxplot()
 dev.off()
@@ -191,7 +261,7 @@ dev.off()
 
 Sed_Hard
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/Sed_Hard.png")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/Sed_Hard.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=Sed_Hard))+
   geom_boxplot()
 dev.off()
@@ -199,7 +269,7 @@ dev.off()
 
 Si_Av
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/Si_Av.png")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/Si_Av.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=Si_Av))+
   geom_boxplot()
 dev.off()
@@ -207,7 +277,7 @@ dev.off()
 
 Ice_Av
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/Ice_Av.png")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/Ice_Av.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=Ice_Av))+
   geom_boxplot()
 dev.off()
@@ -241,7 +311,7 @@ Need to find and replace the P number and the level each time then run all chunk
 
 ## Subset
 ```{r}
-class.env.subs<-subset(class.env,class=="P1")
+class.env.subs<-subset(class.env,is.na(class))
 ```
 
 ## Plots
@@ -249,158 +319,158 @@ NB you need to find and replace x= for the appropriate level
 
 Depth (Bathy)
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P1/bathy_P1.png")
-ggplot(class.env.subs, aes(x=level7, y=Bathy))+
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/bathy_P24.png",width = 1200, height = 500, units = "px")
+ggplot(class.env.subs, aes(x=level9, y=Bathy))+
   geom_boxplot()
 dev.off()
 ```
 Temp Av (T_Av)
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P1/T_Av_P1.png")
-ggplot(class.env.subs, aes(x=level7, y=T_Av))+
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/T_Av_P24.png",width = 1200, height = 500, units = "px")
+ggplot(class.env.subs, aes(x=level9, y=T_Av))+
   geom_boxplot()
 dev.off()
 ```
 Temp Min (T_Min)
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P1/T_Min_P1.png")
-ggplot(class.env.subs, aes(x=level7, y=T_Min))+
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/T_Min_P24.png",width = 1200, height = 500, units = "px")
+ggplot(class.env.subs, aes(x=level9, y=T_Min))+
   geom_boxplot()
 dev.off()
 ```
 
 Salt Av(Salt_Av)
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P1/Salt_Av_P1.png")
-ggplot(class.env.subs, aes(x=level7, y=Salt_Av))+
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/Salt_Av_P24.png",width = 1200, height = 500, units = "px")
+ggplot(class.env.subs, aes(x=level9, y=Salt_Av))+
   geom_boxplot()
 dev.off()
 ```
 
 Salt Min (Salt_Min)
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P1/Salt_Min_P1.png")
-ggplot(class.env.subs, aes(x=level7, y=Salt_Min))+
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/Salt_Min_P24.png",width = 1200, height = 500, units = "px")
+ggplot(class.env.subs, aes(x=level9, y=Salt_Min))+
   geom_boxplot()
 dev.off()
 ```
 
 SedMud (Sed_Mud)
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P1/Sed_Mud_P1.png")
-ggplot(class.env.subs, aes(x=level7, y=Sed_Mud))+
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/Sed_Mud_P24.png",width = 1200, height = 500, units = "px")
+ggplot(class.env.subs, aes(x=level9, y=Sed_Mud))+
   geom_boxplot()
 dev.off()
 ```
  
 SedSand (Sed_Sand)
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P1/Sed_Sand_P1.png")
-ggplot(class.env.subs, aes(x=level7, y=Sed_Sand))+
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/Sed_Sand_P24.png",width = 1200, height = 500, units = "px")
+ggplot(class.env.subs, aes(x=level9, y=Sed_Sand))+
   geom_boxplot()
 dev.off()
 ```
 
 SedGravel (Sed_Gravel)
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P1/Sed_Gravel_P1.png")
-ggplot(class.env.subs, aes(x=level7, y=Sed_Grav))+
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/Sed_Gravel_P24.png",width = 1200, height = 500, units = "px")
+ggplot(class.env.subs, aes(x=level9, y=Sed_Grav))+
   geom_boxplot()
 dev.off()
 ```
 
 Cspd_Av
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P1/Cspd_Av_P1.png")
-ggplot(class.env.subs, aes(x=level7, y=Cspd_Av))+
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/Cspd_Av_P24.png",width = 1200, height = 500, units = "px")
+ggplot(class.env.subs, aes(x=level9, y=Cspd_Av))+
   geom_boxplot()
 dev.off()
 ```
 
 Cspd_Mx
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P1/Cspd_Mx_P1.png")
-ggplot(class.env.subs, aes(x=level7, y=Cspd_Mx))+
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/Cspd_Mx_P24.png",width = 1200, height = 500, units = "px")
+ggplot(class.env.subs, aes(x=level9, y=Cspd_Mx))+
   geom_boxplot()
 dev.off()
 ```
 
 dO2_Av
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P1/dO2_Av_P1.png")
-ggplot(class.env.subs, aes(x=level7, y=dO2_Av))+
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/dO2_Av_P24.png",width = 1200, height = 500, units = "px")
+ggplot(class.env.subs, aes(x=level9, y=dO2_Av))+
   geom_boxplot()
 dev.off()
 ```
 
 Valleyness
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P1/Valleyness_P1.png")
-ggplot(class.env.subs, aes(x=level7, y=Valleyness))+
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/Valleyness_P24.png",width = 1200, height = 500, units = "px")
+ggplot(class.env.subs, aes(x=level9, y=Valleyness))+
   geom_boxplot()
 dev.off()
 ```
 
 TPI_f3
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P1/TPI_f3_P1.png")
-ggplot(class.env.subs, aes(x=level7, y=TPI_f3))+
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/TPI_f3_P24.png",width = 1200, height = 500, units = "px")
+ggplot(class.env.subs, aes(x=level9, y=TPI_f3))+
   geom_boxplot()
 dev.off()
 ```
 
 Slope_3
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P1/Slope_3_P1.png")
-ggplot(class.env.subs, aes(x=level7, y=Slope_3))+
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/Slope_3_P24.png",width = 1200, height = 500, units = "px")
+ggplot(class.env.subs, aes(x=level9, y=Slope_3))+
   geom_boxplot()
 dev.off()
 ```
 
 TxSav
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P1/TxSav_P1.png")
-ggplot(class.env.subs, aes(x=level7, y=TxSav))+
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/TxSav_P24.png",width = 1200, height = 500, units = "px")
+ggplot(class.env.subs, aes(x=level9, y=TxSav))+
   geom_boxplot()
 dev.off()
 ```
 
 Sed_Biogn 
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P1/Sed_Biogn_P1.png")
-ggplot(class.env.subs, aes(x=level7, y=Sed_Biogn))+
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/Sed_Biogn_P24.png",width = 1200, height = 500, units = "px")
+ggplot(class.env.subs, aes(x=level9, y=Sed_Biogn))+
   geom_boxplot()
 dev.off()
 ```
 
 Sed_Clay   
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P1/Sed_Clay _P1.png")
-ggplot(class.env.subs, aes(x=level7, y=Sed_Clay ))+
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/Sed_Clay _P24.png",width = 1200, height = 500, units = "px")
+ggplot(class.env.subs, aes(x=level9, y=Sed_Clay ))+
   geom_boxplot()
 dev.off()
 ```
 
 Sed_Hard
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P1/Sed_Hard_P1.png")
-ggplot(class.env.subs, aes(x=level7, y=Sed_Hard))+
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/Sed_Hard_P24.png",width = 1200, height = 500, units = "px")
+ggplot(class.env.subs, aes(x=level9, y=Sed_Hard))+
   geom_boxplot()
 dev.off()
 ```
 
 Si_Av
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P1/Si_Av_P1.png")
-ggplot(class.env.subs, aes(x=level7, y=Si_Av))+
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/Si_Av_P24.png",width = 1200, height = 500, units = "px")
+ggplot(class.env.subs, aes(x=level9, y=Si_Av))+
   geom_boxplot()
 dev.off()
 ```
 
 Ice_Av
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P1/Ice_Av_P1.png")
-ggplot(class.env.subs, aes(x=level7, y=Ice_Av))+
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/Ice_Av_P24.png",width = 1200, height = 500, units = "px")
+ggplot(class.env.subs, aes(x=level9, y=Ice_Av))+
   geom_boxplot()
 dev.off()
 ```
