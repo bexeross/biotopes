@@ -18,14 +18,16 @@ needs to be in the format of a matrix (x) codifying the presence (1) or absence 
 We want the columns sorted to avoid a disorganised table at the end.
 
 ```{r}
+## if you need to sort, use this code - listshould be in the order you need
+# class.ls<-c("P1","P2","P3","P4","P5","P6","P7","P8","P9","P10",
+#                 "P11","P12","P13","P14","P15","P16","P17","P18","P19","P26",
+#                 "P20","P21","P22","P23","P24","P25")
+# 
+# beta.in <-piv.av %>%
+#   as.data.frame()%>%
+#   select(class.ls)
 
-class.ls<-c("P1","P2","P3","P4","P5","P6","P7","P8","P9","P10",
-                "P11","P12","P13","P14","P15","P16","P17","P18","P19","P26",
-                "P20","P21","P22","P23","P24","P25")
-
-beta.in <-piv.av %>%
-  as.data.frame()%>%
-  select(class.ls)
+beta.in<-piv.av
 
 beta.in[beta.in>0]=1
 beta.in<-t(beta.in)
@@ -99,6 +101,6 @@ beta.share.out<-round_df(beta.share.out, 2)
 ## write to csv
 ```{r}
 write.csv(beta.share.out, 
-          file = file.path(outPath, ("Pclasses_beta_sharePropOfUnion_TOPCOPY.csv"))) #change label
+          file = file.path(outPath, ("64classes_beta_sharePropOfUnion_TOPCOPY.csv"))) #change label
 ```
 
