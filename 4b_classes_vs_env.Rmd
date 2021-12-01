@@ -12,6 +12,7 @@ library(raster)
 library(rgdal)
 library(tibble)
 library(dplyr)
+library(ggbiplot)
 ```
 # Load env rasters
 ```{r}
@@ -281,6 +282,66 @@ png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2
 ggplot(class.env, aes(x=class, y=Ice_Av))+
   geom_boxplot()
 dev.off()
+```
+
+
+
+# PCA
+```{r}
+class.env.naomit<-na.omit(class.env)
+class.env.naomit$class<-as.factor(class.env.naomit$class)
+
+class.env.naomit<-class.env.naomit %>%
+  left_join(res)
+
+PCA.all<-prcomp((class.env.naomit[, -which(names(class.env.naomit) %in% c("SampID","class","level1", "level2","level3","level4","level5","level6", "level7","level8","level9","level10","level11", "level12","level13","level14","level15"))]), center=T, scale.=T)
+
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/PCA_All.png",width = 1200, height = 500, units = "px")
+ggbiplot(PCA.all, data=class.env.naomit, ellipse=F, groups=factor(class.env.naomit$class), color=factor(class.env.naomit$class))
+dev.off()
+
+ggbiplot(PCA.all, data=class.env.naomit, ellipse=F, groups=factor(class.env.naomit$class), color=factor(class.env.naomit$class))
+  
+```
+
+#level1
+```{r}
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/PCA_lev1.png",width = 1200, height = 500, units = "px")
+ggbiplot(PCA.all, data=class.env.naomit, ellipse=F, groups=factor(class.env.naomit$level1,), color=factor(class.env.naomit$level1))
+dev.off()
+
+ggbiplot(PCA.all, data=class.env.naomit, ellipse=F, groups=factor(class.env.naomit$level1), color=factor(class.env.naomit$level1))
+
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/PCA_lev1_PC34.png",width = 1200, height = 500, units = "px")
+ggbiplot(PCA.all, choices=3:4, data=class.env.naomit, ellipse=F, groups=factor(class.env.naomit$level1,), color=factor(class.env.naomit$level1))
+dev.off()
+
+ggbiplot(PCA.all,  choices=3:4, data=class.env.naomit, ellipse=F, groups=factor(class.env.naomit$level1), color=factor(class.env.naomit$level1))
+```
+
+#level2
+```{r}
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/PCA_lev2.png",width = 1200, height = 500, units = "px")
+ggbiplot(PCA.all, data=class.env.naomit, ellipse=F, groups=factor(class.env.naomit$level2), color=factor(class.env.naomit$level2))
+dev.off()
+
+ggbiplot(PCA.all, data=class.env.naomit, ellipse=F, groups=factor(class.env.naomit$level2), color=factor(class.env.naomit$level2))
+
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/PCA_lev2_PC34.png",width = 1200, height = 500, units = "px")
+ggbiplot(PCA.all,  choices=3:4, data=class.env.naomit, ellipse=F, groups=factor(class.env.naomit$level2), color=factor(class.env.naomit$level2))
+dev.off()
+
+ggbiplot(PCA.all,  choices=3:4, data=class.env.naomit, ellipse=F, groups=factor(class.env.naomit$level2), color=factor(class.env.naomit$level2))
+```
+
+#level2 with temp salinity
+
+```{r}
+## TS
+ ggplot(class.env.naomit, aes(class.env.naomit$Salt_Av,class.env.naomit$T_Av))+
+    geom_point(data=class.env.naomit, aes(color=as.factor(class.env.naomit$level2)))
+
+          ggsave("TS_lev2.pdf", width = 30, height = 20, units = "cm",  dpi = 300)
 ```
 
 
