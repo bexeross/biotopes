@@ -51,7 +51,7 @@ envVar<-stack(sp.env, sp.envXtra)
 #make shapefile of classes/samples
 ```{r}
 samp.clss<-my.subs %>%
-  dplyr::select(SampID, class)
+  dplyr::select(SampID, class, level1, level2, level3, level4, level5, level6, level7, level8, level9, level10, level11, level12, level13, level14, level15)
 
 
 class.shp <- SpatialPointsDataFrame(coords = cbind(sample_info$x_coord[match(samp.clss$SampID,sample_info$SampID)],
@@ -75,7 +75,7 @@ writeOGR(class.env.shp, dsn = file.path(outPath, "Spatial"), "class_shp_64Psubgr
 
 #Temporary Load Data
 ```{r}
-#class.env <- read.csv( "F://Projects/PROJECT MegaDataset TWINSPAN/Mega_Pclass_shape_small_envVarMore.csv")
+# class.env <- read.csv( "F://Projects/PROJECT MegaDataset TWINSPAN/Mega_Pclass_shape_small_envVarMore.csv")
 class.env<-as.data.frame(class.env.shp)
 ```
 
@@ -96,21 +96,21 @@ class.ls<-c("P1","P2","P3","P4","P5","P6","P7","P8","P9","P10",
 
 class.env$class <- factor(class.env$class, levels = class.ls)
 
-# class.env$level1<-as.factor(class.env$level1)
-# class.env$level2<-as.factor(class.env$level2)
-# class.env$level3<-as.factor(class.env$level3)
-# class.env$level4<-as.factor(class.env$level4)
-# class.env$level5<-as.factor(class.env$level5)
-# class.env$level6<-as.factor(class.env$level6)
-# class.env$level7<-as.factor(class.env$level7)
-# class.env$level8<-as.factor(class.env$level8)
-# class.env$level9<-as.factor(class.env$level9)
-# class.env$level10<-as.factor(class.env$level10)
-# class.env$level11<-as.factor(class.env$level11)
-# class.env$level12<-as.factor(class.env$level12)
-# class.env$level13<-as.factor(class.env$level13)
-# class.env$level14<-as.factor(class.env$level14)
-# class.env$level15<-as.factor(class.env$level15)
+class.env$level1<-as.factor(class.env$level1)
+class.env$level2<-as.factor(class.env$level2)
+class.env$level3<-as.factor(class.env$level3)
+class.env$level4<-as.factor(class.env$level4)
+class.env$level5<-as.factor(class.env$level5)
+class.env$level6<-as.factor(class.env$level6)
+class.env$level7<-as.factor(class.env$level7)
+class.env$level8<-as.factor(class.env$level8)
+class.env$level9<-as.factor(class.env$level9)
+class.env$level10<-as.factor(class.env$level10)
+class.env$level11<-as.factor(class.env$level11)
+class.env$level12<-as.factor(class.env$level12)
+class.env$level13<-as.factor(class.env$level13)
+class.env$level14<-as.factor(class.env$level14)
+class.env$level15<-as.factor(class.env$level15)
 
 class.env[class.env==-9999]<-NA
 
@@ -372,7 +372,8 @@ Need to find and replace the P number and the level each time then run all chunk
 
 ## Subset
 ```{r}
-class.env.subs<-subset(class.env,is.na(class))
+#class.env.subs<-subset(class.env,is.na(class))
+class.env.subs<-subset(class.env,class=="P2")
 ```
 
 ## Plots
@@ -380,21 +381,21 @@ NB you need to find and replace x= for the appropriate level
 
 Depth (Bathy)
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/bathy_P24.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P2/bathy_P2.png",width = 1200, height = 500, units = "px")
 ggplot(class.env.subs, aes(x=level9, y=Bathy))+
   geom_boxplot()
 dev.off()
 ```
 Temp Av (T_Av)
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/T_Av_P24.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P2/T_Av_P2.png",width = 1200, height = 500, units = "px")
 ggplot(class.env.subs, aes(x=level9, y=T_Av))+
   geom_boxplot()
 dev.off()
 ```
 Temp Min (T_Min)
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/T_Min_P24.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P2/T_Min_P2.png",width = 1200, height = 500, units = "px")
 ggplot(class.env.subs, aes(x=level9, y=T_Min))+
   geom_boxplot()
 dev.off()
@@ -402,7 +403,7 @@ dev.off()
 
 Salt Av(Salt_Av)
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/Salt_Av_P24.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P2/Salt_Av_P2.png",width = 1200, height = 500, units = "px")
 ggplot(class.env.subs, aes(x=level9, y=Salt_Av))+
   geom_boxplot()
 dev.off()
@@ -410,7 +411,7 @@ dev.off()
 
 Salt Min (Salt_Min)
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/Salt_Min_P24.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P2/Salt_Min_P2.png",width = 1200, height = 500, units = "px")
 ggplot(class.env.subs, aes(x=level9, y=Salt_Min))+
   geom_boxplot()
 dev.off()
@@ -418,7 +419,7 @@ dev.off()
 
 SedMud (Sed_Mud)
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/Sed_Mud_P24.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P2/Sed_Mud_P2.png",width = 1200, height = 500, units = "px")
 ggplot(class.env.subs, aes(x=level9, y=Sed_Mud))+
   geom_boxplot()
 dev.off()
@@ -426,7 +427,7 @@ dev.off()
  
 SedSand (Sed_Sand)
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/Sed_Sand_P24.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P2/Sed_Sand_P2.png",width = 1200, height = 500, units = "px")
 ggplot(class.env.subs, aes(x=level9, y=Sed_Sand))+
   geom_boxplot()
 dev.off()
@@ -434,7 +435,7 @@ dev.off()
 
 SedGravel (Sed_Gravel)
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/Sed_Gravel_P24.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P2/Sed_Gravel_P2.png",width = 1200, height = 500, units = "px")
 ggplot(class.env.subs, aes(x=level9, y=Sed_Grav))+
   geom_boxplot()
 dev.off()
@@ -442,7 +443,7 @@ dev.off()
 
 Cspd_Av
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/Cspd_Av_P24.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P2/Cspd_Av_P2.png",width = 1200, height = 500, units = "px")
 ggplot(class.env.subs, aes(x=level9, y=Cspd_Av))+
   geom_boxplot()
 dev.off()
@@ -450,7 +451,7 @@ dev.off()
 
 Cspd_Mx
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/Cspd_Mx_P24.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P2/Cspd_Mx_P2.png",width = 1200, height = 500, units = "px")
 ggplot(class.env.subs, aes(x=level9, y=Cspd_Mx))+
   geom_boxplot()
 dev.off()
@@ -458,7 +459,7 @@ dev.off()
 
 dO2_Av
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/dO2_Av_P24.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P2/dO2_Av_P2.png",width = 1200, height = 500, units = "px")
 ggplot(class.env.subs, aes(x=level9, y=dO2_Av))+
   geom_boxplot()
 dev.off()
@@ -466,7 +467,7 @@ dev.off()
 
 Valleyness
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/Valleyness_P24.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P2/Valleyness_P2.png",width = 1200, height = 500, units = "px")
 ggplot(class.env.subs, aes(x=level9, y=Valleyness))+
   geom_boxplot()
 dev.off()
@@ -474,7 +475,7 @@ dev.off()
 
 TPI_f3
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/TPI_f3_P24.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P2/TPI_f3_P2.png",width = 1200, height = 500, units = "px")
 ggplot(class.env.subs, aes(x=level9, y=TPI_f3))+
   geom_boxplot()
 dev.off()
@@ -482,7 +483,7 @@ dev.off()
 
 Slope_3
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/Slope_3_P24.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P2/Slope_3_P2.png",width = 1200, height = 500, units = "px")
 ggplot(class.env.subs, aes(x=level9, y=Slope_3))+
   geom_boxplot()
 dev.off()
@@ -490,7 +491,7 @@ dev.off()
 
 TxSav
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/TxSav_P24.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P2/TxSav_P2.png",width = 1200, height = 500, units = "px")
 ggplot(class.env.subs, aes(x=level9, y=TxSav))+
   geom_boxplot()
 dev.off()
@@ -498,7 +499,7 @@ dev.off()
 
 Sed_Biogn 
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/Sed_Biogn_P24.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P2/Sed_Biogn_P2.png",width = 1200, height = 500, units = "px")
 ggplot(class.env.subs, aes(x=level9, y=Sed_Biogn))+
   geom_boxplot()
 dev.off()
@@ -506,7 +507,7 @@ dev.off()
 
 Sed_Clay   
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/Sed_Clay _P24.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P2/Sed_Clay _P2.png",width = 1200, height = 500, units = "px")
 ggplot(class.env.subs, aes(x=level9, y=Sed_Clay ))+
   geom_boxplot()
 dev.off()
@@ -514,7 +515,7 @@ dev.off()
 
 Sed_Hard
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/Sed_Hard_P24.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P2/Sed_Hard_P2.png",width = 1200, height = 500, units = "px")
 ggplot(class.env.subs, aes(x=level9, y=Sed_Hard))+
   geom_boxplot()
 dev.off()
@@ -522,7 +523,7 @@ dev.off()
 
 Si_Av
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/Si_Av_P24.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P2/Si_Av_P2.png",width = 1200, height = 500, units = "px")
 ggplot(class.env.subs, aes(x=level9, y=Si_Av))+
   geom_boxplot()
 dev.off()
@@ -530,7 +531,7 @@ dev.off()
 
 Ice_Av
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps/P24/Ice_Av_P24.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/P2/Ice_Av_P2.png",width = 1200, height = 500, units = "px")
 ggplot(class.env.subs, aes(x=level9, y=Ice_Av))+
   geom_boxplot()
 dev.off()
