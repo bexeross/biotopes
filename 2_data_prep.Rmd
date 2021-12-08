@@ -104,4 +104,13 @@ trimmed <- trimmed %>% mutate(SampID = gsub("1920_01", "1920_00", SampID)) %>%
 unique(data.frame(sort(trimmed$new_name)))
 write.csv(trimmed,file.path(outPath,"species_densities_trimmed.csv"),row.names = FALSE)
 ```
+Output metadata to have list of included samples and their locations for mapping checks (are any obviously missing?)
+```{r}
+start.dta<-trimmed %>%
+  select(SampID)%>%
+  distinct() %>%
+  left_join(sample_info)
+
+write.csv(start.dta, file = file.path(outPath, ("start_dta.csv")))
+```
 
