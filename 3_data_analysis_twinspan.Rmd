@@ -254,11 +254,17 @@ eval
 ## check excluded samples/stations
 outputting for more detailed explorations
 ```{r}
-excluded<-refer %>% filter(sample_no%in%unique(sample_info$VL)) %>%
-  filter(!(sample_no%in%good))
+# excluded<-refer %>% filter(sample_no%in%unique(sample_info$VL)) %>%
+#   filter(!(sample_no%in%good))
+# 
+# write.csv(excluded, file = file.path(outPath, ("excluded_megaAnalysis.csv")))
+#   
 
-write.csv(excluded, file = file.path(outPath, ("excluded_megaAnalysis.csv")))
-  
+excl.samp<-sample_info %>%
+  anti_join(tw_1.df, by=c("SampID"="rowname"))%>%
+  left_join(refer, by=c("VL"="sample_no"))
+
+write.csv(excl.samp, file = file.path(outPath, ("excluded_samples.csv")))
 
 ```
 
