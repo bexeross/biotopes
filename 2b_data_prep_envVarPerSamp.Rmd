@@ -1,0 +1,44 @@
+---
+title: "Prep env var per sample - R Notebook"
+output: html_notebook
+---
+
+#Libraries
+
+```{r}
+library(dplyr)
+library(tidyr)
+```
+#Load sample info
+also loaded in 3_data_analysis_twinspan, but only extracting locations here
+```{r}
+##uncomment if not already loaded
+#sample_info<-read.csv(file.path(dataPath,"sample_info.csv"))
+
+samp_pos<-sample_info%>%
+  select(SampID, x_coord, y_coord)
+
+```
+
+#Load video log extracted depth and sediment data
+Depth
+```{r}
+samp_d<-read.csv(file.path(dataPath,"depthMeans.csv"))
+``` 
+ 
+Sediment 
+```{r} 
+samp_sed<-read.csv(file.path(dataPath,"sedimMeans.csv"))
+
+samp_sed$Substrate<-sub("^$", "Unknown", samp_sed$Substrate)
+
+samp_sed_wide<-samp_sed %>%
+  pivot_wider(id_cols = SampID,
+              names_from = Substrate,
+              values_from = mean_percent,
+              values_fill = NA)
+```
+
+
+
+#Load any rasters to sample
