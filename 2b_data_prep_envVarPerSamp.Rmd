@@ -8,15 +8,23 @@ output: html_notebook
 ```{r}
 library(dplyr)
 library(tidyr)
+library(raster)
 ```
 #Load sample info
 also loaded in 3_data_analysis_twinspan, but only extracting locations here
 ```{r}
 ##uncomment if not already loaded
-#sample_info<-read.csv(file.path(dataPath,"sample_info.csv"))
+sample_info_raw<-read.csv(file.path(dataPath,"sample_info.csv"))
 
-samp_pos<-sample_info%>%
-  select(SampID, x_coord, y_coord)
+samp_pos<-sample_info_raw %>%
+  dplyr::select(SampID, x_coord, y_coord)
+
+
+#make shapefile for sampling rasters
+samp.shp <- SpatialPointsDataFrame(coords = cbind(samp_pos$x_coord,
+                                                  samp_pos$y_coord),
+                                 proj4string = CRS("+init=epsg:32633"),
+                                 data =  samp_pos)
 
 ```
 
@@ -30,7 +38,9 @@ Sediment
 ```{r} 
 samp_sed<-read.csv(file.path(dataPath,"sedimMeans.csv"))
 
-samp_sed$Substrate<-sub("^$", "Unknown", samp_sed$Substrate)
+samp_sed <- samp_sed[-which(samp_sed$Substrate == ""), ]
+#samp_sed$Substrate<-sub("^$", "Unknown", samp_sed$Substrate)
+
 
 samp_sed_wide<-samp_sed %>%
   pivot_wider(id_cols = SampID,
@@ -42,3 +52,30 @@ samp_sed_wide<-samp_sed %>%
 
 
 #Load any rasters to sample
+
+```{r}
+oceanogPath<-"U:/Mareano/OCEANOGRAPHY/JonAlbretsenData"
+oceanog.files.names<-list.files(oceanogPath)
+oceanog.files<-list.files(oceanogPath,full.names = T)
+oceanog.stk<-stack(oceanog.files)
+names(oceanog.stk)<-unlist(oceanog.files.names)
+```
+
+
+#sample rasters and convert to dataframe
+```{r}
+samp.env.shp<-extract(oceanog.stk, samp.shp, sp=T)
+samp.env.o<-as.data.frame(samp.env.shp)%>%
+  dplyr::select(-c("coords.x1","coords.x2"))
+```
+
+#assemble sample env var lookup table
+
+```{r}
+samp.envVar<-samp.env.o %>%
+  left_join(samp_d)%>%
+  left_join(samp_sed_wide)
+```
+
+
+
