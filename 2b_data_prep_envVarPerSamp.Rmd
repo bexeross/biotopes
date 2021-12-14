@@ -69,12 +69,14 @@ samp.env.o<-as.data.frame(samp.env.shp)%>%
   dplyr::select(-c("coords.x1","coords.x2"))
 ```
 
-#assemble sample env var lookup table
+#assemble sample env var lookup table and write out
 
 ```{r}
 samp.envVar<-samp.env.o %>%
   left_join(samp_d)%>%
   left_join(samp_sed_wide)
+
+write.csv(samp.envVar, file = file.path(outPath, ("samp_envVar.csv")))
 ```
 
 
