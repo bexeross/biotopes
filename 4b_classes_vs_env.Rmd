@@ -408,3 +408,13 @@ ggplot(class.env, aes(x=class, y=hardSolid))+
   geom_boxplot()
 dev.off()
 ```
+# OUTPUT averages per class
+
+```{r}
+av.class.env<-class.env%>%
+  group_by(class)%>%
+  summarise_all(.funs=mean, na.rm=T)
+
+write.csv(av.class.env, file = file.path(outPath, ("class_envVar_summaries.csv")))
+```
+
