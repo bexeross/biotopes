@@ -42,10 +42,10 @@ hard.solid<-c("bedrock", "boulder", "cobble", "karbonatskorpe","compacted_sedime
 class.env<-samp.clss%>%
   left_join(samp.envVar)%>%
   rowwise()%>%
-  dplyr::mutate(softSed=sum(c_across(any_of(soft.sed)), na.rm = T),
+  dplyr::mutate(softSed=sum(c_across(any_of(soft.sed)), na.rm = T), 
          coarseSed=sum(c_across(any_of(coarse.sed)), na.rm = T),
          hardSed=sum(c_across(any_of(hard.sed)), na.rm = T),
-         hardSolid=sum(c_across(any_of(hard.solid)), na.rm = T))%>%
+         hardSolid=sum(c_across(any_of(hard.solid)), na.rm = T))%>%#not working well - bedrock 100 in class 3 has come out as sum hard 5.9...?
   ungroup()
 ```
 
@@ -379,36 +379,39 @@ ggplot(class.env, aes(x=class, y=dead_lophelia))+
   geom_boxplot()
 dev.off()
 ```
+
+
 #Bex new sedClasses
-soft sed
-```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Sed_SOFT.png",width = 1200, height = 500, units = "px")
-ggplot(class.env, aes(x=class, y=softSed))+
-  geom_boxplot()
-dev.off()
-```
-coarse sed
-```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Sed_COARSE.png",width = 1200, height = 500, units = "px")
-ggplot(class.env, aes(x=class, y=coarseSed))+
-  geom_boxplot()
-dev.off()
-```
-hard sed
-```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Sed_HARD_SED.png",width = 1200, height = 500, units = "px")
-ggplot(class.env, aes(x=class, y=hardSed))+
-  geom_boxplot()
-dev.off()
-```
-hard solid
-```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Sed_HARD_SOLID.png",width = 1200, height = 500, units = "px")
-ggplot(class.env, aes(x=class, y=hardSolid))+
-  geom_boxplot()
-dev.off()
-```
-# OUTPUT averages per class
+NOT WORKING WELL YET - BEDROCK IN CLASS 3 HAD 100 IN THERE BUT SUM WAS >6, DOING LONGHAND IN EXCEL NLY FOR MOMENT - DEAL WITH LATER
+<!-- soft sed -->
+<!-- ```{r} -->
+<!-- png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Sed_SOFT.png",width = 1200, height = 500, units = "px") -->
+<!-- ggplot(class.env, aes(x=class, y=softSed))+ -->
+<!--   geom_boxplot() -->
+<!-- dev.off() -->
+<!-- ``` -->
+<!-- coarse sed -->
+<!-- ```{r} -->
+<!-- png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Sed_COARSE.png",width = 1200, height = 500, units = "px") -->
+<!-- ggplot(class.env, aes(x=class, y=coarseSed))+ -->
+<!--   geom_boxplot() -->
+<!-- dev.off() -->
+<!-- ``` -->
+<!-- hard sed -->
+<!-- ```{r} -->
+<!-- png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Sed_HARD_SED.png",width = 1200, height = 500, units = "px") -->
+<!-- ggplot(class.env, aes(x=class, y=hardSed))+ -->
+<!--   geom_boxplot() -->
+<!-- dev.off() -->
+<!-- ``` -->
+<!-- hard solid -->
+<!-- ```{r} -->
+<!-- png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Sed_HARD_SOLID.png",width = 1200, height = 500, units = "px") -->
+<!-- ggplot(class.env, aes(x=class, y=hardSolid))+ -->
+<!--   geom_boxplot() -->
+<!-- dev.off() -->
+<!-- ``` -->
+<!-- # OUTPUT averages per class -->
 
 ```{r}
 av.class.env<-class.env%>%
