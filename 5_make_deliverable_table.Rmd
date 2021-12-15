@@ -7,6 +7,7 @@ output: html_notebook
 ```{r}
 library(dplyr)
 library(RPostgreSQL)
+library(twinspan)
 ```
 
 ## Create table
@@ -48,20 +49,16 @@ sheet1 <- sheet1 %>%
 ```
 
 
-## Add rows for the samples that were excluded in the analysis
+## Predict class for excluded samples and add to sheet1
 ```{r}
-new.data<-trimmedwide %>%
-  filter(SampID %in% fj.newfilt.out$SampID)
+new.data <- left_join(excl.samp,trimmedwide)
+new.data <- new.data %>%
+  select(-colnames(excl.samp)[-1]) %>%
+  filter(!is.na(aplysillasulfurea)) # just using first species (if that is NA, all are NA)
 
-#sites.sel.nd<-trimmedwide %>%
- # filter(SampID %in% fj.newfilt.out$SampID)  %>%
- # select(SampID)
-
-level15<-predict(tw_kr, new.data)
+level15<-predict(tw_1, new.data)
 group.df<-as.data.frame(level15)
 
-
-new.data.gp<-cbind(new.data, group.df)#,sites.sel.nd)
-#names(new.data.gp)[names(new.data.gp) == 'sites.sel.nd'] <- 'sites.sel'
-
+new.data.gp<-cbind(new.data$SampID, group.df)
+colnames(new.data.gp)[1]<-"SampID"
 ```
