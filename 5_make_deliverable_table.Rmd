@@ -1,0 +1,29 @@
+---
+title: "Fagligforum product"
+output: html_notebook
+---
+
+## Libraries
+```{r}
+library(dplyr)
+```
+
+## Create table
+```{r}
+sheet1 <- data.frame(StationNr = NA,
+                     SampleNr = unique(spmatrix$SampID),
+                     Latitude = NA,
+                     Longitude = NA,
+                     Biotope_class = NA,
+                     PredictedYN = NA,
+                     Region = NA)
+
+sheet1 <- sheet1 %>%
+  mutate(StationNr = as.integer(sample_info$VL[match(SampleNr, sample_info$SampID)])) %>%
+  arrange(StationNr)
+```
+
+## Add rows for the samples that were excluded in the analysis
+```{r}
+
+```
