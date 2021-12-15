@@ -28,6 +28,7 @@ sheet1 <- sheet1 %>%
 ```
 
 ## Import station metadata from Marbunn
+This bit can replace the chunk where we import reference table and create the "refer" object. Safer to do it this way.
 ```{r}
 postgres_driver <- dbDriver("PostgreSQL")
 postgres_conn <- dbConnect(postgres_driver,
@@ -40,16 +41,15 @@ query_res <- dbGetQuery(postgres_conn, "select * from tab_station where equipmen
 
 ```
 
-
 ## Add data from reference table
 ```{r}
 sheet1 <- sheet1 %>%
   mutate(Region = query_res$location[match(StationNr, query_res$refstation_no)])
-
 ```
 
 
-## Predict class for excluded samples and add to sheet1
+## Predict class for excluded samples
+Also, make a lookup table to pull our label
 ```{r}
 new.data <- left_join(excl.samp,trimmedwide)
 new.data <- new.data %>%
@@ -61,4 +61,6 @@ group.df<-as.data.frame(level15)
 
 new.data.gp<-cbind(new.data$SampID, group.df)
 colnames(new.data.gp)[1]<-"SampID"
+
+rec <- samp.clss %>% group_by(level15) %>% summarize(class = first(class))
 ```
