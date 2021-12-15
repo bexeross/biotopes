@@ -6,24 +6,62 @@ output: html_notebook
 ## Libraries
 ```{r}
 library(dplyr)
+library(RPostgreSQL)
 ```
 
 ## Create table
 ```{r}
 sheet1 <- data.frame(StationNr = NA,
                      SampleNr = unique(spmatrix$SampID),
-                     Latitude = NA,
-                     Longitude = NA,
+                     x_coord = NA,
+                     y_coord = NA,
                      Biotope_class = NA,
                      PredictedYN = NA,
                      Region = NA)
 
 sheet1 <- sheet1 %>%
   mutate(StationNr = as.integer(sample_info$VL[match(SampleNr, sample_info$SampID)])) %>%
-  arrange(StationNr)
+  mutate(x_coord = sample_info$x_coord[match(SampleNr, sample_info$SampID)]) %>%
+  mutate(y_coord = sample_info$y_coord[match(SampleNr, sample_info$SampID)]) %>%
+  arrange(StationNr) 
 ```
+
+## Import station metadata from Marbunn
+```{r}
+postgres_driver <- dbDriver("PostgreSQL")
+postgres_conn <- dbConnect(postgres_driver,
+                           dbname = "marbunn",
+                           host = "postgres9.imr.no",
+                           port = 5432,
+                           user = "marbunn",
+                           password = "89kk.KoqA")
+query_res <- dbGetQuery(postgres_conn, "select * from tab_station where equipment = 2")
+
+```
+
+
+## Add data from reference table
+```{r}
+sheet1 <- sheet1 %>%
+  mutate(Region = query_res$location[match(StationNr, query_res$refstation_no)])
+
+```
+
 
 ## Add rows for the samples that were excluded in the analysis
 ```{r}
+new.data<-trimmedwide %>%
+  filter(SampID %in% fj.newfilt.out$SampID)
+
+#sites.sel.nd<-trimmedwide %>%
+ # filter(SampID %in% fj.newfilt.out$SampID)  %>%
+ # select(SampID)
+
+level15<-predict(tw_kr, new.data)
+group.df<-as.data.frame(level15)
+
+
+new.data.gp<-cbind(new.data, group.df)#,sites.sel.nd)
+#names(new.data.gp)[names(new.data.gp) == 'sites.sel.nd'] <- 'sites.sel'
 
 ```
