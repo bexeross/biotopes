@@ -129,19 +129,25 @@ tree_full_pruned$variable.importance
 ## OR Filter spp to show only >1
 And add some env var, then fit tree
 ```{r}
-main<-data %>%
-  select_if(~max(.)>1)%>%
-  add_column(SampID = row.names(.)) %>%
-  left_join(., env) %>%
-  column_to_rownames(., var = "SampID")
+# main<-data %>%
+#   select_if(~max(.)>1)%>%
+#   add_column(SampID = row.names(.)) %>%
+#   left_join(., env) %>%
+#   column_to_rownames(., var = "SampID")
 
 
-predictors <- paste(colnames(main)[-1], collapse="+") # careful with col numbers!
+# using all mega matrix now...
 
-fmla <- as.formula(paste("class", predictors,sep="~"))
+main <- left_join(samp.envVar, trimmedwide)
+main <- main %>%
+  left_join(., sheet1, by = c("SampID"="SampleNr")) %>%
+  transform(Biotope_class=as.factor(Biotope_class)) %>%
+  rename_with(~ gsub("\\(|)", "", .x))
+
+predictors <- paste(colnames(main)[-c(1,373:378)], collapse="+") # careful with col numbers!
+
+fmla <- as.formula(paste("Biotope_class", predictors,sep="~"))
 fmla
-
-
 
 # Fit full tree
 tree_full <- rpart(fmla,
@@ -171,13 +177,6 @@ tree_full_pruned <- rpart(fmla,
 
 tree_full_pruned$variable.importance
 
-
-
-
-
-
-
-
 ```
 
 
@@ -188,7 +187,7 @@ predictions <- predict(tree_full_pruned,type = "class")
 
 crosscheck <- predictions %>%
   as.character() %>%
-  cbind(.,data$class) %>%
+  cbind(.,main$Biotope_class) %>%
   data.frame() %>%
   rename("predicted" = ".", "observed" = "V2") %>%
   mutate_all(as.factor) %>%
@@ -220,9 +219,9 @@ ap_tree_full_pruned <- as.party(tree_full_pruned)
 ```
 ### As heat tree
 ```{r}
-pdf(file.path(outPath,"CT_fjord_env.pdf"), width=20, height=10) #adjust width as necessary
+pdf(file.path(outPath,"CT_mega_env.pdf"), width=20, height=10) #adjust width as necessary
 par(cex=50)
-heat_tree(ap_tree_full_pruned,label_map = levels(data$class)
+heat_tree(ap_tree_full_pruned,label_map = levels(main$Biotope_class)
           #, data_test = data[,which(grepl("KF50", colnames(data)))]
            , show = "tree-only"
            )
