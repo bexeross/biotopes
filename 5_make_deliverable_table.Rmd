@@ -64,3 +64,13 @@ colnames(new.data.gp)[1]<-"SampID"
 
 rec <- samp.clss %>% group_by(level15) %>% summarize(class = first(class))
 ```
+
+## Add biotope class data to sheet 1
+```{r}
+sheet1 <- sheet1 %>%
+  mutate(Biotope_class=case_when(
+    SampleNr %in% row.names(coredata)~ samp.clss$class[match(SampleNr,samp.clss$SampID)],
+    SampleNr %in% new.data$SampID ~ rec$class[match(new.data.gp$level15[match(SampleNr,new.data.gp$SampID)],rec$level15)]
+  ))
+```
+
