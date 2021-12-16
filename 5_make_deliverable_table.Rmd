@@ -80,3 +80,7 @@ sheet1 <- sheet1 %>%
   ))
 ```
 
+## Export
+```{r}
+write.csv(sheet1, file = file.path(outPath, ("sheet1.csv")), row.names = FALSE)
+```
