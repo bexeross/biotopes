@@ -13,11 +13,22 @@ This notebook assumes some data prep has already been done and you have the new 
 library(twinspan, quietly = TRUE)
 library(tidyr, quietly = TRUE)
 library(dplyr, quietly = TRUE)
+library(tibble, quietly = TRUE)
 ```
 
 #combine new and old data
 
 ```{r}
-combo.data<-
+
+# new.data<-new.data %>%
+#   column_to_rownames(var = "SampID") #if already done will error
+
+in.data<-coredata %>%
+  select(which(!is.na(colSums(.))))
+
+combo.data<-in.data %>%
+  bind_rows(new.data) %>%
+  mutate_all(~replace(., is.na(.), 0)) #where columns didn't exist they were filled with NA - this replaces with 0s
+
 ```
 
