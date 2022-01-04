@@ -1,0 +1,52 @@
+---
+title: "NEWDATA 4 - compare new to old twinspan - R Notebook"
+output: html_notebook
+---
+Compare new twinspan groups to old biotopes
+
+#libraries
+```{r}
+
+```
+
+# twinspan result groups married to old biotopes
+(the equivalent of res from the first run) i.e. SampID, and group numbers at different levels
+```{r}
+tw_2.df<-as.data.frame(twin2mat(tw_2))%>%
+  rownames_to_column("SampID")
+
+samples.combo<-tw_2.df %>%
+  select("SampID")
+
+res.tw2<-data.frame(SampID = samples.combo, level1 = NA, level2= NA, level3 = NA, level4 = NA, level5 = NA, level6 = NA, level7 = NA, level8= NA, level9 = NA, level10 = NA, level11 = NA, level12 = NA, level13 = NA, level14= NA, level15 = NA)
+ 
+ for(i in 1:15){
+   res.tw2[,i+1]<-cut(tw_2, level = i)
+ }
+ 
+ f = function(x) length(unique(x))
+ lapply(res.tw2, FUN = f)
+ 
+```
+
+
+
+
+
+
+
+
+
+
+
+
+#make matrix for summary tables
+combine res.tw2 and tw_2.df to give dataset with group numbers and taxa data for making summary tables
+```{r}
+#join together
+res.mat.tw2<-left_join(res.tw2, tw_2.df)
+res.matREF.tw2<-res.mat.tw2
+
+rownames(res.mat.tw2) <- res.mat.tw2[,1]
+```
+
