@@ -1,0 +1,23 @@
+---
+title: "TWINSPAN with new data added - R Notebook"
+output: html_notebook
+---
+When we have new data it is wise to *FIRST* use the previous twinspan to *PREDICT WHICH EXISTING BIOTOPE* it may fall into, *BEFORE* here *RE-RUNNING THE TWINSPAN* to see if there should be any new biotopes added to the classification.
+
+This second step will lose the relationship between group numbers and biotopes from previous runs, so it is important to retain the biotope labels both actual and predicted status in order to track which group numbers these align with in the new TWINSPAN.
+
+This notebook assumes some data prep has already been done and you have the new data in the correct format (samples as rows, taxa as columns, densities as values).
+
+#libraries
+```{r}
+library(twinspan, quietly = TRUE)
+library(tidyr, quietly = TRUE)
+library(dplyr, quietly = TRUE)
+```
+
+#combine new and old data
+
+```{r}
+combo.data<-
+```
+
