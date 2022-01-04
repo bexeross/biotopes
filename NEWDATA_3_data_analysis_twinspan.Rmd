@@ -19,7 +19,6 @@ library(tibble, quietly = TRUE)
 #combine new and old data
 
 ```{r}
-
 # new.data<-new.data %>%
 #   column_to_rownames(var = "SampID") #if already done will error
 
@@ -29,6 +28,11 @@ in.data<-coredata %>%
 combo.data<-in.data %>%
   bind_rows(new.data) %>%
   mutate_all(~replace(., is.na(.), 0)) #where columns didn't exist they were filled with NA - this replaces with 0s
+```
 
+#run TWINSPAN
+```{r}
+
+tw_2<-twinspan(combo.data, cutlevels = cutlevelsPaal, levmax = 15, groupmin = 3)
 ```
 
