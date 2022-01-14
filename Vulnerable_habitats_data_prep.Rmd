@@ -1,0 +1,14 @@
+---
+title: "Vulnerable habitats"
+output: html_notebook
+---
+## Libraries
+```{r}
+library(readxl)
+library(dplyr)
+```
+
+## Read data
+```{r}
+in.data.vme <- read.csv(file.path(outPath,"species_densities_trimmed.csv"))
+```
