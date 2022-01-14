@@ -83,6 +83,9 @@ sheet1 <- sheet1 %>%
 ## Export
 ```{r}
 sheet1 <- sheet1 %>%
-  transform(Biotope_class=gsub("P", "pB", Biotope_class))
+  transform(Biotope_class=gsub("P", "pB", Biotope_class)) %>%
+#sheet1 <- sheet1 %>%  
+  filter(!is.na(Biotope_class))
+
 write.csv(sheet1, file = file.path(outPath, ("sheet1.csv")), row.names = FALSE)
 ```
