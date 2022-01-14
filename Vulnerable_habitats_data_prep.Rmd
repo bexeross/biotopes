@@ -10,5 +10,24 @@ library(dplyr)
 
 ## Read data
 ```{r}
-in.data.vme <- read.csv(file.path(outPath,"species_densities_trimmed.csv"))
+# species densities (trimmed)
+in.data.vh <- read.csv(file.path(outPath,"species_densities_trimmed.csv"))
+
+# habitat definitions with list of qualifying taxa
+habdef <- read_xlsx(file.path(dataPath,"HabitatDefinitions.xlsx"))
+```
+
+
+## select habitat of interest
+```{r}
+hab <- data.frame(number = c(1:9), name = unique(habdef$VH))
+hab
+```
+
+## Create dummy variable and populate
+```{r}
+h <- 2
+in.data.vh <- in.data.vh %>%
+  mutate(vh_dummy = case_when(new_name%in%pull(subset(habdef,habdef$VH==hab$name[h],2))~1))
+  
 ```
