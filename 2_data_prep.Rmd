@@ -41,9 +41,9 @@ idx <- which(is.na(spmatrix$new_name))
 spmatrix$new_name[idx]<- as.character(spmatrix$clean_taxonomy[idx])
 
 # replace Baltina sp with Halipteris
-spmatrix <- spmatrix %>% mutate(new_name = gsub("Balticina sp.",
-                                                  "Halipteris sp.",
-                                                  new_name))
+#spmatrix <- spmatrix %>% mutate(new_name = gsub("Balticina sp.",
+#                                                  "Halipteris sp.",
+#                                                  new_name))
 
 # Gracilechinusacutus is split from Gracilechinusacutus;juvenile should we keep split?
 spmatrix <- spmatrix %>% mutate(new_name = gsub("Gracilechinus acutus;juvenile",
