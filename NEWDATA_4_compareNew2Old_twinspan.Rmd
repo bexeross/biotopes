@@ -71,6 +71,22 @@ newGpCountPerBiotope<-res.tw2pb %>%
             count14 = n_distinct(level14),
             count15 = n_distinct(level15))
 ```
+#visualise biotope per cluster
+```{r}
+ tw_2bioLabel<-tw_2
+ 
+ samples.comboBio<-samples.combo%>%
+   left_join(res.tw2pb)
+
+
+ tw_2bioLabel[["quadrat"]][["labels"]]<-as.vector(samples.comboBio[["Biotope_class"]])
+
+pdf(file.path(outPath,"giantDendro_tw2_triangle_previousBiotopeClassLabells.pdf"), width=100, height=10)
+par(cex=0.1, mar=c(10,0,0,0))
+plot(as.dendrogram(tw_2bioLabel,"quadrat"),type="triangle")
+dev.off()
+
+```
 
 
 
