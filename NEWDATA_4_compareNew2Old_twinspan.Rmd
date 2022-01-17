@@ -53,7 +53,23 @@ res.tw2pb<- res.tw2 %>%
 # count unique group per biotope
 
 ```{r}
-
+newGpCountPerBiotope<-res.tw2pb %>%
+  group_by(Biotope_class)%>%
+  summarise(count1 = n_distinct(level1),
+            count2 = n_distinct(level2),
+            count3 = n_distinct(level3),
+            count4 = n_distinct(level4),
+            count5 = n_distinct(level5),
+            count6 = n_distinct(level6),
+            count7 = n_distinct(level7),
+            count8 = n_distinct(level8),
+            count9 = n_distinct(level9),
+            count10 = n_distinct(level10),
+            count11 = n_distinct(level11),
+            count12 = n_distinct(level12),
+            count13 = n_distinct(level13),
+            count14 = n_distinct(level14),
+            count15 = n_distinct(level15))
 ```
 
 
