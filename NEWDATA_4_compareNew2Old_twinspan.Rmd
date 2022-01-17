@@ -27,9 +27,34 @@ res.tw2<-data.frame(SampID = samples.combo, level1 = NA, level2= NA, level3 = NA
  f = function(x) length(unique(x))
  lapply(res.tw2, FUN = f)
  
+res.tw2pb<- res.tw2 %>%
+  left_join(sheet1, by=c("SampID"="SampleNr"))%>%
+  select("SampID",
+         "Biotope_class",
+         "level1",
+         "level2",
+         "level3",
+         "level4",
+         "level5",
+         "level6",
+         "level7",
+         "level8",
+         "level9",
+         "level10",
+         "level11",
+         "level12",
+         "level13",
+         "level14",
+         "level15")
+ 
 ```
 
 
+# count unique group per biotope
+
+```{r}
+
+```
 
 
 
