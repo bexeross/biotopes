@@ -87,6 +87,17 @@ plot(as.dendrogram(tw_2bioLabel,"quadrat"),type="triangle")
 dev.off()
 
 ```
+#visualise new group per cluster
+
+```{r}
+pdf(file.path(outPath,"miniDendro_tw2_biotopeClass.pdf"), width=200, height=10) #adjust width as necessary
+par(cex=0.7)
+# Do some plotting
+plot(tw_2bioLabel,"quadrat")
+
+# Close the PDF file's associated graphics device (necessary to finalize the output)
+dev.off()
+```
 
 
 
