@@ -39,7 +39,6 @@ res.tw2<-data.frame(SampID = samples.combo, level1 = NA, level2= NA, level3 = NA
 
 
 
-
 #make matrix for summary tables
 combine res.tw2 and tw_2.df to give dataset with group numbers and taxa data for making summary tables
 ```{r}
