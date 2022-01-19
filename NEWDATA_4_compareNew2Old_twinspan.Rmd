@@ -196,7 +196,7 @@ my.subs.tw2$class <- factor(my.subs.tw2$class, levels = class.ls)
 
 
 # Make some helpful extra summary stats
-these are extra to what you will get in the deep summaries which is where you should go next (4a and 4aa)
+these are extra to what you will get in the deep summaries which is where you should go next (4a and 4aa) and output them
 
 ```{r}
 my.subs.tw2.xtraInfo<-my.subs.tw2 %>%
@@ -215,21 +215,34 @@ my.subs.tw2.xtraInfo$Biotope_class <- factor(my.subs.tw2.xtraInfo$Biotope_class,
 
 
 
-newDataAffil <-my.subs.tw2.xtraInfo %>%
+newDataAffil.in <-my.subs.tw2.xtraInfo %>%
   group_by(class)%>% 
   pivot_wider(id_cols="class",
               names_from="PredictedYN",
               values_from="SampID",
               values_fn=list(SampID=length))%>%
-  mutate(n=Y+N,
-         propNew= Y/n)%>%
-  mutate_all(~replace(., is.na(.), 0))
+  arrange(class)%>%
+  mutate_all(~replace(., is.na(.), 0))%>%
+  column_to_rownames("class")%>%
+  as.matrix()
+# %>%
+#   mutate(n=rowSums(across(where(is.numeric))),
+#          propNew= Y/n)%>%
+#   mutate_all(~replace(., is.na(.), 0))%>%
+#   t()%>%
+#   as.data.frame() %>%
+#   `colnames<-`(.[1, ])%>%
+#   .[-1, ]
+
+newDataAffil<-as.data.frame.matrix(prop.table(newDataAffil.in,1))
+newDataAffil<-t(newDataAffil)
 
 pBaffil<-as.data.frame.matrix(prop.table(with(my.subs.tw2.xtraInfo,table(Biotope_class, class)),1))
+pBaffil<-round_df(pBaffil,2)
 
-  
-
-
+out.prop.New_pB<-rbind(newDataAffil, pBaffil)
+write.csv(out.prop.New_pB, 
+          file = file.path(outPath, ("summary_TmpClass_prop_NewData_pB.csv"))) #change label
 ```
 
 
