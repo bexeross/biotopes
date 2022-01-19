@@ -6,7 +6,9 @@ Compare new twinspan groups to old biotopes
 
 #libraries
 ```{r}
-
+library(twinspan)
+library(dplyr)
+library(tibble)
 ```
 
 # twinspan result groups married to old biotopes
@@ -99,8 +101,32 @@ plot(tw_2bioLabel,"quadrat")
 dev.off()
 ```
 
+#visualise new data in clusters
+which samples are the new ones - where have they fit in?
+```{r}
+ tw_2newLabel<-tw_2
+
+samples.comboNewData<-samples.combo%>%
+   left_join(sheet1, by=c("SampID"="SampleNr"))
 
 
+ tw_2newLabel[["quadrat"]][["labels"]]<-as.vector(samples.comboNewData[["PredictedYN"]])
+
+pdf(file.path(outPath,"giantDendro_tw2_triangle_newYoldN.pdf"), width=100, height=10)
+par(cex=0.1, mar=c(10,0,0,0))
+plot(as.dendrogram(tw_2newLabel,"quadrat"),type="triangle")
+dev.off()
+```
+
+# INTERMISSION
+You will need to do manual investigations/interpretations of the above outputs: the aim is to discern which new groups relate to old pBs and assess where additional checks are needed e.g.
+- some classes are "eaten" by others -should these be retained and more classes defined from subgroups (remaining loyal to splits/sister groups)
+- some branches are not coherent (made of mixed pBs) so need checking if thy are a new class or just a mess of poor data in some manner
+- some classes have split into non-sister subgroups which need to be characterised separately.
+The result should be a list of the group numbers, their levels, and whether they are stable or need investigation so that you can proceed with deep summary checks and finalise the latest biotope list. No branch should be left without being assigned to a group to investigate
+
+# Label groups as branches for investigation
+This is a step that is also done in the deep summary script, but is done first here so that we can also make some summary statistics for those groups that may be useful (e.g. poportion pB associated to group, proportion new data found in group)
 
 
 
