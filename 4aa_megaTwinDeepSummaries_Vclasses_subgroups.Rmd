@@ -9,7 +9,7 @@ As even splitting into smaller twintables can result in some being too big to di
 #library
 ```{r}
 library(twinspan)
-library(dplyr, quietly = TRUE)
+library(dplyr)
 library(tibble)
 library(Matrix)
 ```
