@@ -137,11 +137,11 @@ This is a step that is also done in the deep summary script, but is done first h
 
 ```{r}
 # Jan 2022 new data added - tw_2
-n<-41
+n<-40
 
 #Pål class subclasses (after first analysis)
-reclassify<-data.frame(level=c(4,6,6,6,7,7,6,6,8,8,8,8,7,7,6,6,6,7,7,6,6,5,4,6,7,7,8,9,9,8,8,6,7,7,6,7,7,6,4,2,2),
-                         class=c(16,68,69,70,142,143,72,73,296,297,298,299,150,151,76,77,78,158,159,80,81,41,21,84,170,171,344,690,691,346,347,87,176,177,89,180,181,91,23,6,7),
+reclassify<-data.frame(level=c(4,6,6,6,7,7,6,6,8,8,8,8,7,7,6,6,6,7,7,6,6,5,6,7,7,8,9,9,8,8,6,7,7,6,7,7,6,4,2,2),
+                         class=c(16,68,69,70,142,143,72,73,296,297,298,299,150,151,76,77,78,158,159,80,81,41,84,170,171,344,690,691,346,347,87,176,177,89,180,181,91,23,6,7),
 new_class=sprintf("Tmp%s",seq(1:n)))
 
 
@@ -189,9 +189,9 @@ my.subs.tw2<-res.mat.tw2
 class.ls<-c("Tmp1","Tmp2","Tmp3","Tmp4","Tmp5","Tmp6","Tmp7","Tmp8","Tmp9","Tmp10",
             "Tmp11","Tmp12","Tmp13","Tmp14","Tmp15","Tmp16","Tmp17","Tmp18","Tmp19","Tmp20",
             "Tmp21","Tmp22","Tmp23","Tmp24","Tmp25","Tmp26","Tmp27","Tmp28","Tmp29","Tmp30",
-            "Tmp31","Tmp32","Tmp33","Tmp34","Tmp35","Tmp36","Tmp37","Tmp38","Tmp39","Tmp40",
-            "Tmp41")
+            "Tmp31","Tmp32","Tmp33","Tmp34","Tmp35","Tmp36","Tmp37","Tmp38","Tmp39","Tmp40")
 my.subs.tw2$class <- factor(my.subs.tw2$class, levels = class.ls)
+
 ```
 
 
@@ -202,21 +202,31 @@ these are extra to what you will get in the deep summaries which is where you sh
 my.subs.tw2.xtraInfo<-my.subs.tw2 %>%
   left_join(sheet1, by=c("SampID"="SampleNr"))
 
+#order levels for pBs
+pB.ls<-c("pB1","pB2","pB3","pB4","pB5","pB6","pB7","pB8","pB9","pB10",
+            "pB11","pB12","pB13","pB14","pB15","pB16","pB17","pB18","pB19","pB20",
+            "pB21","pB22","pB23","pB24","pB25","pB26","pB27","pB28","pB29","pB30",
+            "pB31","pB32","pB33","pB34","pB35","pB36","pB37","pB38","pB39","pB40",
+            "pB41","pB42","pB43","pB44","pB45","pB46","pB47","pB48","pB49","pB50",
+            "pB51","pB52","pB53","pB54","pB55","pB56","pB57","pB58","pB59","pB60",
+            "pB61","pB62","pB63","pB64")
+my.subs.tw2.xtraInfo$Biotope_class <- factor(my.subs.tw2.xtraInfo$Biotope_class, levels = pB.ls)
+
+
+
 
 newDataAffil <-my.subs.tw2.xtraInfo %>%
   group_by(class)%>% 
   pivot_wider(id_cols="class",
               names_from="PredictedYN",
               values_from="SampID",
-              values_fn=list(SampID=length))
+              values_fn=list(SampID=length))%>%
+  mutate(n=Y+N,
+         propNew= Y/n)%>%
+  mutate_all(~replace(., is.na(.), 0))
 
+pBaffil<-as.data.frame.matrix(prop.table(with(my.subs.tw2.xtraInfo,table(Biotope_class, class)),1))
 
-pBaffil<-my.subs.tw2.xtraInfo %>%
-  group_by(class)%>% 
-  pivot_wider(id_cols="class",
-              names_from="Biotope_class",
-              values_from="SampID",
-              values_fn=list(SampID=length))
   
 
 
