@@ -95,7 +95,7 @@ my.shp <- SpatialPointsDataFrame(coords = cbind(sample_info$x_coord[match(my.sub
                                  proj4string = CRS("+init=epsg:32633"),
                                  data = my.subs)
 
-writeOGR(my.shp, dsn = file.path(outPath, "Spatial"), "Mega_Pclass_shape_big", driver = "ESRI Shapefile", overwrite_layer = TRUE)
+writeOGR(my.shp, dsn = file.path(outPath, "Spatial"), "Mega_TMPclass_shape_big", driver = "ESRI Shapefile", overwrite_layer = TRUE)
 
 
 #smaller shp
@@ -106,7 +106,7 @@ my.shp.s <- SpatialPointsDataFrame(coords = cbind(sample_info$x_coord[match(my.s
                                  proj4string = CRS("+init=epsg:32633"),
                                  data = my.subs.small)
 
-writeOGR(my.shp.s, dsn = file.path(outPath, "Spatial"), "Mega_Pclass_shape_small", driver = "ESRI Shapefile", overwrite_layer = TRUE)
+writeOGR(my.shp.s, dsn = file.path(outPath, "Spatial"), "Mega_TMPclass_shape_small", driver = "ESRI Shapefile", overwrite_layer = TRUE)
 
 ```
 
@@ -226,20 +226,24 @@ I.e. dominant spp (av >1pseudospp) and consistent spp (present in >50% samples).
 ```{r}
 dom.av<-piv.av%>%
   as.data.frame() %>%
-  filter_all(any_vars(. > 1))
+  filter_all(any_vars(. > 1))%>%
+  rownames_to_column("taxa")
 ```
 
 *Consistent*
 ```{r}
 hi.prop<-piv.prop%>%
   as.data.frame() %>%
-  filter_all(any_vars(. > 0.5))
+  filter_all(any_vars(. > 0.5))%>%
+  rownames_to_column("taxa")
 ```
 
 combine
 
 ```{r}
-short.sum<-cbind(dom.av,hi.prop)
+#short.sum<-cbind(dom.av,hi.prop)
+short.sum<-dom.av%>%
+  left_join(hi.prop, by=c("taxa"="taxa"))
 values2<-c(rep("av>1",ncol(dom.av)), rep("prop>.5",ncol(hi.prop)))
 
 out.piv.short<-rbind(values2, short.sum)
@@ -256,14 +260,14 @@ out.piv.short<-rbind(values2, short.sum)
 #           file = file.path(outPath, ("V6_prop_obs.csv"))) #change label
 
 write.csv(out.piv, 
-          file = file.path(outPath, ("Mega_Vgroups_av_proportion_max.csv"))) #change label
+          file = file.path(outPath, ("Mega_TMPgroups_av_proportion_max.csv"))) #change label
 
 write.csv(out.piv.short, 
-          file = file.path(outPath, ("Mega_Vgroups_avGT1_propGT50pc.csv"))) #change label
+          file = file.path(outPath, ("Mega_TMPgroups_avGT1_propGT50pc.csv"))) #change label
 
 
 write.csv(piv.meta, 
-          file = file.path(outPath, ("Mega_Vgroups_metadata.csv"))) #change label
+          file = file.path(outPath, ("Mega_TMPgroups_metadata.csv"))) #change label
 
 ```
 
