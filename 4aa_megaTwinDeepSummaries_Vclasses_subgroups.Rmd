@@ -4,7 +4,10 @@ output: html_notebook
 ---
 USE WITH PROVISIONAL CLASS ALLOCATIONS
 
-As even splitting into smaller twintables can result in some being too big to digest, we want to try and summarise groups at different levels for their average pseudospp., n, max pseudospp? to be better able to compare sub-branches.
+As even splitting into smaller twintables can result in some being too big to digest, we want to try and dplyr::summarise groups at different levels for their average pseudospp., n, max pseudospp? to be better able to compare sub-branches.
+
+#NB
+If you came from 4a_megaTwinDeepSummaries_Vclasses.RMD then you have already done the first few steps and just need to slot in the object you made in that script around line 114 (search for title "If you came from 4a_megaTwinDeepSummaries_Vclasses.RMD " to find your starting point.)
 
 #library
 ```{r}
@@ -35,6 +38,16 @@ likely identified from the heatmap analysis. These will be labelled from 1 (left
 #                          new_class=sprintf("P%s",seq(1:n)))
 
 
+# The 64 (Decemeber 2021 delivery)
+# n<-64
+# 
+# #Pål class subclasses (after first analysis)
+# reclassify<-data.frame(level=c(7,7,6,6,7,7,4,7,7,6,8,8,8,8,6,6,7,7,7,7,7,8,8,5,6,6,7,7,7,8,8,6,7,8,9,9,4,7,7,7,10,10,9,10,10,9,8,8,7,7,7,8,8,9,9,9,9,8,8,9,9,8,2,2),
+#                          class=c(142,143,70,68,138,139,16,147,146,72,296,297,298,299,75,76,154,155,157,156,158,318,319,46,94,95,180,181,182,366,367,89,176,354,710,711,20,166,167,164,1320,1321,661,1324,1325,663,344,345,173,174,175,336,337,676,677,678,679,343,340,682,683,342,6,7
+# ),
+# new_class=sprintf("P%s",seq(1:n)))
+
+# Jan 2022 new data added - tw_2
 n<-64
 
 #Pål class subclasses (after first analysis)
@@ -98,6 +111,16 @@ my.subs$class <- factor(my.subs$class, levels = class.ls)
 ```
 
 
+# If you came from 4a_megaTwinDeepSummaries_Vclasses.RMD
+
+You can start here - you have a "my.subs" object that is in the right format already (which, if you came from NEWDATA_4_compareNew2Old_twinspan.RMD was originally called my.subs.tw2) we just need to convert this to a new object to be the master reference sheet as the my.subs name is being used again (being "my subset").
+
+```{r}
+clss.ref.mat<-my.subs.tw2
+```
+
+
+
 
 
 
@@ -110,6 +133,7 @@ i.e. subset to class, look for level at which there become multiple group number
 ```{r}
 #my.subs<-subset(res.mat,class =="P26") #change as needed
 #my.subs<-subset(res.mat,is.na(class)) #change as needed
+my.subs<-subset(clss.ref.mat,class =="Tmp28") #change as needed
 ```
 
 
@@ -121,16 +145,16 @@ Make table of metadata (parent groups, n sub groups at level 15, and n samples p
 ```{r}
 #parent groups
 piv.meta.a<-my.subs %>%
-  group_by(class)%>% # change to level you want to see groups at
-  summarise(across(c(2:15),mean)) %>%
+  group_by(level12)%>% # change to level you want to see groups at
+  dplyr::summarise(across(c(2:15),mean)) %>%
   t()%>%
   `colnames<-`(.[1, ])%>%
   .[-1, ]
 
 # n lev 15 groups
 piv.meta.15<-my.subs %>%
-  group_by(class)%>% # change to level you want to see groups at
-  summarise(nSubGpL15 = n_distinct(level15)) %>%
+  group_by(level12)%>% # change to level you want to see groups at
+  dplyr::summarise(nSubGpL15 = n_distinct(level15)) %>%
   t()%>%
   as.data.frame() %>%
   `colnames<-`(.[1, ])%>%
@@ -138,8 +162,8 @@ piv.meta.15<-my.subs %>%
 
 # n samples
 piv.meta.g<-my.subs %>%
-  group_by(class)%>% # change to level you want to see groups at
-  summarise(nSamp=n_distinct(SampID)) %>%
+  group_by(level12)%>% # change to level you want to see groups at
+  dplyr::summarise(nSamp=n_distinct(SampID)) %>%
   t()%>%
   as.data.frame() %>%
   `colnames<-`(.[1, ])%>%
@@ -156,8 +180,8 @@ Make tables of average psuedospp per class/proportion of obs per class/max pseud
 *Average pseudospp*
 ```{r}
 piv.av<-my.subs %>%
-  group_by(class)%>% # change to level you want to see groups at
-  summarise(across(c(17:343),mean)) %>%
+  group_by(level12)%>% # change to level you want to see groups at
+  dplyr::summarise(across(c(17:343),mean)) %>%
   t()%>%
   `colnames<-`(.[1, ])%>%
   .[-1, ] %>%
@@ -182,8 +206,8 @@ piv.av<-round_df(piv.av, 1)
 i.e. proportion of n spp obs (non zero pseudospp)/n samples per group
 ```{r}
 piv.n<-my.subs %>%
-  group_by(class)%>% # change to level you want to see groups at
-  summarise(across(c(17:343),nnzero)) %>%
+  group_by(level12)%>% # change to level you want to see groups at
+  dplyr::summarise(across(c(17:343),nnzero)) %>%
   t()%>%
   as.data.frame() %>%
   `colnames<-`(.[1, ])%>%
@@ -203,8 +227,8 @@ piv.prop<-round_df(piv.prop,2)
 Make table of maximum pseudospp per group
 ```{r}
 piv.mx<-my.subs %>%
-  group_by(class)%>% # change to level you want to see groups at
-  summarise(across(c(17:343),max)) %>%
+  group_by(level12)%>% # change to level you want to see groups at
+  dplyr::summarise(across(c(17:343),max)) %>%
   t()%>%
   `colnames<-`(.[1, ])%>%
   .[-1, ]
@@ -220,53 +244,50 @@ out.piv<-rbind(values, out.piv)
 
 ## short form summary
 I.e. dominant spp (av >1pseudospp) and consistent spp (present in >50% samples).
-IN DEVELOPMENT
 
-<!-- *Dominant* -->
-<!-- ```{r} -->
-<!-- dom.av<-piv.av%>% -->
-<!--   as.data.frame() %>% -->
-<!--   filter_all(any_vars(. > 1)) -->
-<!-- ``` -->
+*Dominant*
+```{r}
+dom.av<-piv.av%>%
+  as.data.frame() %>%
+  filter_all(any_vars(. > 1))%>%
+  rownames_to_column("taxa")
+```
 
-<!-- *Consistent* -->
-<!-- ```{r} -->
-<!-- hi.prop<-piv.prop%>% -->
-<!--   as.data.frame() %>% -->
-<!--   filter_all(any_vars(. > 0.5)) -->
-<!-- ``` -->
+*Consistent*
+```{r}
+hi.prop<-piv.prop%>%
+  as.data.frame() %>%
+  filter_all(any_vars(. > 0.5))%>%
+  rownames_to_column("taxa")
+```
 
-<!-- combine -->
+combine
 
-<!-- ```{r} -->
-<!-- short.sum<-cbind(dom.av,hi.prop) -->
-<!-- values2<-c(rep("av>1",ncol(dom.av)), rep("prop>.5",ncol(hi.prop))) -->
+```{r}
+#short.sum<-cbind(dom.av,hi.prop)
+short.sum<-dom.av%>%
+  left_join(hi.prop, by=c("taxa"="taxa"))
+values2<-c(rep("av>1",ncol(dom.av)), rep("prop>.5",ncol(hi.prop)))
 
-<!-- out.piv.short<-rbind(values2, short.sum) -->
+out.piv.short<-rbind(values2, short.sum)
+```
 
 
-<!-- ``` -->
 
 
 #output csvs
 
 ```{r}
 
-# write.csv(out.piv.short, 
-#           file = file.path(outPath, ("Mega_P1_avGT1_propGT50pc.csv"))) #change label
+ write.csv(out.piv.short, 
+           file = file.path(outPath, ("Tmp28_avGT1_propGT50pc.csv"))) #change label
 
-
-# write.csv(piv.av, 
-#           file = file.path(outPath, ("V6_av_pseudoSpp.csv"))) #change label
-# 
-# write.csv(piv.prop, 
-#           file = file.path(outPath, ("V6_prop_obs.csv"))) #change label
 
 write.csv(out.piv, 
-          file = file.path(outPath, ("Mega_64subGp_av_proportion_max.csv"))) #change label
+          file = file.path(outPath, ("Tmp28_av_proportion_max.csv"))) #change label
 
 write.csv(piv.meta, 
-          file = file.path(outPath, ("Mega_64subGp_metadata.csv"))) #change label
+          file = file.path(outPath, ("Tmp28_metadata.csv"))) #change label
 
 
 
