@@ -61,15 +61,15 @@ class.env<-samp.clss%>%
 #            "P11","P12","P13","P14","P15","P16","P17","P18","P19","P26",
 #            "P20","P21","P22","P23","P24","P25")
 
-class.ls<-c("P1","P2","P3","P4","P5","P6","P7","P8","P9","P10",
-            "P11","P12","P13","P14","P15","P16","P17","P18","P19","P20",
-            "P21","P22","P23","P24","P25","P26","P27","P28","P29","P30",
-            "P31","P32","P33","P34","P35","P36","P37","P38","P39","P40",
-            "P41","P42","P43","P44","P45","P46","P47","P48","P49","P50",
-            "P51","P52","P53","P54","P55","P56","P57","P58","P59","P60",
-            "P61","P62","P63","P64")
-
-class.env$class <- factor(class.env$class, levels = class.ls)
+# class.ls<-c("P1","P2","P3","P4","P5","P6","P7","P8","P9","P10",
+#             "P11","P12","P13","P14","P15","P16","P17","P18","P19","P20",
+#             "P21","P22","P23","P24","P25","P26","P27","P28","P29","P30",
+#             "P31","P32","P33","P34","P35","P36","P37","P38","P39","P40",
+#             "P41","P42","P43","P44","P45","P46","P47","P48","P49","P50",
+#             "P51","P52","P53","P54","P55","P56","P57","P58","P59","P60",
+#             "P61","P62","P63","P64")
+# 
+# class.env$class <- factor(class.env$class, levels = class.ls)
 
 class.env$level1<-as.factor(class.env$level1)
 class.env$level2<-as.factor(class.env$level2)
@@ -106,28 +106,28 @@ colnames(class.env)
 
 Depth (Bathy)
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/bathy.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_bathy.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=mean_depth))+
   geom_boxplot()
 dev.off()
 ```
 Temp Av (T_Av)
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/T_Av.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_T_Av.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=temp_mean..tif))+
   geom_boxplot()
 dev.off()
 ```
 Temp Min (T_Min)
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/T_Min.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_T_Min.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=temp_min..tif))+
   geom_boxplot()
 dev.off()
 ```
 Temp SD
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/T_SD.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_T_SD.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=temp_std..tif))+
   geom_boxplot()
 dev.off()
@@ -136,7 +136,7 @@ dev.off()
 
 Salt Av(Salt_Av)
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Salt_Av.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_Salt_Av.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=salt_mean..tif))+
   geom_boxplot()
 dev.off()
@@ -144,14 +144,14 @@ dev.off()
 
 Salt Min (Salt_Min)
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Salt_Min.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_Salt_Min.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=salt_min..tif))+
   geom_boxplot()
 dev.off()
 ```
 Salt SD 
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Salt_SD.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_Salt_SD.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=salt_std..tif))+
   geom_boxplot()
 dev.off()
@@ -159,7 +159,7 @@ dev.off()
 
 Cspd_Av
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Cspd_Av.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_Cspd_Av.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=spd_mean..tif))+
   geom_boxplot()
 dev.off()
@@ -167,14 +167,14 @@ dev.off()
 
 Cspd_Mx
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Cspd_Mx.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_Cspd_Mx.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=spd_max..tif))+
   geom_boxplot()
 dev.off()
 ```
 Cspd_Mx
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Cspd_SD.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_Cspd_SD.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=spd_std..tif))+
   geom_boxplot()
 dev.off()
@@ -182,7 +182,7 @@ dev.off()
 
 Xcoord
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Xcoord.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_Xcoord.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=x_coord))+
   geom_boxplot()
 dev.off()
@@ -190,7 +190,7 @@ dev.off()
 
 Ycoord
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Ycoord.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_Ycoord.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=y_coord))+
   geom_boxplot()
 dev.off()
@@ -208,28 +208,28 @@ dev.off()
 
 Boulders
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Sed_Bould.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_Sed_Bould.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=boulder))+
   geom_boxplot()
 dev.off()
 ```
 Cobbles
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Sed_Cobb.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_Sed_Cobb.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=cobble))+
   geom_boxplot()
 dev.off()
 ``` 
 Pebbles
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Sed_Pebb.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_Sed_Pebb.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=pebble))+
   geom_boxplot()
 dev.off()
 ``` 
 Sandy_mud
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Sed_SandyMud.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_Sed_SandyMud.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=sandy_mud))+
   geom_boxplot()
 dev.off()
@@ -237,7 +237,7 @@ dev.off()
 
 SedSand (Sed_Sand)
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Sed_Sand.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_Sed_Sand.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=sand))+
   geom_boxplot()
 dev.off()
@@ -245,49 +245,49 @@ dev.off()
 
 SedMud
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Sed_Mud.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_Sed_Mud.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=mud))+
   geom_boxplot()
 dev.off()
 ```
 Bedrock
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Sed_Bedrock.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_Sed_Bedrock.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=bedrock))+
   geom_boxplot()
 dev.off()
 ```
 Compacted Sediment
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Sed_CompSed.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_Sed_CompSed.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=compacted_sediment))+
   geom_boxplot()
 dev.off()
 ```
 shellsand
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Sed_Shellsand.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_Sed_Shellsand.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=shellsand))+
   geom_boxplot()
 dev.off()
 ```
 clay
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Sed_Clay.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_Sed_Clay.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=clay))+
   geom_boxplot()
 dev.off()
 ```
 consolidated_clay
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Sed_ConsolClay.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_Sed_ConsolClay.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=consolidated_clay))+
   geom_boxplot()
 dev.off()
 ```
 clay outcropping
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Sed_ClayOutcrop.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_Sed_ClayOutcrop.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y="clay_(outcropping)"))+
   geom_boxplot()
 dev.off()
@@ -295,42 +295,42 @@ dev.off()
 
 karbonatskorpe
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Sed_KarbonatSk.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_Sed_KarbonatSk.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=karbonatskorpe))+
   geom_boxplot()
 dev.off()
 ```
 biobush
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Sed_Biobush.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_Sed_Biobush.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=biobush))+
   geom_boxplot()
 dev.off()
 ```
 clay_spicules
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Sed_ClaySpicules.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_Sed_ClaySpicules.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=clay_spicules))+
   geom_boxplot()
 dev.off()
 ```
 gelatinous_snow
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Sed_GelSnow.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_Sed_GelSnow.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=gelatinous_snow))+
   geom_boxplot()
 dev.off()
 ```
 sand with shells
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Sed_SandWShells.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_Sed_SandWShells.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=sand_with_shells))+
   geom_boxplot()
 dev.off()
 ```
 sand with biomaterial
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Sed_SandWBiomateral.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_Sed_SandWBiomateral.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=sand_with_biomaterial))+
   geom_boxplot()
 dev.off()
@@ -345,28 +345,28 @@ dev.off()
 
 Coral Rubble
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Sed_CoralRubb.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_Sed_CoralRubb.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=coral_rubble))+
   geom_boxplot()
 dev.off()
 ```
 Lophelia Rubble
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Sed_LopheliaRubb.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_Sed_LopheliaRubb.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=lophelia_rubble))+
   geom_boxplot()
 dev.off()
 ```
 Live Lophelia
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Sed_LiveLophelia.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_Sed_LiveLophelia.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=live_lophelia))+
   geom_boxplot()
 dev.off()
 ```
 Live Lophelia
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Sed_LiveLophelia.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_Sed_LiveLophelia.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=live_lophelia))+
   geom_boxplot()
 dev.off()
@@ -374,7 +374,7 @@ dev.off()
 
 Dead Lophelia
 ```{r}
-png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Sed_DeadLophelia.png",width = 1200, height = 500, units = "px")
+png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_Sed_DeadLophelia.png",width = 1200, height = 500, units = "px")
 ggplot(class.env, aes(x=class, y=dead_lophelia))+
   geom_boxplot()
 dev.off()
@@ -385,28 +385,28 @@ dev.off()
 NOT WORKING WELL YET - BEDROCK IN CLASS 3 HAD 100 IN THERE BUT SUM WAS >6, DOING LONGHAND IN EXCEL NLY FOR MOMENT - DEAL WITH LATER
 <!-- soft sed -->
 <!-- ```{r} -->
-<!-- png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Sed_SOFT.png",width = 1200, height = 500, units = "px") -->
+<!-- png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_Sed_SOFT.png",width = 1200, height = 500, units = "px") -->
 <!-- ggplot(class.env, aes(x=class, y=softSed))+ -->
 <!--   geom_boxplot() -->
 <!-- dev.off() -->
 <!-- ``` -->
 <!-- coarse sed -->
 <!-- ```{r} -->
-<!-- png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Sed_COARSE.png",width = 1200, height = 500, units = "px") -->
+<!-- png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_Sed_COARSE.png",width = 1200, height = 500, units = "px") -->
 <!-- ggplot(class.env, aes(x=class, y=coarseSed))+ -->
 <!--   geom_boxplot() -->
 <!-- dev.off() -->
 <!-- ``` -->
 <!-- hard sed -->
 <!-- ```{r} -->
-<!-- png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Sed_HARD_SED.png",width = 1200, height = 500, units = "px") -->
+<!-- png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_Sed_HARD_SED.png",width = 1200, height = 500, units = "px") -->
 <!-- ggplot(class.env, aes(x=class, y=hardSed))+ -->
 <!--   geom_boxplot() -->
 <!-- dev.off() -->
 <!-- ``` -->
 <!-- hard solid -->
 <!-- ```{r} -->
-<!-- png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/Paal class subgroup tables/64subgps_videoEnv/Sed_HARD_SOLID.png",width = 1200, height = 500, units = "px") -->
+<!-- png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/TMPenv_Sed_HARD_SOLID.png",width = 1200, height = 500, units = "px") -->
 <!-- ggplot(class.env, aes(x=class, y=hardSolid))+ -->
 <!--   geom_boxplot() -->
 <!-- dev.off() -->
@@ -416,8 +416,8 @@ NOT WORKING WELL YET - BEDROCK IN CLASS 3 HAD 100 IN THERE BUT SUM WAS >6, DOING
 ```{r}
 av.class.env<-class.env%>%
   group_by(class)%>%
-  summarise_all(.funs=mean, na.rm=T)
+  summarise_all(mean, na.rm=T)
 
-write.csv(av.class.env, file = file.path(outPath, ("class_envVar_summaries.csv")))
+write.csv(av.class.env, file = file.path(outPath, ("TMPclass_envVar_summaries.csv")))
 ```
 
