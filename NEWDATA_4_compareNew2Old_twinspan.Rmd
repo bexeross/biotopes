@@ -212,7 +212,14 @@ pB.ls<-c("pB1","pB2","pB3","pB4","pB5","pB6","pB7","pB8","pB9","pB10",
             "pB61","pB62","pB63","pB64")
 my.subs.tw2.xtraInfo$Biotope_class <- factor(my.subs.tw2.xtraInfo$Biotope_class, levels = pB.ls)
 
-
+nSampPClass<-my.subs.tw2.xtraInfo %>%
+  group_by(class)%>% # change to level you want to see groups at
+  summarise(nSamp=n_distinct(SampID)) %>%
+  t()%>%
+  as.data.frame() %>%
+  `colnames<-`(.[1, ])%>%
+  .[-1, ]%>%
+  type.convert()
 
 
 newDataAffil.in <-my.subs.tw2.xtraInfo %>%
@@ -237,10 +244,11 @@ newDataAffil.in <-my.subs.tw2.xtraInfo %>%
 newDataAffil<-as.data.frame.matrix(prop.table(newDataAffil.in,1))
 newDataAffil<-t(newDataAffil)
 
-pBaffil<-as.data.frame.matrix(prop.table(with(my.subs.tw2.xtraInfo,table(Biotope_class, class)),1))
+pBaffil<-as.data.frame.matrix(prop.table(with(my.subs.tw2.xtraInfo,table(class, Biotope_class)),1))
 pBaffil<-round_df(pBaffil,2)
+pBaffil<-t(pBaffil)
 
-out.prop.New_pB<-rbind(newDataAffil, pBaffil)
+out.prop.New_pB<-rbind(nSampPClass, newDataAffil, pBaffil)
 write.csv(out.prop.New_pB, 
           file = file.path(outPath, ("summary_TmpClass_prop_NewData_pB.csv"))) #change label
 ```
