@@ -6,6 +6,9 @@ USE WITH PROVISIONAL CLASS ALLOCATIONS
 
 As even splitting into smaller twintables can result in some being too big to digest, we want to try and summarise groups at different levels for their average pseudospp., n, max pseudospp? to be better able to compare sub-branches.
 
+#NB
+If you came from NEWDATA_4_compareNew2Old_twinspan.RMD then you have already done the first few steps and just need to slot in the object you made in that script around line 80 (search for title "If you came from NEWDATA_4_compareNew2Old_twinspan.RMD" to find your starting point.)
+
 #library
 ```{r}
 library(twinspan)
@@ -77,6 +80,14 @@ my.subs<-res.mat
 #my.subs<-subset(res.mat,level8 ==298) #change as needed
 
 ```
+# IF YOU CAME FROM NEWDATA_4_compareNew2Old_twinspan.RMD
+You have already done the steps above and just need to slot in the object you made in that script
+```{r}
+my.subs<-my.subs.tw2
+```
+
+
+
 # make shapefile
 
 ```{r}
