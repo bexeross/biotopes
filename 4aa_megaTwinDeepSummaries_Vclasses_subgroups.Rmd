@@ -92,7 +92,7 @@ for(i in 1:n){
 
 table(res.mat$class)
 
-my.subs<-res.mat
+#my.subs<-res.mat
 #
 
 ```
@@ -107,7 +107,9 @@ class.ls<-c("P1","P2","P3","P4","P5","P6","P7","P8","P9","P10",
             "P41","P42","P43","P44","P45","P46","P47","P48","P49","P50",
             "P51","P52","P53","P54","P55","P56","P57","P58","P59","P60",
             "P61","P62","P63","P64")
-my.subs$class <- factor(my.subs$class, levels = class.ls)
+res.mat$class <- factor(res.mat$class, levels = class.ls)
+
+clss.ref.mat<-res.mat
 ```
 
 
@@ -121,6 +123,19 @@ clss.ref.mat<-my.subs.tw2
 
 
 
+# Add trawl data
+```{r}
+#merge trawl mark data (make ure you have run "data_prep_trawlmarks.Rmd" first) Need to do this after summarising env var as there are too many NAs in trawl marks to get goo summaries
+trawlwide.cln<-trawlwide %>%
+  group_by(SampID) %>%
+  summarise(TrawlmarkDens=max(`Trawl mark`))
+
+
+clss.ref.mat<- clss.ref.mat %>%
+  left_join(., trawlwide.cln, by =c("SampID"="SampID"))%>%
+  replace(is.na(.), 0)
+```
+
 
 
 
@@ -133,7 +148,7 @@ i.e. subset to class, look for level at which there become multiple group number
 ```{r}
 #my.subs<-subset(res.mat,class =="P26") #change as needed
 #my.subs<-subset(res.mat,is.na(class)) #change as needed
-my.subs<-subset(clss.ref.mat,class =="Tmp28") #change as needed
+my.subs<-subset(clss.ref.mat,class =="Tmp8") #change as needed
 ```
 
 
@@ -145,7 +160,7 @@ Make table of metadata (parent groups, n sub groups at level 15, and n samples p
 ```{r}
 #parent groups
 piv.meta.a<-my.subs %>%
-  group_by(level12)%>% # change to level you want to see groups at
+  group_by(level10)%>% # change to level you want to see groups at
   dplyr::summarise(across(c(2:15),mean)) %>%
   t()%>%
   `colnames<-`(.[1, ])%>%
@@ -153,7 +168,7 @@ piv.meta.a<-my.subs %>%
 
 # n lev 15 groups
 piv.meta.15<-my.subs %>%
-  group_by(level12)%>% # change to level you want to see groups at
+  group_by(level10)%>% # change to level you want to see groups at
   dplyr::summarise(nSubGpL15 = n_distinct(level15)) %>%
   t()%>%
   as.data.frame() %>%
@@ -162,8 +177,9 @@ piv.meta.15<-my.subs %>%
 
 # n samples
 piv.meta.g<-my.subs %>%
-  group_by(level12)%>% # change to level you want to see groups at
-  dplyr::summarise(nSamp=n_distinct(SampID)) %>%
+  group_by(level10)%>% # change to level you want to see groups at
+  summarise(nSamp=n_distinct(SampID),
+            trawlm_Max=max(TrawlmarkDens)) %>%
   t()%>%
   as.data.frame() %>%
   `colnames<-`(.[1, ])%>%
@@ -180,7 +196,7 @@ Make tables of average psuedospp per class/proportion of obs per class/max pseud
 *Average pseudospp*
 ```{r}
 piv.av<-my.subs %>%
-  group_by(level12)%>% # change to level you want to see groups at
+  group_by(level10)%>% # change to level you want to see groups at
   dplyr::summarise(across(c(17:343),mean)) %>%
   t()%>%
   `colnames<-`(.[1, ])%>%
@@ -206,7 +222,7 @@ piv.av<-round_df(piv.av, 1)
 i.e. proportion of n spp obs (non zero pseudospp)/n samples per group
 ```{r}
 piv.n<-my.subs %>%
-  group_by(level12)%>% # change to level you want to see groups at
+  group_by(level10)%>% # change to level you want to see groups at
   dplyr::summarise(across(c(17:343),nnzero)) %>%
   t()%>%
   as.data.frame() %>%
@@ -216,8 +232,9 @@ piv.n<-my.subs %>%
 
 #piv.meta.g[,] <- sapply(piv.meta.g[,], as.numeric)
 #piv.n[,] <- sapply(piv.n[,], as.numeric)
+piv.meta.gn<-as.data.frame(piv.meta.g[1,])
 
-piv.prop<-mapply('/',piv.n,piv.meta.g)
+piv.prop<-mapply('/',piv.n,piv.meta.gn)
 rownames(piv.prop)<-rownames(piv.n)
 piv.prop<-round_df(piv.prop,2)
 
@@ -227,7 +244,7 @@ piv.prop<-round_df(piv.prop,2)
 Make table of maximum pseudospp per group
 ```{r}
 piv.mx<-my.subs %>%
-  group_by(level12)%>% # change to level you want to see groups at
+  group_by(level10)%>% # change to level you want to see groups at
   dplyr::summarise(across(c(17:343),max)) %>%
   t()%>%
   `colnames<-`(.[1, ])%>%
@@ -280,14 +297,14 @@ out.piv.short<-rbind(values2, short.sum)
 ```{r}
 
  write.csv(out.piv.short, 
-           file = file.path(outPath, ("Tmp28_avGT1_propGT50pc.csv"))) #change label
+           file = file.path(outPath, ("Tmp8_2_avGT1_propGT50pc.csv"))) #change label
 
 
 write.csv(out.piv, 
-          file = file.path(outPath, ("Tmp28_av_proportion_max.csv"))) #change label
+          file = file.path(outPath, ("Tmp8_2_av_proportion_max.csv"))) #change label
 
 write.csv(piv.meta, 
-          file = file.path(outPath, ("Tmp28_metadata.csv"))) #change label
+          file = file.path(outPath, ("Tmp8_2_metadata.csv"))) #change label
 
 
 
