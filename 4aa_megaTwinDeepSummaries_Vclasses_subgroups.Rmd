@@ -140,10 +140,10 @@ ______________
 
 #SECTION YOU EDIT
 
-Edit the class and level here and run all chunks below to output the 3 summary csvs.
+Edit the class and level here and run all chunks below to output the 3 summary csvs. NB you should make sure to run 4b_classes_vs_env.RMD first in order to have the class.env variable and be able to output env var per group.
 ```{r}
-my.class<-"Tmp9"
-deep.level<-"level11"
+my.class<-"Tmp7"
+deep.level<-"level7"
 ```
 ______________
 
@@ -158,6 +158,7 @@ i.e. subset to class, look for level at which there become multiple group number
 #my.subs<-subset(res.mat,class =="P26") #change as needed
 #my.subs<-subset(res.mat,is.na(class)) #change as needed
 my.subs<-subset(clss.ref.mat,class ==my.class) #change as needed
+env.subs<-subset(class.env, class==my.class)
 ```
 
 
@@ -195,8 +196,20 @@ piv.meta.g<-my.subs %>%
   .[-1, ]%>%
   type.convert()
 
+# env var
 
-piv.meta<-rbind(piv.meta.a,piv.meta.15,piv.meta.g)
+piv.meta.env<-env.subs%>%
+  group_by(.data[[deep.level]])%>%
+  summarise_all(mean, na.rm=T) %>%
+  select(-c("SampID", "class"))%>%
+  t()%>%
+  as.data.frame() %>%
+  `colnames<-`(.[1, ])%>%
+  .[-(1:15), ]%>%
+  type.convert()
+
+
+piv.meta<-rbind(piv.meta.a,piv.meta.15,piv.meta.g, piv.meta.env)
 ```
 
 ## full summary dataset
@@ -301,19 +314,20 @@ out.piv.short<-rbind(values2, short.sum)
 
 
 
+
 #output csvs
 
 ```{r}
 
  write.csv(out.piv.short, 
-           file = file.path(outPath,paste(my.class,"_avGT1_propGT50pc.csv"))) #change label
+           file = file.path(outPath,paste0(my.class,"2_avGT1_propGT50pc.csv"))) #change label
 
 
 write.csv(out.piv, 
-          file = file.path(outPath,paste(my.class,"_av_proportion_max.csv"))) #change label
+          file = file.path(outPath,paste0(my.class,"2_av_proportion_max.csv"))) #change label
 
 write.csv(piv.meta, 
-          file = file.path(outPath,paste(my.class,"_metadata.csv"))) #change label
+          file = file.path(outPath,paste0(my.class,"2_metadata.csv"))) #change label
 
 
 
