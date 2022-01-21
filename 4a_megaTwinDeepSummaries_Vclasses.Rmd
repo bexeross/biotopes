@@ -80,6 +80,7 @@ my.subs<-res.mat
 #my.subs<-subset(res.mat,level8 ==298) #change as needed
 
 ```
+
 # IF YOU CAME FROM NEWDATA_4_compareNew2Old_twinspan.RMD
 You have already done the steps above and just need to slot in the object you made in that script
 ```{r}
@@ -87,6 +88,25 @@ my.subs<-my.subs.tw2
 ```
 
 
+
+
+
+# Add trawl data
+```{r}
+#merge trawl mark data (make ure you have run "data_prep_trawlmarks.Rmd" first) Need to do this after summarising env var as there are too many NAs in trawl marks to get goo summaries
+trawlwide.cln<-trawlwide %>%
+  group_by(SampID) %>%
+  summarise(TrawlmarkDens=max(`Trawl mark`))
+
+
+my.subs<- my.subs %>%
+  left_join(., trawlwide.cln, by =c("SampID"="SampID"))%>%
+  replace(is.na(.), 0)
+
+
+
+
+```
 
 # make shapefile
 
@@ -109,25 +129,6 @@ my.shp.s <- SpatialPointsDataFrame(coords = cbind(sample_info$x_coord[match(my.s
 writeOGR(my.shp.s, dsn = file.path(outPath, "Spatial"), "Mega_TMPclass_shape_small", driver = "ESRI Shapefile", overwrite_layer = TRUE)
 
 ```
-
-# Add trawl data
-```{r}
-#merge trawl mark data (make ure you have run "data_prep_trawlmarks.Rmd" first) Need to do this after summarising env var as there are too many NAs in trawl marks to get goo summaries
-trawlwide.cln<-trawlwide %>%
-  group_by(SampID) %>%
-  summarise(TrawlmarkDens=max(`Trawl mark`))
-
-
-my.subs<- my.subs %>%
-  left_join(., trawlwide.cln, by =c("SampID"="SampID"))%>%
-  replace(is.na(.), 0)
-
-
-
-
-```
-
-
 
 
 
@@ -219,10 +220,9 @@ piv.n<-my.subs %>%
   .[-1, ] %>%
   type.convert()
 
-#piv.meta.g[,] <- sapply(piv.meta.g[,], as.numeric)
-#piv.n[,] <- sapply(piv.n[,], as.numeric)
+piv.meta.gn<-as.data.frame(piv.meta.g[1,])
 
-piv.prop<-mapply('/',piv.n,piv.meta.g)
+piv.prop<-mapply('/',piv.n,piv.meta.gn)
 rownames(piv.prop)<-rownames(piv.n)
 piv.prop<-round_df(piv.prop,2)
 
