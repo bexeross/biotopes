@@ -271,7 +271,7 @@ combine
 ```{r}
 #short.sum<-cbind(dom.av,hi.prop)
 short.sum<-dom.av%>%
-  left_join(hi.prop, by=c("taxa"="taxa"))
+ full_join(hi.prop, by=c("taxa"="taxa"))
 values2<-c(rep("av>1",ncol(dom.av)), rep("prop>.5",ncol(hi.prop)))
 
 out.piv.short<-rbind(values2, short.sum)
