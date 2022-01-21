@@ -142,8 +142,8 @@ ______________
 
 Edit the class and level here and run all chunks below to output the 3 summary csvs. NB you should make sure to run 4b_classes_vs_env.RMD first in order to have the class.env variable and be able to output env var per group.
 ```{r}
-my.class<-"Tmp7"
-deep.level<-"level7"
+my.class<-"Tmp11"
+deep.level<-"level11"
 ```
 ______________
 
@@ -320,14 +320,14 @@ out.piv.short<-rbind(values2, short.sum)
 ```{r}
 
  write.csv(out.piv.short, 
-           file = file.path(outPath,paste0(my.class,"2_avGT1_propGT50pc.csv"))) #change label
+           file = file.path(outPath,paste0(my.class,"_avGT1_propGT50pc.csv"))) #change label
 
 
 write.csv(out.piv, 
-          file = file.path(outPath,paste0(my.class,"2_av_proportion_max.csv"))) #change label
+          file = file.path(outPath,paste0(my.class,"_av_proportion_max.csv"))) #change label
 
 write.csv(piv.meta, 
-          file = file.path(outPath,paste0(my.class,"2_metadata.csv"))) #change label
+          file = file.path(outPath,paste0(my.class,"_metadata.csv"))) #change label
 
 
 
