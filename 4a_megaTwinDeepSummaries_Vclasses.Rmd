@@ -110,6 +110,23 @@ writeOGR(my.shp.s, dsn = file.path(outPath, "Spatial"), "Mega_TMPclass_shape_sma
 
 ```
 
+# Add trawl data
+```{r}
+#merge trawl mark data (make ure you have run "data_prep_trawlmarks.Rmd" first) Need to do this after summarising env var as there are too many NAs in trawl marks to get goo summaries
+trawlwide.cln<-trawlwide %>%
+  group_by(SampID) %>%
+  summarise(TrawlmarkDens=max(`Trawl mark`))
+
+
+my.subs<- my.subs %>%
+  left_join(., trawlwide.cln, by =c("SampID"="SampID"))%>%
+  replace(is.na(.), 0)
+
+
+
+
+```
+
 
 
 
@@ -137,10 +154,21 @@ piv.meta.15<-my.subs %>%
   `colnames<-`(.[1, ])%>%
   .[-1, ]
 
+# # n samples
+# piv.meta.g<-my.subs %>%
+#   group_by(class)%>% # change to level you want to see groups at
+#   summarise(nSamp=n_distinct(SampID)) %>%
+#   t()%>%
+#   as.data.frame() %>%
+#   `colnames<-`(.[1, ])%>%
+#   .[-1, ]%>%
+#   type.convert()
+
 # n samples
 piv.meta.g<-my.subs %>%
   group_by(class)%>% # change to level you want to see groups at
-  summarise(nSamp=n_distinct(SampID)) %>%
+  summarise(nSamp=n_distinct(SampID),
+            trawlm_Max=max(TrawlmarkDens)) %>%
   t()%>%
   as.data.frame() %>%
   `colnames<-`(.[1, ])%>%
