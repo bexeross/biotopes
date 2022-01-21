@@ -136,7 +136,16 @@ clss.ref.mat<- clss.ref.mat %>%
   replace(is.na(.), 0)
 ```
 
+______________
 
+#SECTION YOU EDIT
+
+Edit the class and level here and run all chunks below to output the 3 summary csvs.
+```{r}
+my.class<-"Tmp9"
+deep.level<-"level11"
+```
+______________
 
 
 
@@ -148,7 +157,7 @@ i.e. subset to class, look for level at which there become multiple group number
 ```{r}
 #my.subs<-subset(res.mat,class =="P26") #change as needed
 #my.subs<-subset(res.mat,is.na(class)) #change as needed
-my.subs<-subset(clss.ref.mat,class =="Tmp8") #change as needed
+my.subs<-subset(clss.ref.mat,class ==my.class) #change as needed
 ```
 
 
@@ -160,7 +169,7 @@ Make table of metadata (parent groups, n sub groups at level 15, and n samples p
 ```{r}
 #parent groups
 piv.meta.a<-my.subs %>%
-  group_by(level10)%>% # change to level you want to see groups at
+  group_by(.data[[deep.level]])%>% # change to level you want to see groups at
   dplyr::summarise(across(c(2:15),mean)) %>%
   t()%>%
   `colnames<-`(.[1, ])%>%
@@ -168,7 +177,7 @@ piv.meta.a<-my.subs %>%
 
 # n lev 15 groups
 piv.meta.15<-my.subs %>%
-  group_by(level10)%>% # change to level you want to see groups at
+  group_by(.data[[deep.level]])%>% # change to level you want to see groups at
   dplyr::summarise(nSubGpL15 = n_distinct(level15)) %>%
   t()%>%
   as.data.frame() %>%
@@ -177,7 +186,7 @@ piv.meta.15<-my.subs %>%
 
 # n samples
 piv.meta.g<-my.subs %>%
-  group_by(level10)%>% # change to level you want to see groups at
+  group_by(.data[[deep.level]])%>% # change to level you want to see groups at
   summarise(nSamp=n_distinct(SampID),
             trawlm_Max=max(TrawlmarkDens)) %>%
   t()%>%
@@ -196,7 +205,7 @@ Make tables of average psuedospp per class/proportion of obs per class/max pseud
 *Average pseudospp*
 ```{r}
 piv.av<-my.subs %>%
-  group_by(level10)%>% # change to level you want to see groups at
+  group_by(.data[[deep.level]])%>% # change to level you want to see groups at
   dplyr::summarise(across(c(17:343),mean)) %>%
   t()%>%
   `colnames<-`(.[1, ])%>%
@@ -222,7 +231,7 @@ piv.av<-round_df(piv.av, 1)
 i.e. proportion of n spp obs (non zero pseudospp)/n samples per group
 ```{r}
 piv.n<-my.subs %>%
-  group_by(level10)%>% # change to level you want to see groups at
+  group_by(.data[[deep.level]])%>% # change to level you want to see groups at
   dplyr::summarise(across(c(17:343),nnzero)) %>%
   t()%>%
   as.data.frame() %>%
@@ -244,7 +253,7 @@ piv.prop<-round_df(piv.prop,2)
 Make table of maximum pseudospp per group
 ```{r}
 piv.mx<-my.subs %>%
-  group_by(level10)%>% # change to level you want to see groups at
+  group_by(.data[[deep.level]])%>% # change to level you want to see groups at
   dplyr::summarise(across(c(17:343),max)) %>%
   t()%>%
   `colnames<-`(.[1, ])%>%
@@ -297,14 +306,14 @@ out.piv.short<-rbind(values2, short.sum)
 ```{r}
 
  write.csv(out.piv.short, 
-           file = file.path(outPath, ("Tmp8_2_avGT1_propGT50pc.csv"))) #change label
+           file = file.path(outPath,paste(my.class,"_avGT1_propGT50pc.csv"))) #change label
 
 
 write.csv(out.piv, 
-          file = file.path(outPath, ("Tmp8_2_av_proportion_max.csv"))) #change label
+          file = file.path(outPath,paste(my.class,"_av_proportion_max.csv"))) #change label
 
 write.csv(piv.meta, 
-          file = file.path(outPath, ("Tmp8_2_metadata.csv"))) #change label
+          file = file.path(outPath,paste(my.class,"_metadata.csv"))) #change label
 
 
 
