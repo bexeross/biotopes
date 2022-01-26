@@ -2,21 +2,95 @@
 title: "Vulnerable habitats"
 output: html_notebook
 ---
+
+Trying a new approach in order to align VME models with generic biotope models better. Inputs required: the classified samples, as well as the species matrix and the environmental matrix.
+
 ## Libraries
 ```{r}
 library(readxl)
 library(dplyr)
+library(party)
+library(partykit)
+library(ggparty)
+library(rpart)
 ```
+
+# New approach
+VME presence/absence or quality is dervied from the classified samples, which in turn is largely based on the twinspan classification with some manual tweaks.
+
+## Build a response variable
+Take the classified samples and pick a habitat of interest. Recode data
+```{r}
+vme_pure="pB8" # using provisional biotope labels for now!
+vme_mixed="pB10"
+resp <- sheet1 %>%
+  mutate(vme = case_when(Biotope_class==vme_pure~2,
+                         Biotope_class==vme_mixed~1,
+                           TRUE ~ 0))%>%
+  select(SampleNr,vme)
+```
+
+## Assess species composition of habitat
+Will do this using a Classification Tree
+
+### set up the model formula
+```{r}
+# the question I want to ask is: can the species abundances predict our VME assignations? and further, will the "official" vme indicators come up as good predictors of this?
+species_explain <- paste(colnames(coredata), collapse="+") 
+fmla <- as.formula(paste("vme", species_explain,sep="~"))
+fmla
+```
+### Fit a CT
+```{r}
+# Fit full tree
+coredata1 <- coredata %>%
+  mutate(SampleNr=row.names(.))
+
+tree_full <- rpart(fmla,
+                   data=left_join(coredata1,resp),
+                   method="class", # need to change to something appropriate for an ordered factor!
+                   control=rpart.control(xval = 10,
+                                         minbucket = 2, cp = 0)
+)
+
+cp <-cp.select(tree_full)
+#cp <- 0.03
+
+# Prune Tree
+tree_full_pruned <- rpart(fmla,
+                          data=left_join(coredata1,resp),
+                          method="class",
+                          control=rpart.control(xval = 10,
+                                                minbucket = 2, cp = cp))
+
+tree_full_pruned$variable.importance
+
+```
+
+### Plot it
+```{r}
+ap_tree_full_pruned <- as.party(tree_full_pruned)
+rounded_labels <- add_splitvar_breaks_index_new(party_object = ap_tree_full_pruned,
+                                                 plot_data = ggparty:::get_plot_data(ap_tree_full_pruned), 
+                                                 round_digits = 2)
+ggparty(ap_tree_full_pruned) +
+   geom_edge() +
+   geom_edge_label(mapping = aes(label = unlist(rounded_labels)),
+                   data = rounded_labels) +
+   geom_node_splitvar()+
+   geom_node_label(aes(label = class), ids = "terminal")
+```
+
+# Old approach
+VMEness is determined from abundances of VME indicators
 
 ## Read data
 ```{r}
 # species densities (trimmed)
 in.data.vh <- read.csv(file.path(outPath,"species_densities_trimmed.csv"))
-
 # habitat definitions with list of qualifying taxa
 habdef <- read_xlsx(file.path(dataPath,"HabitatDefinitions.xlsx"))
 ```
-
 
 ## select habitat of interest
 ```{r}
