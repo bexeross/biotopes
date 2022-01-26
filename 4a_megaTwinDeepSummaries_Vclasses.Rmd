@@ -30,19 +30,32 @@ likely identified from the heatmap analysis. These will be labelled from 1 (left
 #                          new_class=sprintf("V%s",seq(1:n)))
 
 
-#Pål classes
-n<-26
+# #Pål classes
+# n<-26
+# 
+# # Make reclassification table
+# reclassify <- data.frame(level=c(6,6,5,4,7,7,6,7,8,8,6,5,5,4,5,6,6,6,6,7,7,5,6,6,1,6),
+#                          class=c(71,70,34,16,147,146,72,148,298,299,75,38,39,23,45,89,88,81,80,164,165,43,84,85,3,83),
+#                          new_class=sprintf("P%s",seq(1:n)))
+
+
+#SubTmp
+
+n<-74
 
 # Make reclassification table
-reclassify <- data.frame(level=c(6,6,5,4,7,7,6,7,8,8,6,5,5,4,5,6,6,6,6,7,7,5,6,6,1,6),
-                         class=c(71,70,34,16,147,146,72,148,298,299,75,38,39,23,45,89,88,81,80,164,165,43,84,85,3,83),
-                         new_class=sprintf("P%s",seq(1:n)))
+reclassify <- data.frame(level=c(4,6,6,6,6,7,7,7,8,8,7,9,9,8,8,10,10,9,8,9,9,7,7,6,6,7,7,9,9,9,9,8,9,9,6,5,7,9,9,9,9,7,8,8,8,10,12,12,11,9,8,8,8,8,9,9,8,7,9,9,9,9,8,9,8,9,9,8,7,7,6,4,2,2),
+                         class=c(16,68,69,70,71,144,145,146,294,295,148,596,597,299,300,1204,1205,603,302,606,607,152,153,77,78,158,159,640,641,642,643,322,646,647,81,41,168,676,677,678,679,170,342,343,344,1380,5524,5525,2763,691,346,347,349,348,700,701,351,176,708,709,710,711,356,714,357,716,717,359,180,181,91,23,6,7),
+                         new_class=sprintf("SubTmp%s",seq(1:n)))
 
 
 
 
 ```
 
+
+#CONTINUE HERE IF CLASSIFYING FOR FIRST TIME 
+Else skip down to # SECONDARY CLASSIFICATIONS
 
 # matrix
 we need the twintable matrix to work with, which we can get with twin2mat and this needs to be merged with res
@@ -81,12 +94,35 @@ my.subs<-res.mat
 
 ```
 
+# SECONDARY CLASSIFICATIONS
+
+```{r}
+res.mat.tw2.cl2<-left_join(res.tw2, tw_2.df)
+res.matREF.tw2.cl2<-res.mat.tw2.cl2
+
+rownames(res.mat.tw2.cl2) <- res.mat.tw2.cl2[,1]
+  
+  
+  
+
+for(i in 1:n){
+  res.mat.tw2.cl2[getsamplesingrp(res.matREF.tw2.cl2,reclassify$level[i],reclassify$class[i]),"class"]<-as.character(reclassify$new_class[i])
+}
+
+table(res.mat.tw2.cl2$class)
+
+my.subs.tw2<-res.mat.tw2.cl2
+```
+
+
+
+
+
 # IF YOU CAME FROM NEWDATA_4_compareNew2Old_twinspan.RMD
 You have already done the steps above and just need to slot in the object you made in that script
 ```{r}
 my.subs<-my.subs.tw2
 ```
-
 
 
 
@@ -115,7 +151,7 @@ my.shp <- SpatialPointsDataFrame(coords = cbind(sample_info$x_coord[match(my.sub
                                  proj4string = CRS("+init=epsg:32633"),
                                  data = my.subs)
 
-writeOGR(my.shp, dsn = file.path(outPath, "Spatial"), "Mega_TMPclass_shape_big", driver = "ESRI Shapefile", overwrite_layer = TRUE)
+writeOGR(my.shp, dsn = file.path(outPath, "Spatial"), "Mega_SubTMPclass_shape_big", driver = "ESRI Shapefile", overwrite_layer = TRUE)
 
 
 #smaller shp
@@ -126,7 +162,7 @@ my.shp.s <- SpatialPointsDataFrame(coords = cbind(sample_info$x_coord[match(my.s
                                  proj4string = CRS("+init=epsg:32633"),
                                  data = my.subs.small)
 
-writeOGR(my.shp.s, dsn = file.path(outPath, "Spatial"), "Mega_TMPclass_shape_small", driver = "ESRI Shapefile", overwrite_layer = TRUE)
+writeOGR(my.shp.s, dsn = file.path(outPath, "Spatial"), "Mega_SubTMPclass_shape_small", driver = "ESRI Shapefile", overwrite_layer = TRUE)
 
 ```
 
@@ -288,14 +324,14 @@ out.piv.short<-rbind(values2, short.sum)
 #           file = file.path(outPath, ("V6_prop_obs.csv"))) #change label
 
 write.csv(out.piv, 
-          file = file.path(outPath, ("Mega_TMPgroups_av_proportion_max.csv"))) #change label
+          file = file.path(outPath, ("Mega_SubTMPgroups_av_proportion_max.csv"))) #change label
 
 write.csv(out.piv.short, 
-          file = file.path(outPath, ("Mega_TMPgroups_avGT1_propGT50pc.csv"))) #change label
+          file = file.path(outPath, ("Mega_SubTMPgroups_avGT1_propGT50pc.csv"))) #change label
 
 
 write.csv(piv.meta, 
-          file = file.path(outPath, ("Mega_TMPgroups_metadata.csv"))) #change label
+          file = file.path(outPath, ("Mega_SubTMPgroups_metadata.csv"))) #change label
 
 ```
 
