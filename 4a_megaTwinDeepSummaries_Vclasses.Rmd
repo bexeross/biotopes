@@ -4,7 +4,7 @@ output: html_notebook
 ---
 USE WITH PROVISIONAL CLASS ALLOCATIONS
 
-As even splitting into smaller twintables can result in some being too big to digest, we want to try and summarise groups at different levels for their average pseudospp., n, max pseudospp? to be better able to compare sub-branches.
+As even splitting into smaller twintables can result in some being too big to digest, we want to try and dplyr::summarise groups at different levels for their average pseudospp., n, max pseudospp? to be better able to compare sub-branches.
 
 #NB
 If you came from NEWDATA_4_compareNew2Old_twinspan.RMD then you have already done the first few steps and just need to slot in the object you made in that script around line 80 (search for title "If you came from NEWDATA_4_compareNew2Old_twinspan.RMD" to find your starting point.)
@@ -112,6 +112,21 @@ for(i in 1:n){
 table(res.mat.tw2.cl2$class)
 
 my.subs.tw2<-res.mat.tw2.cl2
+
+
+
+
+class.ls<-c("SubTmp1","SubTmp2","SubTmp3","SubTmp4","SubTmp5","SubTmp6","SubTmp7","SubTmp8","SubTmp9","SubTmp10",
+      "SubTmp11","SubTmp12","SubTmp13","SubTmp14","SubTmp15","SubTmp16","SubTmp17","SubTmp18","SubTmp19","SubTmp20",
+      "SubTmp21","SubTmp22","SubTmp23","SubTmp24","SubTmp25","SubTmp26","SubTmp27","SubTmp28","SubTmp29","SubTmp30",
+      "SubTmp31","SubTmp32","SubTmp33","SubTmp34","SubTmp35","SubTmp36","SubTmp37","SubTmp38","SubTmp39","SubTmp40",
+      "SubTmp41","SubTmp42","SubTmp43","SubTmp44","SubTmp45","SubTmp46","SubTmp47","SubTmp48","SubTmp49","SubTmp50",
+      "SubTmp51","SubTmp52","SubTmp53","SubTmp54","SubTmp55","SubTmp56","SubTmp57","SubTmp58","SubTmp59","SubTmp60",
+      "SubTmp61","SubTmp62","SubTmp63","SubTmp64","SubTmp65","SubTmp66","SubTmp67","SubTmp68","SubTmp69","SubTmp70",
+      "SubTmp71","SubTmp72","SubTmp73","SubTmp74")
+
+my.subs.tw2$class <- factor(my.subs.tw2$class, levels = class.ls)
+
 ```
 
 
@@ -132,7 +147,7 @@ my.subs<-my.subs.tw2
 #merge trawl mark data (make ure you have run "data_prep_trawlmarks.Rmd" first) Need to do this after summarising env var as there are too many NAs in trawl marks to get goo summaries
 trawlwide.cln<-trawlwide %>%
   group_by(SampID) %>%
-  summarise(TrawlmarkDens=max(`Trawl mark`))
+  dplyr::summarise(TrawlmarkDens=max(`Trawl mark`))
 
 
 my.subs<- my.subs %>%
@@ -177,7 +192,7 @@ Make table of metadata (parent groups, n sub groups at level 15, and n samples p
 #parent groups
 piv.meta.a<-my.subs %>%
   group_by(class)%>% # change to level you want to see groups at
-  summarise(across(c(2:15),mean)) %>%
+  dplyr::summarise(across(c(2:15),mean)) %>%
   t()%>%
   `colnames<-`(.[1, ])%>%
   .[-1, ]
@@ -185,7 +200,7 @@ piv.meta.a<-my.subs %>%
 # n lev 15 groups
 piv.meta.15<-my.subs %>%
   group_by(class)%>% # change to level you want to see groups at
-  summarise(nSubGpL15 = n_distinct(level15)) %>%
+  dplyr::summarise(nSubGpL15 = n_distinct(level15)) %>%
   t()%>%
   as.data.frame() %>%
   `colnames<-`(.[1, ])%>%
@@ -194,7 +209,7 @@ piv.meta.15<-my.subs %>%
 # # n samples
 # piv.meta.g<-my.subs %>%
 #   group_by(class)%>% # change to level you want to see groups at
-#   summarise(nSamp=n_distinct(SampID)) %>%
+#   dplyr::summarise(nSamp=n_distinct(SampID)) %>%
 #   t()%>%
 #   as.data.frame() %>%
 #   `colnames<-`(.[1, ])%>%
@@ -204,7 +219,7 @@ piv.meta.15<-my.subs %>%
 # n samples
 piv.meta.g<-my.subs %>%
   group_by(class)%>% # change to level you want to see groups at
-  summarise(nSamp=n_distinct(SampID),
+  dplyr::summarise(nSamp=n_distinct(SampID),
             trawlm_Max=max(TrawlmarkDens)) %>%
   t()%>%
   as.data.frame() %>%
@@ -223,7 +238,7 @@ Make tables of average psuedospp per class/proportion of obs per class/max pseud
 ```{r}
 piv.av<-my.subs %>%
   group_by(class)%>% # change to level you want to see groups at
-  summarise(across(c(17:343),mean)) %>%
+  dplyr::summarise(across(c(17:343),mean)) %>%
   t()%>%
   `colnames<-`(.[1, ])%>%
   .[-1, ] %>%
@@ -249,7 +264,7 @@ i.e. proportion of n spp obs (non zero pseudospp)/n samples per group
 ```{r}
 piv.n<-my.subs %>%
   group_by(class)%>% # change to level you want to see groups at
-  summarise(across(c(17:343),nnzero)) %>%
+  dplyr::summarise(across(c(17:343),nnzero)) %>%
   t()%>%
   as.data.frame() %>%
   `colnames<-`(.[1, ])%>%
@@ -269,7 +284,7 @@ Make table of maximum pseudospp per group
 ```{r}
 piv.mx<-my.subs %>%
   group_by(class)%>% # change to level you want to see groups at
-  summarise(across(c(17:343),max)) %>%
+  dplyr::summarise(across(c(17:343),max)) %>%
   t()%>%
   `colnames<-`(.[1, ])%>%
   .[-1, ]
