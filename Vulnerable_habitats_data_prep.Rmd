@@ -14,6 +14,13 @@ library(dplyr)
 ### New approach
 VME presence/absence or quality is dervied from the classified samples, which in turn is largely based on the twinspan classification with some manual tweaks.
 
+## Build a response variable
+```{r}
+vme="pB8" # so far this is a mockup suing provisional biotopes!
+resp <- sheet1 %>%
+  mutate(vme = case_when(Biotope_class=vme))
+```
+
 ### Old approach
 VMEness is determined from abundances of VME indicators
 ## Read data
