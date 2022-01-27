@@ -3,9 +3,9 @@ title: "Vulnerable habitats"
 output: html_notebook
 ---
 
-Trying a new approach in order to align VME models with generic biotope models better. Inputs required: the classified samples, as well as the species matrix and the environmental matrix.
+Trying a new approach in order to better align VME models with generic biotope models.  Inputs required: the classified samples, as well as the species matrix and the environmental matrix.
 
-## Libraries
+# Libraries
 ```{r}
 library(readxl)
 library(dplyr)
@@ -13,10 +13,12 @@ library(party)
 library(partykit)
 library(ggparty)
 library(rpart)
+
+library(rpartScore)
 ```
 
 # New approach
-VME presence/absence or quality is dervied from the classified samples, which in turn is largely based on the twinspan classification with some manual tweaks.
+VME presence/absence (or quality) is derived from the classified samples, so that it is ultimately based on the agreed upon biotope classification.
 
 ## Build a response variable
 Take the classified samples and pick a habitat of interest. Recode data
