@@ -164,15 +164,14 @@ my.subs.tw2.merges$class<-gsub('SubTmp61$','SubTmpMrgH',my.subs.tw2.merges$class
 my.subs.tw2.merges$class<-as.factor(my.subs.tw2.merges$class)
 
 
-classMerge.ls<-c("SubTmp1","SubTmp2","SubTmp3","SubTmp4","SubTmp5","SubTmp6","SubTmp7","SubTmp8","SubTmp9","SubTmp10",
-      "SubTmp11","SubTmp12","SubTmp13","SubTmp14","SubTmp15","SubTmp16","SubTmp17","SubTmp18","SubTmp19","SubTmp20",
-      "SubTmp21","SubTmp22","SubTmp23","SubTmp24","SubTmp25","SubTmp26","SubTmp27","SubTmp28","SubTmp29","SubTmp30",
-      "SubTmp31","SubTmp32","SubTmp33","SubTmp34","SubTmp35","SubTmp36","SubTmp37","SubTmp38","SubTmp39","SubTmp40",
-      "SubTmp41","SubTmp42","SubTmp43","SubTmp44","SubTmp45","SubTmp46","SubTmp47","SubTmp48","SubTmp49","SubTmp50",
-      "SubTmp51","SubTmp52","SubTmp53","SubTmp54","SubTmp55","SubTmp56","SubTmp57","SubTmp58","SubTmp59","SubTmp60",
-      "SubTmp61","SubTmp62","SubTmp63","SubTmp64","SubTmp65","SubTmp66","SubTmp67","SubTmp68","SubTmp69","SubTmp70",
-      "SubTmp71","SubTmp72","SubTmp73","SubTmp74",
-      "SubTmpMrgA","SubTmpMrgB","SubTmpMrgC","SubTmpMrgD","SubTmpMrgE","SubTmpMrgF","SubTmpMrgG","SubTmpMrgH")
+classMerge.ls<-c("SubTmpMrgA","SubTmp2","SubTmp3","SubTmp4","SubTmp5","SubTmp6","SubTmp7","SubTmp8","SubTmp9","SubTmp10",
+      "SubTmp11","SubTmp12","SubTmp13","SubTmp14","SubTmp15",            "SubTmp17","SubTmp18","SubTmp19","SubTmp20",
+      "SubTmp21","SubTmp22","SubTmp23","SubTmpMrgB","SubTmp25","SubTmp26","SubTmp27","SubTmp28","SubTmp29",
+      "SubTmpMrgC","SubTmpMrgD","SubTmp34","SubTmp35","SubTmp36","SubTmp37","SubTmp38","SubTmp39","SubTmp40",
+                  "SubTmpMrgE",          "SubTmp44",           "SubTmp46","SubTmp47","SubTmpMrgF","SubTmp49",
+      "SubTmp51","SubTmp52","SubTmp53","SubTmpMrgG","SubTmpMrgH",         "SubTmp57","SubTmp58","SubTmp59",
+                 "SubTmp62","SubTmp63","SubTmp64","SubTmp65","SubTmp66","SubTmp67",             "SubTmp69","SubTmp70",
+      "SubTmp71","SubTmp72","SubTmp73")
 
 my.subs.tw2.merges$class <- factor(my.subs.tw2.merges$class, levels = classMerge.ls)
 levels(my.subs.tw2.merges$class)
