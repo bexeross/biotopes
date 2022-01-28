@@ -44,8 +44,8 @@ likely identified from the heatmap analysis. These will be labelled from 1 (left
 n<-74
 
 # Make reclassification table
-reclassify <- data.frame(level=c(4,6,6,6,6,7,7,7,8,8,7,9,9,8,8,10,10,9,8,9,9,7,7,6,6,7,7,9,9,9,9,8,9,9,6,5,7,9,9,9,9,7,8,8,8,10,12,12,11,9,8,8,8,8,9,9,8,7,9,9,9,9,8,9,8,9,9,8,7,7,6,4,2,2),
-                         class=c(16,68,69,70,71,144,145,146,294,295,148,596,597,299,300,1204,1205,603,302,606,607,152,153,77,78,158,159,640,641,642,643,322,646,647,81,41,168,676,677,678,679,170,342,343,344,1380,5524,5525,2763,691,346,347,349,348,700,701,351,176,708,709,710,711,356,714,357,716,717,359,180,181,91,23,6,7),
+reclassify <- data.frame(level=c(4,6,6,6,6,7,7,7,8,8,7,9,9,8,8,10,10,9,8,9,9,7,7,6,6,7,7,9,9,9,9,8,9,9,6,5,7,9,9,9,9,7,8,8,8,10,12,12,11,9,8,8,8,8,9,9,8,7,9,9,9,9,8,9,9,9,9,8,7,7,6,4,2,2),
+                         class=c(16,68,69,70,71,144,145,146,294,295,148,596,597,299,300,1204,1205,603,302,606,607,152,153,77,78,158,159,640,641,642,643,322,646,647,81,41,168,676,677,678,679,170,342,343,344,1380,5524,5525,2763,691,346,347,349,348,700,701,351,176,708,709,710,711,356,714,715,716,717,359,180,181,91,23,6,7),
                          new_class=sprintf("SubTmp%s",seq(1:n)))
 
 
@@ -130,6 +130,57 @@ my.subs.tw2$class <- factor(my.subs.tw2$class, levels = class.ls)
 ```
 
 
+----------------------
+
+
+# IF YOU ARE DOING A RECLASSIFICATION MERGE
+
+```{r}
+#SubTmp
+
+my.subs.tw2.merges<-my.subs.tw2
+
+my.subs.tw2.merges$class<-gsub('SubTmp1$','SubTmpMrgA',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp16$','SubTmpMrgA',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp30$','SubTmpMrgA',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp24$','SubTmpMrgB',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp74$','SubTmpMrgB',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp31$','SubTmpMrgC',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp41$','SubTmpMrgC',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp32$','SubTmpMrgD',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp33$','SubTmpMrgD',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp42$','SubTmpMrgE',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp43$','SubTmpMrgE',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp45$','SubTmpMrgE',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp50$','SubTmpMrgE',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp48$','SubTmpMrgF',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp56$','SubTmpMrgF',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp54$','SubTmpMrgG',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp68$','SubTmpMrgG',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp55$','SubTmpMrgH',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp60$','SubTmpMrgH',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp61$','SubTmpMrgH',my.subs.tw2.merges$class,perl =T)
+
+my.subs.tw2.merges$class<-as.factor(my.subs.tw2.merges$class)
+
+
+classMerge.ls<-c("SubTmp1","SubTmp2","SubTmp3","SubTmp4","SubTmp5","SubTmp6","SubTmp7","SubTmp8","SubTmp9","SubTmp10",
+      "SubTmp11","SubTmp12","SubTmp13","SubTmp14","SubTmp15","SubTmp16","SubTmp17","SubTmp18","SubTmp19","SubTmp20",
+      "SubTmp21","SubTmp22","SubTmp23","SubTmp24","SubTmp25","SubTmp26","SubTmp27","SubTmp28","SubTmp29","SubTmp30",
+      "SubTmp31","SubTmp32","SubTmp33","SubTmp34","SubTmp35","SubTmp36","SubTmp37","SubTmp38","SubTmp39","SubTmp40",
+      "SubTmp41","SubTmp42","SubTmp43","SubTmp44","SubTmp45","SubTmp46","SubTmp47","SubTmp48","SubTmp49","SubTmp50",
+      "SubTmp51","SubTmp52","SubTmp53","SubTmp54","SubTmp55","SubTmp56","SubTmp57","SubTmp58","SubTmp59","SubTmp60",
+      "SubTmp61","SubTmp62","SubTmp63","SubTmp64","SubTmp65","SubTmp66","SubTmp67","SubTmp68","SubTmp69","SubTmp70",
+      "SubTmp71","SubTmp72","SubTmp73","SubTmp74",
+      "SubTmpMrgA","SubTmpMrgB","SubTmpMrgC","SubTmpMrgD","SubTmpMrgE","SubTmpMrgF","SubTmpMrgG","SubTmpMrgH")
+
+my.subs.tw2.merges$class <- factor(my.subs.tw2.merges$class, levels = classMerge.ls)
+levels(my.subs.tw2.merges$class)
+
+my.subs<-my.subs.tw2.merges
+```
+
+----------------------
 
 
 
@@ -139,7 +190,7 @@ You have already done the steps above and just need to slot in the object you ma
 my.subs<-my.subs.tw2
 ```
 
-
+-----------------------
 
 
 # Add trawl data
@@ -166,7 +217,7 @@ my.shp <- SpatialPointsDataFrame(coords = cbind(sample_info$x_coord[match(my.sub
                                  proj4string = CRS("+init=epsg:32633"),
                                  data = my.subs)
 
-writeOGR(my.shp, dsn = file.path(outPath, "Spatial"), "Mega_SubTMPclass_shape_big", driver = "ESRI Shapefile", overwrite_layer = TRUE)
+writeOGR(my.shp, dsn = file.path(outPath, "Spatial"), "Mega_SubTMPMrg_class_shape_big", driver = "ESRI Shapefile", overwrite_layer = TRUE)
 
 
 #smaller shp
@@ -177,7 +228,7 @@ my.shp.s <- SpatialPointsDataFrame(coords = cbind(sample_info$x_coord[match(my.s
                                  proj4string = CRS("+init=epsg:32633"),
                                  data = my.subs.small)
 
-writeOGR(my.shp.s, dsn = file.path(outPath, "Spatial"), "Mega_SubTMPclass_shape_small", driver = "ESRI Shapefile", overwrite_layer = TRUE)
+writeOGR(my.shp.s, dsn = file.path(outPath, "Spatial"), "Mega_SubTMPMrg_class_shape_small", driver = "ESRI Shapefile", overwrite_layer = TRUE)
 
 ```
 
@@ -339,14 +390,14 @@ out.piv.short<-rbind(values2, short.sum)
 #           file = file.path(outPath, ("V6_prop_obs.csv"))) #change label
 
 write.csv(out.piv, 
-          file = file.path(outPath, ("Mega_SubTMPgroups_av_proportion_max.csv"))) #change label
+          file = file.path(outPath, ("Mega_SubTMPMrg_groups_av_proportion_max.csv"))) #change label
 
 write.csv(out.piv.short, 
-          file = file.path(outPath, ("Mega_SubTMPgroups_avGT1_propGT50pc.csv"))) #change label
+          file = file.path(outPath, ("Mega_SubTMPMrg_groups_avGT1_propGT50pc.csv"))) #change label
 
 
 write.csv(piv.meta, 
-          file = file.path(outPath, ("Mega_SubTMPgroups_metadata.csv"))) #change label
+          file = file.path(outPath, ("Mega_SubTMPMrg_groups_metadata.csv"))) #change label
 
 ```
 
