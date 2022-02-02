@@ -51,18 +51,18 @@ sheet1 <- sheet1 %>%
 ## Predict class for excluded samples
 Also, make a lookup table to pull our label
 ```{r}
-new.data <- left_join(excl.samp,trimmedwide)
-new.data <- new.data %>%
-  select(-colnames(excl.samp)[-1]) %>%
-  filter(!is.na(aplysillasulfurea)) # just using first species (if that is NA, all are NA)
+# new.data <- left_join(excl.samp,trimmedwide)
+# new.data <- new.data %>%
+#   select(-colnames(excl.samp)[-1]) %>%
+#   filter(!is.na(aplysillasulfurea)) # just using first species (if that is NA, all are NA)
 
-level15<-predict(tw_1, new.data)
-group.df<-as.data.frame(level15)
+# level15<-predict(tw_1, new.data)
+# group.df<-as.data.frame(level15)
 
-new.data.gp<-cbind(new.data$SampID, group.df)
-colnames(new.data.gp)[1]<-"SampID"
+# new.data.gp<-cbind(new.data$SampID, group.df)
+# colnames(new.data.gp)[1]<-"SampID"
 
-rec <- samp.clss %>% group_by(level15) %>% summarize(class = first(class))
+# rec <- samp.clss %>% group_by(level15) %>% summarize(class = first(class))
 ```
 
 ## Add biotope class data to sheet 1
