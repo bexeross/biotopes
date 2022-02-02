@@ -7,7 +7,7 @@ output: html_notebook
 ```{r}
 library(dplyr)
 library(RPostgreSQL)
-library(twinspan)
+#library(twinspan)
 ```
 
 ## Create table
