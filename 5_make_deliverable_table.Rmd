@@ -67,6 +67,8 @@ Also, make a lookup table to pull our label
 
 ## Add biotope class data to sheet 1
 ```{r}
+samp.class <- my.subs.small
+
 sheet1 <- sheet1 %>%
   mutate(Biotope_class=case_when(
     SampleNr %in% row.names(coredata)~ samp.clss$class[match(SampleNr,samp.clss$SampID)],
