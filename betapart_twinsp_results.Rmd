@@ -70,10 +70,11 @@ unions<-pair.sums.beta.out.labelled %>%
 
 #make match shape of beta.share (add P1 column and P25 row both filled with NA)
 unions<-unions %>%
-  mutate(P1=NA)%>%
-  select(P1, everything())%>%
+  mutate(SubTmpMrgA=NA)%>%              ##### MAKE SURE HAS CORRECT NAME
+  select(SubTmpMrgA, everything())%>%   ##### MAKE SURE HAS CORRECT NAME
   add_row()%>%
-  `rownames<-`(class.ls)
+#  `rownames<-`(class.ls)
+  `rownames<-`(classMerge.ls)           ##### MAKE SURE HAS CORRECT LIST
 
 
 
@@ -101,6 +102,6 @@ beta.share.out<-round_df(beta.share.out, 2)
 ## write to csv
 ```{r}
 write.csv(beta.share.out, 
-          file = file.path(outPath, ("64classes_beta_sharePropOfUnion_TOPCOPY.csv"))) #change label
+          file = file.path(outPath, ("SubTmpMrg_beta_sharePropOfUnion_TOPCOPY.csv"))) #change label
 ```
 

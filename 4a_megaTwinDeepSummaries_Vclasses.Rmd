@@ -4,7 +4,7 @@ output: html_notebook
 ---
 USE WITH PROVISIONAL CLASS ALLOCATIONS
 
-As even splitting into smaller twintables can result in some being too big to digest, we want to try and summarise groups at different levels for their average pseudospp., n, max pseudospp? to be better able to compare sub-branches.
+As even splitting into smaller twintables can result in some being too big to digest, we want to try and dplyr::summarise groups at different levels for their average pseudospp., n, max pseudospp? to be better able to compare sub-branches.
 
 #NB
 If you came from NEWDATA_4_compareNew2Old_twinspan.RMD then you have already done the first few steps and just need to slot in the object you made in that script around line 80 (search for title "If you came from NEWDATA_4_compareNew2Old_twinspan.RMD" to find your starting point.)
@@ -30,19 +30,32 @@ likely identified from the heatmap analysis. These will be labelled from 1 (left
 #                          new_class=sprintf("V%s",seq(1:n)))
 
 
-#Pål classes
-n<-26
+# #Pål classes
+# n<-26
+# 
+# # Make reclassification table
+# reclassify <- data.frame(level=c(6,6,5,4,7,7,6,7,8,8,6,5,5,4,5,6,6,6,6,7,7,5,6,6,1,6),
+#                          class=c(71,70,34,16,147,146,72,148,298,299,75,38,39,23,45,89,88,81,80,164,165,43,84,85,3,83),
+#                          new_class=sprintf("P%s",seq(1:n)))
+
+
+#SubTmp
+
+n<-74
 
 # Make reclassification table
-reclassify <- data.frame(level=c(6,6,5,4,7,7,6,7,8,8,6,5,5,4,5,6,6,6,6,7,7,5,6,6,1,6),
-                         class=c(71,70,34,16,147,146,72,148,298,299,75,38,39,23,45,89,88,81,80,164,165,43,84,85,3,83),
-                         new_class=sprintf("P%s",seq(1:n)))
+reclassify <- data.frame(level=c(4,6,6,6,6,7,7,7,8,8,7,9,9,8,8,10,10,9,8,9,9,7,7,6,6,7,7,9,9,9,9,8,9,9,6,5,7,9,9,9,9,7,8,8,8,10,12,12,11,9,8,8,8,8,9,9,8,7,9,9,9,9,8,9,9,9,9,8,7,7,6,4,2,2),
+                         class=c(16,68,69,70,71,144,145,146,294,295,148,596,597,299,300,1204,1205,603,302,606,607,152,153,77,78,158,159,640,641,642,643,322,646,647,81,41,168,676,677,678,679,170,342,343,344,1380,5524,5525,2763,691,346,347,349,348,700,701,351,176,708,709,710,711,356,714,715,716,717,359,180,181,91,23,6,7),
+                         new_class=sprintf("SubTmp%s",seq(1:n)))
 
 
 
 
 ```
 
+
+#CONTINUE HERE IF CLASSIFYING FOR FIRST TIME 
+Else skip down to # SECONDARY CLASSIFICATIONS
 
 # matrix
 we need the twintable matrix to work with, which we can get with twin2mat and this needs to be merged with res
@@ -81,14 +94,102 @@ my.subs<-res.mat
 
 ```
 
+# SECONDARY CLASSIFICATIONS
+
+```{r}
+res.mat.tw2.cl2<-left_join(res.tw2, tw_2.df)
+res.matREF.tw2.cl2<-res.mat.tw2.cl2
+
+rownames(res.mat.tw2.cl2) <- res.mat.tw2.cl2[,1]
+  
+  
+  
+
+for(i in 1:n){
+  res.mat.tw2.cl2[getsamplesingrp(res.matREF.tw2.cl2,reclassify$level[i],reclassify$class[i]),"class"]<-as.character(reclassify$new_class[i])
+}
+
+table(res.mat.tw2.cl2$class)
+
+my.subs.tw2<-res.mat.tw2.cl2
+
+
+
+
+class.ls<-c("SubTmp1","SubTmp2","SubTmp3","SubTmp4","SubTmp5","SubTmp6","SubTmp7","SubTmp8","SubTmp9","SubTmp10",
+      "SubTmp11","SubTmp12","SubTmp13","SubTmp14","SubTmp15","SubTmp16","SubTmp17","SubTmp18","SubTmp19","SubTmp20",
+      "SubTmp21","SubTmp22","SubTmp23","SubTmp24","SubTmp25","SubTmp26","SubTmp27","SubTmp28","SubTmp29","SubTmp30",
+      "SubTmp31","SubTmp32","SubTmp33","SubTmp34","SubTmp35","SubTmp36","SubTmp37","SubTmp38","SubTmp39","SubTmp40",
+      "SubTmp41","SubTmp42","SubTmp43","SubTmp44","SubTmp45","SubTmp46","SubTmp47","SubTmp48","SubTmp49","SubTmp50",
+      "SubTmp51","SubTmp52","SubTmp53","SubTmp54","SubTmp55","SubTmp56","SubTmp57","SubTmp58","SubTmp59","SubTmp60",
+      "SubTmp61","SubTmp62","SubTmp63","SubTmp64","SubTmp65","SubTmp66","SubTmp67","SubTmp68","SubTmp69","SubTmp70",
+      "SubTmp71","SubTmp72","SubTmp73","SubTmp74")
+
+my.subs.tw2$class <- factor(my.subs.tw2$class, levels = class.ls)
+
+```
+
+
+----------------------
+
+
+# IF YOU ARE DOING A RECLASSIFICATION MERGE
+
+```{r}
+#SubTmp
+
+my.subs.tw2.merges<-my.subs.tw2
+
+my.subs.tw2.merges$class<-gsub('SubTmp1$','SubTmpMrgA',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp16$','SubTmpMrgA',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp30$','SubTmpMrgA',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp24$','SubTmpMrgB',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp74$','SubTmpMrgB',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp31$','SubTmpMrgC',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp41$','SubTmpMrgC',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp32$','SubTmpMrgD',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp33$','SubTmpMrgD',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp42$','SubTmpMrgE',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp43$','SubTmpMrgE',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp45$','SubTmpMrgE',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp50$','SubTmpMrgE',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp48$','SubTmpMrgF',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp56$','SubTmpMrgF',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp54$','SubTmpMrgG',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp68$','SubTmpMrgG',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp55$','SubTmpMrgH',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp60$','SubTmpMrgH',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp61$','SubTmpMrgH',my.subs.tw2.merges$class,perl =T)
+
+my.subs.tw2.merges$class<-as.factor(my.subs.tw2.merges$class)
+
+
+classMerge.ls<-c("SubTmpMrgA","SubTmp2","SubTmp3","SubTmp4","SubTmp5","SubTmp6","SubTmp7","SubTmp8","SubTmp9","SubTmp10",
+      "SubTmp11","SubTmp12","SubTmp13","SubTmp14","SubTmp15",            "SubTmp17","SubTmp18","SubTmp19","SubTmp20",
+      "SubTmp21","SubTmp22","SubTmp23","SubTmpMrgB","SubTmp25","SubTmp26","SubTmp27","SubTmp28","SubTmp29",
+      "SubTmpMrgC","SubTmpMrgD","SubTmp34","SubTmp35","SubTmp36","SubTmp37","SubTmp38","SubTmp39","SubTmp40",
+                  "SubTmpMrgE",          "SubTmp44",           "SubTmp46","SubTmp47","SubTmpMrgF","SubTmp49",
+      "SubTmp51","SubTmp52","SubTmp53","SubTmpMrgG","SubTmpMrgH",         "SubTmp57","SubTmp58","SubTmp59",
+                 "SubTmp62","SubTmp63","SubTmp64","SubTmp65","SubTmp66","SubTmp67",             "SubTmp69","SubTmp70",
+      "SubTmp71","SubTmp72","SubTmp73")
+
+my.subs.tw2.merges$class <- factor(my.subs.tw2.merges$class, levels = classMerge.ls)
+levels(my.subs.tw2.merges$class)
+
+my.subs<-my.subs.tw2.merges
+```
+
+----------------------
+
+
+
 # IF YOU CAME FROM NEWDATA_4_compareNew2Old_twinspan.RMD
 You have already done the steps above and just need to slot in the object you made in that script
 ```{r}
 my.subs<-my.subs.tw2
 ```
 
-
-
+-----------------------
 
 
 # Add trawl data
@@ -96,7 +197,7 @@ my.subs<-my.subs.tw2
 #merge trawl mark data (make ure you have run "data_prep_trawlmarks.Rmd" first) Need to do this after summarising env var as there are too many NAs in trawl marks to get goo summaries
 trawlwide.cln<-trawlwide %>%
   group_by(SampID) %>%
-  summarise(TrawlmarkDens=max(`Trawl mark`))
+  dplyr::summarise(TrawlmarkDens=max(`Trawl mark`))
 
 
 my.subs<- my.subs %>%
@@ -115,7 +216,7 @@ my.shp <- SpatialPointsDataFrame(coords = cbind(sample_info$x_coord[match(my.sub
                                  proj4string = CRS("+init=epsg:32633"),
                                  data = my.subs)
 
-writeOGR(my.shp, dsn = file.path(outPath, "Spatial"), "Mega_TMPclass_shape_big", driver = "ESRI Shapefile", overwrite_layer = TRUE)
+writeOGR(my.shp, dsn = file.path(outPath, "Spatial"), "Mega_SubTMPMrg_class_shape_big", driver = "ESRI Shapefile", overwrite_layer = TRUE)
 
 
 #smaller shp
@@ -126,7 +227,7 @@ my.shp.s <- SpatialPointsDataFrame(coords = cbind(sample_info$x_coord[match(my.s
                                  proj4string = CRS("+init=epsg:32633"),
                                  data = my.subs.small)
 
-writeOGR(my.shp.s, dsn = file.path(outPath, "Spatial"), "Mega_TMPclass_shape_small", driver = "ESRI Shapefile", overwrite_layer = TRUE)
+writeOGR(my.shp.s, dsn = file.path(outPath, "Spatial"), "Mega_SubTMPMrg_class_shape_small", driver = "ESRI Shapefile", overwrite_layer = TRUE)
 
 ```
 
@@ -141,7 +242,7 @@ Make table of metadata (parent groups, n sub groups at level 15, and n samples p
 #parent groups
 piv.meta.a<-my.subs %>%
   group_by(class)%>% # change to level you want to see groups at
-  summarise(across(c(2:15),mean)) %>%
+  dplyr::summarise(across(c(2:15),mean)) %>%
   t()%>%
   `colnames<-`(.[1, ])%>%
   .[-1, ]
@@ -149,7 +250,7 @@ piv.meta.a<-my.subs %>%
 # n lev 15 groups
 piv.meta.15<-my.subs %>%
   group_by(class)%>% # change to level you want to see groups at
-  summarise(nSubGpL15 = n_distinct(level15)) %>%
+  dplyr::summarise(nSubGpL15 = n_distinct(level15)) %>%
   t()%>%
   as.data.frame() %>%
   `colnames<-`(.[1, ])%>%
@@ -158,7 +259,7 @@ piv.meta.15<-my.subs %>%
 # # n samples
 # piv.meta.g<-my.subs %>%
 #   group_by(class)%>% # change to level you want to see groups at
-#   summarise(nSamp=n_distinct(SampID)) %>%
+#   dplyr::summarise(nSamp=n_distinct(SampID)) %>%
 #   t()%>%
 #   as.data.frame() %>%
 #   `colnames<-`(.[1, ])%>%
@@ -168,7 +269,7 @@ piv.meta.15<-my.subs %>%
 # n samples
 piv.meta.g<-my.subs %>%
   group_by(class)%>% # change to level you want to see groups at
-  summarise(nSamp=n_distinct(SampID),
+  dplyr::summarise(nSamp=n_distinct(SampID),
             trawlm_Max=max(TrawlmarkDens)) %>%
   t()%>%
   as.data.frame() %>%
@@ -187,7 +288,7 @@ Make tables of average psuedospp per class/proportion of obs per class/max pseud
 ```{r}
 piv.av<-my.subs %>%
   group_by(class)%>% # change to level you want to see groups at
-  summarise(across(c(17:343),mean)) %>%
+  dplyr::summarise(across(c(17:343),mean)) %>%
   t()%>%
   `colnames<-`(.[1, ])%>%
   .[-1, ] %>%
@@ -213,7 +314,7 @@ i.e. proportion of n spp obs (non zero pseudospp)/n samples per group
 ```{r}
 piv.n<-my.subs %>%
   group_by(class)%>% # change to level you want to see groups at
-  summarise(across(c(17:343),nnzero)) %>%
+  dplyr::summarise(across(c(17:343),nnzero)) %>%
   t()%>%
   as.data.frame() %>%
   `colnames<-`(.[1, ])%>%
@@ -233,7 +334,7 @@ Make table of maximum pseudospp per group
 ```{r}
 piv.mx<-my.subs %>%
   group_by(class)%>% # change to level you want to see groups at
-  summarise(across(c(17:343),max)) %>%
+  dplyr::summarise(across(c(17:343),max)) %>%
   t()%>%
   `colnames<-`(.[1, ])%>%
   .[-1, ]
@@ -288,14 +389,14 @@ out.piv.short<-rbind(values2, short.sum)
 #           file = file.path(outPath, ("V6_prop_obs.csv"))) #change label
 
 write.csv(out.piv, 
-          file = file.path(outPath, ("Mega_TMPgroups_av_proportion_max.csv"))) #change label
+          file = file.path(outPath, ("Mega_SubTMPMrg_groups_av_proportion_max.csv"))) #change label
 
 write.csv(out.piv.short, 
-          file = file.path(outPath, ("Mega_TMPgroups_avGT1_propGT50pc.csv"))) #change label
+          file = file.path(outPath, ("Mega_SubTMPMrg_groups_avGT1_propGT50pc.csv"))) #change label
 
 
 write.csv(piv.meta, 
-          file = file.path(outPath, ("Mega_TMPgroups_metadata.csv"))) #change label
+          file = file.path(outPath, ("Mega_SubTMPMrg_groups_metadata.csv"))) #change label
 
 ```
 
