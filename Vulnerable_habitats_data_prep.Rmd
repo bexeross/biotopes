@@ -37,7 +37,7 @@ Will do this using a Classification Tree
 
 ### set up the model formula
 ```{r}
-# the question I want to ask is: can the species abundances predict our VME assignations? and further, will the "official" vme indicators come up as good predictors of this?
+# the question I want to ask is: can the species abundances predict our VME assignations? and further, what are the implicit abundance thresholds used?
 species_explain <- paste(colnames(coredata), collapse="+") 
 fmla <- as.formula(paste("vme", species_explain,sep="~"))
 fmla
