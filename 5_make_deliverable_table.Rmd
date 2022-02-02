@@ -75,11 +75,11 @@ sheet1 <- sheet1 %>%
     #SampleNr %in% new.data$SampID ~ rec$class[match(new.data.gp$level15[match(SampleNr,new.data.gp$SampID)],rec$level15)]
   ))
 
-sheet1 <- sheet1 %>%
-  mutate(PredictedYN=case_when(
-    SampleNr %in% row.names(coredata)~ "N",
-    SampleNr %in% new.data$SampID ~ "Y"
-  ))
+#sheet1 <- sheet1 %>%
+#  mutate(PredictedYN=case_when(
+#    SampleNr %in% row.names(coredata)~ "N",
+#    SampleNr %in% new.data$SampID ~ "Y"
+#  ))
 ```
 
 ## Export
