@@ -113,5 +113,7 @@ grab <- trimmedwide %>%
   ungroup() %>%
   mutate(resp=select(.,with(habdef, indicators[class == vme]))%>% rowSums(na.rm = TRUE)) %>%
   select(SampID,resp)
+
+resp <- left_join(Dummy, grab)
 ```
 
