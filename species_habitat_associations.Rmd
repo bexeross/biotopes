@@ -1,0 +1,10 @@
+---
+title: "Quantify species-habitat associations"
+output: html_notebook
+---
+
+Here I would like to quantify the strength of the association between every indicator species and every biotope
+```{r}
+library(shar)
+```
+
