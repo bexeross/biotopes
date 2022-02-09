@@ -85,27 +85,33 @@ ggparty(ap_species_tree_pruned) +
    geom_node_label(aes(label = class), ids = "terminal")
 ```
 
-# Old approach
-VMEness is determined from abundances of VME indicators
+# Hybrid between old approach and new
+VMEness is determined from abundances of VME indicators, but these are selected from their "association" with each biotope class 
 
 ## Read data
 ```{r}
 # species densities (trimmed)
-in.data.vh <- read.csv(file.path(outPath,"species_densities_trimmed.csv"))
+#in.data.vh <- read.csv(file.path(outPath,"species_densities_trimmed.csv"))
 # habitat definitions with list of qualifying taxa
-habdef <- read_xlsx(file.path(dataPath,"HabitatDefinitions.xlsx"))
+#habdef <- read_xlsx(file.path(dataPath,"HabitatDefinitions.xlsx")) # this is the old-old approach
+habdef <- read_xlsx(file.path(dataPath,"BiotopeClasses_VMEindicators.xlsx"))
+colnames(habdef) <- c("sort", "class", "include", "indicators")
+habdef
 ```
 
-## select habitat of interest
+## Build a response variable
+Take the classified samples and pick a habitat of interest. Extract relevant species. Sum over selected species
 ```{r}
-hab <- data.frame(number = c(1:9), name = unique(habdef$VH))
-hab
+vme = "6" # using SubTmp(Mrg) nomenclature
+
+Dummy <- my.subs.small %>%
+  mutate(dummy = case_when(class==paste("SubTmp",vme, sep = "")~1, 
+                         TRUE ~ 0))%>%
+  select(SampID, dummy)
+
+grab <- trimmedwide %>%
+  ungroup() %>%
+  mutate(resp=select(.,with(habdef, indicators[class == vme]))%>% rowSums(na.rm = TRUE)) %>%
+  select(SampID,resp)
 ```
 
-## Create dummy variable and populate
-```{r}
-h <- 2
-in.data.vh <- in.data.vh %>%
-  mutate(vh_dummy = case_when(new_name%in%pull(subset(habdef,habdef$VH==hab$name[h],2))~1))
-  
-```
