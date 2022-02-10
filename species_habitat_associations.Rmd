@@ -5,6 +5,35 @@ output: html_notebook
 
 Here I would like to quantify the strength of the association between every indicator species and every biotope
 ```{r}
+library(readxl)
 library(shar)
+library(spatstat.geom)
 ```
 
+## testing things out...
+```{r}
+indic <- read_xlsx(file.path(dataPath,"VMEindicators.xlsx"))
+sp <- "anthodichotoma" # can be put in a loop
+
+species1 <- trimmedwide %>%
+  select(sp)%>%
+  left_join(sample_info)%>%
+  select(SampID, sp, x_coord, y_coord)
+
+species1conv <-ppp(species1$x_coord, species1$y_coord, 
+                   window=owin(xrange=c(extent(landscape)[1],extent(landscape)[2]), yrange=c(extent(landscape)[3],extent(landscape)[4])),
+                   marks=species1)
+
+```
+
+## habitat associations
+I think I have to exclude the habitats not thoroughly sampled...
+```{r}
+landscape <- pred[[12]]
+significance_level <- 0.01
+
+results_habitat_association(pattern = fit_point_process(pattern = species1conv, process = "cluster", n_random = 99),
+                            raster = landscape,
+                            significance_level = significance_level)
+
+```
