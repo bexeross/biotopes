@@ -64,12 +64,9 @@ sp <- with(indic,species[VMEindicator=="Yes"])
 
 # I still need to set a min acceptable n_i and p_i!!!
 
-
 N <- trimmedwide %>%
   ungroup()%>%
-  mutate(landscape = land_ext)%>%
-  filter(landscape==levels(land_ext)[i])%>%
-  select(with(indic,species[VMEindicator=="Yes"]))%>% # sum abundances of all indicators
+  select(sp[n])%>% # sum abundances of indicator across habitats
   sum
 
 P <- dim(trimmedwide)[1]
