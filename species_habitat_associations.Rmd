@@ -71,7 +71,6 @@ N <- trimmedwide %>%
 
 P <- dim(trimmedwide)[1]
 
-
 res <- setNames(data.frame(matrix(ncol = length(sp), nrow = length(levels(land_ext)))), sp)
 
 for(n in 1:length(sp)){
