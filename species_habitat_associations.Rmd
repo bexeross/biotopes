@@ -23,7 +23,7 @@ species1 <- trimmedwide %>%
   select(sp)%>%
   left_join(sample_info)%>%
   select(SampID, sp, x_coord, y_coord)%>%
-  mutate(presence=decostand(aplysillasulfurea,method="pa"))%>%
+  mutate(presence=decostand(across(sp),method="pa"))%>%
   filter(presence==1)
 
 species1conv <-ppp(species1$x_coord, species1$y_coord, 
@@ -50,7 +50,10 @@ results_habitat_association(pattern = fit_point_process(pattern = species1conv, 
 ## Option 2: Relative Habitat Use
 https://doi.org/10.1016/j.ecolind.2021.108521
 ```{r}
+
 land_ext <- factor(raster::extract(landscape, my.shp.s))
+
+sp <- with(indic,species[VMEindicator=="Yes"])
 
 # for each species:
 # rhu = (n[i]/p[i])/((N-n[i])/(P-p[i]))
@@ -59,21 +62,8 @@ land_ext <- factor(raster::extract(landscape, my.shp.s))
 # N = total no. of individuals
 # P = total no. of sites
 
-i <- 1
+# I still need to set a min acceptable n_i and p_i!!!
 
-n_i <- trimmedwide %>%
-  ungroup()%>%
-  mutate(landscape = land_ext)%>%
-  filter(landscape==levels(land_ext)[i])%>%
-  select(sp)%>%
-  sum
-
-p_i <- trimmedwide %>%
-  ungroup()%>%
-  mutate(landscape = land_ext)%>%
-  filter(landscape==levels(land_ext)[i])%>%
-  dim(.)%>%
-  first
 
 N <- trimmedwide %>%
   ungroup()%>%
@@ -84,7 +74,27 @@ N <- trimmedwide %>%
 
 P <- dim(trimmedwide)[1]
 
-rhu = (n_i/p_i)/((N-n_i)/(P-p_i))
 
+res <- setNames(data.frame(matrix(ncol = length(sp), nrow = length(levels(land_ext)))), sp)
+
+for(n in 1:length(sp)){
+for(i in 1:length(levels(land_ext))){
+n_i <- trimmedwide %>%
+  ungroup()%>%
+  mutate(landscape = land_ext)%>%
+  filter(landscape==levels(land_ext)[i])%>%
+  select(sp[n])%>%
+  sum
+p_i <- trimmedwide %>%
+  ungroup()%>%
+  mutate(landscape = land_ext)%>%
+  filter(landscape==levels(land_ext)[i])%>%
+  dim(.)%>%
+  first
+rhu = (n_i/p_i)/((N-n_i)/(P-p_i))
+res[i,n]<-rhu
+}
+}
+res
 ```
 
