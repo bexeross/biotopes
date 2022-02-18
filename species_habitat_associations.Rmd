@@ -8,28 +8,37 @@ Here I would like to quantify the strength of the association between every indi
 library(readxl)
 library(shar)
 library(spatstat.geom)
+library(vegan)
 ```
 
 ## testing things out...
 ```{r}
 indic <- read_xlsx(file.path(dataPath,"VMEindicators.xlsx"))
-sp <- "anthodichotoma" # can be put in a loop
+
+landscape <- pred[[12]]
+
+sp <- "aplysillasulfurea" # can be put in a loop
 
 species1 <- trimmedwide %>%
   select(sp)%>%
   left_join(sample_info)%>%
-  select(SampID, sp, x_coord, y_coord)
+  select(SampID, sp, x_coord, y_coord)%>%
+  mutate(presence=decostand(aplysillasulfurea,method="pa"))%>%
+  filter(presence==1)
 
 species1conv <-ppp(species1$x_coord, species1$y_coord, 
                    window=owin(xrange=c(extent(landscape)[1],extent(landscape)[2]), yrange=c(extent(landscape)[3],extent(landscape)[4])),
-                   marks=species1)
+                   marks=data.frame(presence = as.character(species1$presence))
+                   )
+
+marks(species1conv)<-data.frame(marks(species1conv))
 
 ```
 
 ## habitat associations
-I think I have to exclude the habitats not thoroughly sampled...
+I think I have to exclude the habitats not thoroughly sampled... Actually, the proble is (I think) that it's using all points as presences because it's ignoring the densities! Need to convert to presence/absence... Actually, I need to subset the dataset and use only the presence points.
 ```{r}
-landscape <- pred[[12]]
+
 significance_level <- 0.01
 
 results_habitat_association(pattern = fit_point_process(pattern = species1conv, process = "cluster", n_random = 99),
@@ -37,3 +46,45 @@ results_habitat_association(pattern = fit_point_process(pattern = species1conv, 
                             significance_level = significance_level)
 
 ```
+
+## Option 2: Relative Habitat Use
+https://doi.org/10.1016/j.ecolind.2021.108521
+```{r}
+land_ext <- factor(raster::extract(landscape, my.shp.s))
+
+# for each species:
+# rhu = (n[i]/p[i])/((N-n[i])/(P-p[i]))
+# n[i] = no. of individuals in habitat[i]. Would have to use sum of abundance
+# p[i] = no. of sites in habitat[i]
+# N = total no. of individuals
+# P = total no. of sites
+
+i <- 1
+
+n_i <- trimmedwide %>%
+  ungroup()%>%
+  mutate(landscape = land_ext)%>%
+  filter(landscape==levels(land_ext)[i])%>%
+  select(sp)%>%
+  sum
+
+p_i <- trimmedwide %>%
+  ungroup()%>%
+  mutate(landscape = land_ext)%>%
+  filter(landscape==levels(land_ext)[i])%>%
+  dim(.)%>%
+  first
+
+N <- trimmedwide %>%
+  ungroup()%>%
+  mutate(landscape = land_ext)%>%
+  filter(landscape==levels(land_ext)[i])%>%
+  select(with(indic,species[VMEindicator=="Yes"]))%>% # sum abundances of all indicators
+  sum
+
+P <- dim(trimmedwide)[1]
+
+rhu = (n_i/p_i)/((N-n_i)/(P-p_i))
+
+```
+
