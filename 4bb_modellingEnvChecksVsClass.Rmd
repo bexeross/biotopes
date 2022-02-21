@@ -1,0 +1,15 @@
+---
+title: "4bb - modellingEnvChecks vs Class - R Notebook"
+output: html_notebook
+---
+
+If you have run all previous environmental checks with different environmental data from what is used in the models, it can be helpful to get an overview of how the classes align with the modelling environmental variables to see which classess might react best/worst in models/ which might be worth merging on the grounds of not enough resolution in modelling variables to tell them apart. This is where you can load those envVar and start exploring how the classes interact with them.
+
+#Libraries
+```{r}
+library(dplyr)
+library(tidyr)
+library(raster)
+```
+
+
