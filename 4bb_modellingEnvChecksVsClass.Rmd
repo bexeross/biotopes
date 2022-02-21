@@ -10,9 +10,11 @@ If you have run all previous environmental checks with different environmental d
 library(dplyr)
 library(tidyr)
 library(raster)
+library(ggplot2)
+library(purrr)
 ```
 
-#Data loading
+#Data loading and raster value extraction
 Need:
 
 - a stack of envrionmental variable rasters used in the modelling, and 
@@ -27,22 +29,55 @@ summary(my.shp.s@data)
 ```
 
 
-Load any rasters to sample
+Load any rasters to sample, sample them and output csv for later if needed
 
 ```{r}
 rasPath<-"U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/envStack/"
 ras.files.names<-list.files(rasPath)
+gsub(pattern="\\.tif$","",ras.files.names)
 ras.files<-list.files(rasPath,full.names = T)
 ras.stk<-stack(ras.files)
 names(ras.stk)<-unlist(ras.files.names)
-```
 
-
-#sample rasters and convert to dataframe
-```{r}
 smpClassEnvMod.shp<-raster::extract(ras.stk, my.shp.s, sp=T)
 smpClassEnvMod.o<-as.data.frame(smpClassEnvMod.shp)#%>%
   #dplyr::select(-c("coords.x1","coords.x2"))
 write.csv(smpClassEnvMod.o, file = file.path(outPath, ("samp_Class_envVar_Modelling_SubTmpMrg.csv")))
 ```
+
+# explore classes vs envVar
+
+plot each variable vs class
+```{r}
+
+makeplots<-function(myVars){
+  a<-smpClassEnvMod.o %>%
+    select(!!myVars, class)%>%
+    ggplot(aes(x=class , y=!!myVars))+
+    geom_boxplot()+
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+  
+  print(a)
+  
+ # saveName<-paste0(eval(myVars))
+ #  ggsave(saveName)
+   }
+
+
+var.ls<-names(ras.stk)
+walk(var.ls, ~makeplots(myVars=sym(.x)))
+
+
+```
+
+<!-- Depth (Bathy) -->
+<!-- ```{r} -->
+<!-- png("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/TMP class 0122/SubTMPMrg_modEnv_bathy.png",width = 1200, height = 500, units = "px") -->
+<!-- ggplot(smpClassEnvMod.o, aes(x=class, y=bathy.tif))+ -->
+<!--   geom_boxplot()+ -->
+<!--   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) -->
+<!-- dev.off() -->
+<!-- ``` -->
+
+# PCA
 
