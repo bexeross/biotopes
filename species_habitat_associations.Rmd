@@ -5,6 +5,7 @@ output: html_notebook
 
 Here I would like to quantify the strength of the association between every indicator species and every biotope
 ```{r}
+library(tidyverse)
 library(readxl)
 library(shar)
 library(spatstat.geom)
@@ -48,49 +49,46 @@ results_habitat_association(pattern = fit_point_process(pattern = species1conv, 
 ```
 
 ## Option 2: Relative Habitat Use
-https://doi.org/10.1016/j.ecolind.2021.108521
+https://doi.org/10.1016/j.ecolind.2021.108521. Code below is by Francois Gillet
 ```{r}
 
-land_ext <- factor(raster::extract(landscape, my.shp.s))
-
-sp <- with(indic,species[VMEindicator=="Yes"])
-
-# for each species:
-# rhu = (n[i]/p[i])/((N-n[i])/(P-p[i]))
-# n[i] = no. of individuals in habitat[i]. Would have to use sum of abundance
-# p[i] = no. of sites in habitat[i]
-# N = total no. of individuals
-# P = total no. of sites
-
-# I still need to set a min acceptable n_i and p_i!!!
-
-N <- trimmedwide %>%
-  ungroup()%>%
-  select(sp[n])%>% # sum abundances of indicator across habitats
-  sum
-
-P <- dim(trimmedwide)[1]
-
-res <- setNames(data.frame(matrix(ncol = length(sp), nrow = length(levels(land_ext)))), sp)
-
-for(n in 1:length(sp)){
-for(i in 1:length(levels(land_ext))){
-n_i <- trimmedwide %>%
-  ungroup()%>%
-  mutate(landscape = land_ext)%>%
-  filter(landscape==levels(land_ext)[i])%>%
-  select(sp[n])%>%
-  sum
-p_i <- trimmedwide %>%
-  ungroup()%>%
-  mutate(landscape = land_ext)%>%
-  filter(landscape==levels(land_ext)[i])%>%
-  dim(.)%>%
-  first
-rhu = (n_i/p_i)/((N-n_i)/(P-p_i))
-res[i,n]<-rhu
+# Function to compute RHU
+rhu <- function(spe, hab, long = FALSE) {
+  # Computes relative habitat use of a set of species (Larsen et al. 2011)
+  # F. Gillet, 2022-02-20
+  # spe = a data frame of species abundances (sites x species)
+  # hab = a vector representing a partition of sites (factor of habitat classes)
+  # long = if TRUE, a long tibble instead of a data frame of species x habitat
+  if (!is.factor(hab)) {
+    hab <- factor(hab)
+  }
+  # habitat classes
+  lev <- levels(hab)
+  # nb of sites
+  P <- matrix(nrow(spe), nrow = length(lev), ncol = ncol(spe))
+  # sum of abundances per species and habitat
+  n_i <- spe %>% mutate(hab = hab) %>% 
+    group_by(hab) %>% summarise_all(sum) %>% 
+    select(-hab) %>% as.matrix
+  # sum of all abundances per habitat
+  N <- matrix(rep(colSums(n_i), each = length(lev)), ncol = ncol(spe))
+  # nb of sites per habitat
+  p_i <- matrix(rep(as.matrix(table(hab)), ncol(spe)), nrow = length(lev))
+  # compute RHU (data frame)
+  RHU <- (n_i / p_i) / ((N - n_i) / (P - p_i))
+  res <- t(RHU) %>% as.data.frame()
+  names(res) <- lev
+  # convert to a tibble (long format)
+  if (long) {
+    res <- RHU %>% as_tibble %>% mutate(Habitat = lev) %>%
+      pivot_longer(-Habitat, names_to = "Species", values_to = "RHU")
+  }
+  res
 }
-}
-res
+
 ```
 
+### Compute rhu
+```{r}
+
+```
