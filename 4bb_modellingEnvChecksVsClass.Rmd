@@ -57,8 +57,9 @@ makeplots<-function(myVars){
     geom_boxplot()+
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
   
+  png(filename=file.path(outPath,sprintf("Rplot_%s_%s.png", format(Sys.time(), '%d%m%Y_%H_%M_%OS'), '%03d'))) # misses some...(need subsecond or better naming option)
   print(a)
-  
+  dev.off()
  # saveName<-paste0(eval(myVars))
  #  ggsave(saveName)
    }
