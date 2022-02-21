@@ -1,0 +1,123 @@
+---
+title: "Quantify species-habitat associations"
+output: html_notebook
+---
+
+Here I would like to quantify the strength of the association between every indicator species and every biotope
+```{r}
+library(tidyverse)
+library(readxl)
+library(shar)
+library(spatstat.geom)
+library(vegan)
+```
+
+## testing things out...
+```{r}
+indic <- read_xlsx(file.path(dataPath,"VMEindicators.xlsx"))
+
+landscape <- pred[[12]]
+
+sp <- "aplysillasulfurea" # can be put in a loop
+
+species1 <- trimmedwide %>%
+  select(sp)%>%
+  left_join(sample_info)%>%
+  select(SampID, sp, x_coord, y_coord)%>%
+  mutate(presence=decostand(across(sp),method="pa"))%>%
+  filter(presence==1)
+
+species1conv <-ppp(species1$x_coord, species1$y_coord, 
+                   window=owin(xrange=c(extent(landscape)[1],extent(landscape)[2]), yrange=c(extent(landscape)[3],extent(landscape)[4])),
+                   marks=data.frame(presence = as.character(species1$presence))
+                   )
+
+marks(species1conv)<-data.frame(marks(species1conv))
+
+```
+
+## habitat associations
+I think I have to exclude the habitats not thoroughly sampled... Actually, the proble is (I think) that it's using all points as presences because it's ignoring the densities! Need to convert to presence/absence... Actually, I need to subset the dataset and use only the presence points.
+```{r}
+
+significance_level <- 0.01
+
+results_habitat_association(pattern = fit_point_process(pattern = species1conv, process = "cluster", n_random = 99),
+                            raster = landscape,
+                            significance_level = significance_level)
+
+```
+
+## Option 2: Relative Habitat Use
+https://doi.org/10.1016/j.ecolind.2021.108521. Code below is by Francois Gillet
+```{r}
+
+# Function to compute RHU
+rhu <- function(spe, hab, long = FALSE) {
+  # Computes relative habitat use of a set of species (Larsen et al. 2011)
+  # F. Gillet, 2022-02-20
+  # spe = a data frame of species abundances (sites x species)
+  # hab = a vector representing a partition of sites (factor of habitat classes)
+  # long = if TRUE, a long tibble instead of a data frame of species x habitat
+  if (!is.factor(hab)) {
+    hab <- factor(hab)
+  }
+  # habitat classes
+  lev <- levels(hab)
+  # nb of sites
+  P <- matrix(nrow(spe), nrow = length(lev), ncol = ncol(spe))
+  # sum of abundances per species and habitat
+  n_i <- spe %>% mutate(hab = hab) %>% 
+    group_by(hab) %>% summarise_all(sum) %>% 
+    select(-hab) %>% as.matrix
+  # sum of all abundances per habitat
+  N <- matrix(rep(colSums(n_i), each = length(lev)), ncol = ncol(spe))
+  # nb of sites per habitat
+  p_i <- matrix(rep(as.matrix(table(hab)), ncol(spe)), nrow = length(lev))
+  # compute RHU (data frame)
+  RHU <- (n_i / p_i) / ((N - n_i) / (P - p_i))
+  res <- t(RHU) %>% as.data.frame()
+  names(res) <- lev
+  # convert to a tibble (long format)
+  if (long) {
+    res <- RHU %>% as_tibble %>% mutate(Habitat = lev) %>%
+      pivot_longer(-Habitat, names_to = "Species", values_to = "RHU")
+  }
+  res
+}
+
+```
+
+### Compute rhu
+```{r}
+indsp <- with(indic,species[VMEindicator=="Yes"])
+spe <- trimmedwide %>% select(indsp) %>% ungroup() %>% select(-SampID) 
+hab <- my.subs.small$class
+
+rhu <- rhu(spe,hab)
+
+write.table(round(rhu, digits = 2), file.path(dataPath, "outputs\\TMP class 0122\\relative_habitat_use.csv"), row.names = TRUE, sep = "|", dec = ",")
+
+```
+
+## Indicator Value
+I should use all species for the calculation, then extract the result for the VME indicators...
+```{r}
+# Prepare the data
+spe <- trimmedwide %>% ungroup() %>% select(-SampID)%>%mutate_if(is.numeric, ~replace(., is.na(.), 0))
+hab <- hab
+
+# Compute Larsen's relative habitat use
+#rhu(spe = spe, hab = hab) # data frame
+#rhu(spe = spe, hab = hab, long = TRUE) # long tibble
+
+library(indicspecies)
+# Compute Dufrêne and Legendre's IndVal (group-equalized)
+indval <- data.frame(strassoc(X = spe, cluster = hab, func = "IndVal.g")) # Compute point-biserial correlation (group-equalized), ranges 0-1
+#indval <- data.frame(strassoc(X = spe, cluster = hab, func = "r.g"))
+
+indval <- indval %>% filter(row.names(.)%in%indsp)
+
+write.csv(round(indval, digits = 2), file.path(dataPath, "outputs\\TMP class 0122\\indicator_value.csv"), row.names = TRUE)
+```
+

@@ -3,9 +3,9 @@ title: "Vulnerable habitats"
 output: html_notebook
 ---
 
-Trying a new approach in order to align VME models with generic biotope models better. Inputs required: the classified samples, as well as the species matrix and the environmental matrix.
+Trying a new approach in order to better align VME models with generic biotope models.  Inputs required: the classified samples, as well as the species matrix and the environmental matrix.
 
-## Libraries
+# Libraries
 ```{r}
 library(readxl)
 library(dplyr)
@@ -13,21 +13,23 @@ library(party)
 library(partykit)
 library(ggparty)
 library(rpart)
+
+library(rpartScore)
 ```
 
 # New approach
-VME presence/absence or quality is dervied from the classified samples, which in turn is largely based on the twinspan classification with some manual tweaks.
+VME presence/absence (or quality) is derived from the classified samples, so that it is ultimately based on the agreed upon biotope classification.
 
 ## Build a response variable
 Take the classified samples and pick a habitat of interest. Recode data
 ```{r}
-vme_pure="pB8" # using provisional biotope labels for now!
-vme_mixed="pB10"
-resp <- sheet1 %>%
-  mutate(vme = case_when(Biotope_class==vme_pure~2,
-                         Biotope_class==vme_mixed~1,
+vme_pure="x"
+vme_mixed="y"
+resp <- my.subs.small %>%
+  mutate(vme = case_when(level6==vme_pure~2, # should I soft-code the level?
+                         level6==vme_mixed~1,
                            TRUE ~ 0))%>%
-  select(SampleNr,vme)
+  select(SampID,vme)
 ```
 
 ## Assess species composition of habitat
@@ -35,7 +37,7 @@ Will do this using a Classification Tree
 
 ### set up the model formula
 ```{r}
-# the question I want to ask is: can the species abundances predict our VME assignations? and further, will the "official" vme indicators come up as good predictors of this?
+# the question I want to ask is: can the species abundances predict our VME assignations? and further, what are the implicit abundance thresholds used?
 species_explain <- paste(colnames(coredata), collapse="+") 
 fmla <- as.formula(paste("vme", species_explain,sep="~"))
 fmla
@@ -46,34 +48,36 @@ fmla
 coredata1 <- coredata %>%
   mutate(SampleNr=row.names(.))
 
-tree_full <- rpart(fmla,
-                   data=left_join(coredata1,resp),
-                   method="class", # need to change to something appropriate for an ordered factor!
-                   control=rpart.control(xval = 10,
+species_tree <- rpartScore(fmla,
+                        data=left_join(coredata1,resp),
+                        split="abs",
+                        prune="mc",
+                        control=rpart.control(xval = 10,
                                          minbucket = 2, cp = 0)
 )
 
-cp <-cp.select(tree_full)
+cp <-cp.select(species_tree)
 #cp <- 0.03
 
 # Prune Tree
-tree_full_pruned <- rpart(fmla,
+species_tree_pruned <- rpartScore(fmla,
                           data=left_join(coredata1,resp),
-                          method="class",
+                          split="abs",
+                          prune="mc",
                           control=rpart.control(xval = 10,
                                                 minbucket = 2, cp = cp))
 
-tree_full_pruned$variable.importance
+species_tree_pruned$variable.importance
 
 ```
 
 ### Plot it
 ```{r}
-ap_tree_full_pruned <- as.party(tree_full_pruned)
-rounded_labels <- add_splitvar_breaks_index_new(party_object = ap_tree_full_pruned,
-                                                 plot_data = ggparty:::get_plot_data(ap_tree_full_pruned), 
+ap_species_tree_pruned <- as.party(species_tree_pruned)
+rounded_labels <- add_splitvar_breaks_index_new(party_object = ap_species_tree_pruned,
+                                                 plot_data = ggparty:::get_plot_data(ap_species_tree_pruned), 
                                                  round_digits = 2)
-ggparty(ap_tree_full_pruned) +
+ggparty(ap_species_tree_pruned) +
    geom_edge() +
    geom_edge_label(mapping = aes(label = unlist(rounded_labels)),
                    data = rounded_labels) +
@@ -81,27 +85,35 @@ ggparty(ap_tree_full_pruned) +
    geom_node_label(aes(label = class), ids = "terminal")
 ```
 
-# Old approach
-VMEness is determined from abundances of VME indicators
+# Hybrid between old approach and new
+VMEness is determined from abundances of VME indicators, but these are selected from their "association" with each biotope class 
 
 ## Read data
 ```{r}
 # species densities (trimmed)
-in.data.vh <- read.csv(file.path(outPath,"species_densities_trimmed.csv"))
+#in.data.vh <- read.csv(file.path(outPath,"species_densities_trimmed.csv"))
 # habitat definitions with list of qualifying taxa
-habdef <- read_xlsx(file.path(dataPath,"HabitatDefinitions.xlsx"))
+#habdef <- read_xlsx(file.path(dataPath,"HabitatDefinitions.xlsx")) # this is the old-old approach
+habdef <- read_xlsx(file.path(dataPath,"BiotopeClasses_VMEindicators.xlsx"))
+colnames(habdef) <- c("sort", "class", "include", "indicators")
+habdef
 ```
 
-## select habitat of interest
+## Build a response variable
+Take the classified samples and pick a habitat of interest. Extract relevant species. Sum over selected species
 ```{r}
-hab <- data.frame(number = c(1:9), name = unique(habdef$VH))
-hab
+vme = "6" # using SubTmp(Mrg) nomenclature
+
+Dummy <- my.subs.small %>%
+  mutate(dummy = case_when(class==paste("SubTmp",vme, sep = "")~1, 
+                         TRUE ~ 0))%>%
+  select(SampID, dummy)
+
+grab <- trimmedwide %>%
+  ungroup() %>%
+  mutate(resp=select(.,with(habdef, indicators[class == vme]))%>% rowSums(na.rm = TRUE)) %>%
+  select(SampID,resp)
+
+resp <- left_join(Dummy, grab)
 ```
 
-## Create dummy variable and populate
-```{r}
-h <- 2
-in.data.vh <- in.data.vh %>%
-  mutate(vh_dummy = case_when(new_name%in%pull(subset(habdef,habdef$VH==hab$name[h],2))~1))
-  
-```
