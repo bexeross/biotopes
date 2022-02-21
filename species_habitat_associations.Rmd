@@ -94,7 +94,10 @@ indsp <- with(indic,species[VMEindicator=="Yes"])
 spe <- trimmedwide %>% select(indsp) %>% ungroup() %>% select(-SampID) 
 hab <- my.subs.small$class
 
-rhu(spe,hab)
+rhu <- rhu(spe,hab)
+
+write.table(round(rhu, digits = 2), file.path(dataPath, "outputs\\TMP class 0122\\relative_habitat_use.csv"), row.names = TRUE, sep = "|", dec = ",")
+
 ```
 
 ## Indicator Value
