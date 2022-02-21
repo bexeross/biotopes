@@ -12,4 +12,37 @@ library(tidyr)
 library(raster)
 ```
 
+#Data loading
+Need:
+
+- a stack of envrionmental variable rasters used in the modelling, and 
+- the shapefile from 4a that holds the latest sample, class, x/y info, most likely my.shp.s 
+
+Check my.shp.s
+
+```{r}
+plot(my.shp.s)
+summary(my.shp.s@data)
+
+```
+
+
+Load any rasters to sample
+
+```{r}
+rasPath<-"U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/envStack/"
+ras.files.names<-list.files(rasPath)
+ras.files<-list.files(rasPath,full.names = T)
+ras.stk<-stack(ras.files)
+names(ras.stk)<-unlist(ras.files.names)
+```
+
+
+#sample rasters and convert to dataframe
+```{r}
+smpClassEnvMod.shp<-raster::extract(ras.stk, my.shp.s, sp=T)
+smpClassEnvMod.o<-as.data.frame(smpClassEnvMod.shp)#%>%
+  #dplyr::select(-c("coords.x1","coords.x2"))
+write.csv(smpClassEnvMod.o, file = file.path(outPath, ("samp_Class_envVar_Modelling_SubTmpMrg.csv")))
+```
 
