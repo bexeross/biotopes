@@ -161,14 +161,22 @@ my.subs.tw2.merges$class<-gsub('SubTmp55$','SubTmpMrgH',my.subs.tw2.merges$class
 my.subs.tw2.merges$class<-gsub('SubTmp60$','SubTmpMrgH',my.subs.tw2.merges$class,perl =T)
 my.subs.tw2.merges$class<-gsub('SubTmp61$','SubTmpMrgH',my.subs.tw2.merges$class,perl =T)
 
+my.subs.tw2.merges$class<-gsub('SubTmp6$','SubTmpMrgS6',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp7$','SubTmpMrgS6',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp20$','SubTmpMrgS20',my.subs.tw2.merges$class,perl =T)
+my.subs.tw2.merges$class<-gsub('SubTmp21$','SubTmpMrgS20',my.subs.tw2.merges$class,perl =T)
+
+
+
 my.subs.tw2.merges$class<-as.factor(my.subs.tw2.merges$class)
 
 
-classMerge.ls<-c("SubTmpMrgA","SubTmp2","SubTmp3","SubTmp4","SubTmp5","SubTmp6","SubTmp7","SubTmp8","SubTmp9","SubTmp10",
-      "SubTmp11","SubTmp12","SubTmp13","SubTmp14","SubTmp15",            "SubTmp17","SubTmp18","SubTmp19","SubTmp20",
-      "SubTmp21","SubTmp22","SubTmp23","SubTmpMrgB","SubTmp25","SubTmp26","SubTmp27","SubTmp28","SubTmp29",
-      "SubTmpMrgC","SubTmpMrgD","SubTmp34","SubTmp35","SubTmp36","SubTmp37","SubTmp38","SubTmp39","SubTmp40",
-                  "SubTmpMrgE",          "SubTmp44",           "SubTmp46","SubTmp47","SubTmpMrgF","SubTmp49",
+classMerge.ls<-c(
+      "SubTmpMrgA","SubTmp2","SubTmp3","SubTmp4","SubTmp5","SubTmpMrgS6",            "SubTmp8","SubTmp9","SubTmp10",
+      "SubTmp11","SubTmp12","SubTmp13","SubTmp14","SubTmp15",          "SubTmp17","SubTmp18","SubTmp19","SubTmpMrgS20",
+                 "SubTmp22","SubTmp23","SubTmpMrgB","SubTmp25","SubTmp26","SubTmp27","SubTmp28","SubTmp29",
+      "SubTmpMrgC","SubTmpMrgD",       "SubTmp34","SubTmp35","SubTmp36","SubTmp37","SubTmp38","SubTmp39","SubTmp40",
+                  "SubTmpMrgE",        "SubTmp44",           "SubTmp46","SubTmp47","SubTmpMrgF","SubTmp49",
       "SubTmp51","SubTmp52","SubTmp53","SubTmpMrgG","SubTmpMrgH",         "SubTmp57","SubTmp58","SubTmp59",
                  "SubTmp62","SubTmp63","SubTmp64","SubTmp65","SubTmp66","SubTmp67",             "SubTmp69","SubTmp70",
       "SubTmp71","SubTmp72","SubTmp73")
@@ -216,7 +224,7 @@ my.shp <- SpatialPointsDataFrame(coords = cbind(sample_info$x_coord[match(my.sub
                                  proj4string = CRS("+init=epsg:32633"),
                                  data = my.subs)
 
-writeOGR(my.shp, dsn = file.path(outPath, "Spatial"), "Mega_SubTMPMrg_class_shape_big", driver = "ESRI Shapefile", overwrite_layer = TRUE)
+writeOGR(my.shp, dsn = file.path(outPath, "Spatial"), "Mega_SubTMPMrg2_class_shape_big", driver = "ESRI Shapefile", overwrite_layer = TRUE)
 
 
 #smaller shp
@@ -227,7 +235,7 @@ my.shp.s <- SpatialPointsDataFrame(coords = cbind(sample_info$x_coord[match(my.s
                                  proj4string = CRS("+init=epsg:32633"),
                                  data = my.subs.small)
 
-writeOGR(my.shp.s, dsn = file.path(outPath, "Spatial"), "Mega_SubTMPMrg_class_shape_small", driver = "ESRI Shapefile", overwrite_layer = TRUE)
+writeOGR(my.shp.s, dsn = file.path(outPath, "Spatial"), "Mega_SubTMPMrg2_class_shape_small", driver = "ESRI Shapefile", overwrite_layer = TRUE)
 
 ```
 
@@ -288,7 +296,7 @@ Make tables of average psuedospp per class/proportion of obs per class/max pseud
 ```{r}
 piv.av<-my.subs %>%
   group_by(class)%>% # change to level you want to see groups at
-  dplyr::summarise(across(c(17:343),mean)) %>%
+  dplyr::summarise(across(c(17:348),mean)) %>%
   t()%>%
   `colnames<-`(.[1, ])%>%
   .[-1, ] %>%
@@ -314,7 +322,7 @@ i.e. proportion of n spp obs (non zero pseudospp)/n samples per group
 ```{r}
 piv.n<-my.subs %>%
   group_by(class)%>% # change to level you want to see groups at
-  dplyr::summarise(across(c(17:343),nnzero)) %>%
+  dplyr::summarise(across(c(17:348),nnzero)) %>%
   t()%>%
   as.data.frame() %>%
   `colnames<-`(.[1, ])%>%
@@ -334,7 +342,7 @@ Make table of maximum pseudospp per group
 ```{r}
 piv.mx<-my.subs %>%
   group_by(class)%>% # change to level you want to see groups at
-  dplyr::summarise(across(c(17:343),max)) %>%
+  dplyr::summarise(across(c(17:348),max)) %>%
   t()%>%
   `colnames<-`(.[1, ])%>%
   .[-1, ]
@@ -389,14 +397,14 @@ out.piv.short<-rbind(values2, short.sum)
 #           file = file.path(outPath, ("V6_prop_obs.csv"))) #change label
 
 write.csv(out.piv, 
-          file = file.path(outPath, ("Mega_SubTMPMrg_groups_av_proportion_max.csv"))) #change label
+          file = file.path(outPath, ("Mega_SubTMPMrg2_groups_av_proportion_max.csv"))) #change label
 
 write.csv(out.piv.short, 
-          file = file.path(outPath, ("Mega_SubTMPMrg_groups_avGT1_propGT50pc.csv"))) #change label
+          file = file.path(outPath, ("Mega_SubTMPMrg2_groups_avGT1_propGT50pc.csv"))) #change label
 
 
 write.csv(piv.meta, 
-          file = file.path(outPath, ("Mega_SubTMPMrg_groups_metadata.csv"))) #change label
+          file = file.path(outPath, ("Mega_SubTMPMrg2_groups_metadata.csv"))) #change label
 
 ```
 
