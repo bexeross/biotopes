@@ -121,5 +121,7 @@ indval1 <- data.frame(strassoc(X = spe1, cluster = hab, func = "IndVal.g")) # Co
 indval <- indval1 %>% filter(row.names(.)%in%indsp)
 
 write.table(round(indval, digits = 2), file.path(dataPath, "outputs\\TMP class 0122\\indicator_value.csv"), row.names = TRUE, dec = ",", sep =";")
+
+#dotchart(sort(indval1$SubTmpMrgG))
 ```
 
