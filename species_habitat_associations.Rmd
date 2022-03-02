@@ -106,7 +106,7 @@ write.table(round(rhu, digits = 2), file.path(dataPath, "outputs\\TMP class 0122
 I should use all species for the calculation, then extract the result for the VME indicators...
 ```{r}
 # Prepare the data
-spe <- spe %>% mutate_if(is.numeric, ~replace(., is.na(.), 0))
+spe1 <- combo %>% select(-class) %>% select(-contains("level")) %>% select(-SampID) %>% mutate_if(is.numeric, ~replace(., is.na(.), 0))
 hab <- hab
 
 # Compute Larsen's relative habitat use
@@ -115,10 +115,10 @@ hab <- hab
 
 library(indicspecies)
 # Compute Dufrêne and Legendre's IndVal (group-equalized)
-indval <- data.frame(strassoc(X = spe, cluster = hab, func = "IndVal.g")) # Compute point-biserial correlation (group-equalized), ranges 0-1
+indval1 <- data.frame(strassoc(X = spe1, cluster = hab, func = "IndVal.g")) # Compute point-biserial correlation (group-equalized), ranges 0-1
 #indval <- data.frame(strassoc(X = spe, cluster = hab, func = "r.g"))
 
-indval <- indval %>% filter(row.names(.)%in%indsp)
+indval <- indval1 %>% filter(row.names(.)%in%indsp)
 
 write.table(round(indval, digits = 2), file.path(dataPath, "outputs\\TMP class 0122\\indicator_value.csv"), row.names = TRUE, dec = ",", sep =";")
 ```
