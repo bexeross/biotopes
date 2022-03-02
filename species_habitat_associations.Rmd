@@ -91,8 +91,10 @@ rhu <- function(spe, hab, long = FALSE) {
 ### Compute rhu
 ```{r}
 indsp <- with(indic,species[VMEindicator=="Yes"])
-spe <- trimmedwide %>% select(indsp) %>% ungroup() %>% select(-SampID) 
-hab <- my.subs.small$class
+#spe <- trimmedwide %>% select(indsp) %>% ungroup() %>% select(-SampID) 
+combo <- my.subs.small %>% left_join(trimmedwide)
+
+spe <- combo %>% select(indsp) %>% ungroup()
 
 rhu <- rhu(spe,hab)
 
