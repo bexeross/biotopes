@@ -106,7 +106,7 @@ write.table(round(rhu, digits = 2), file.path(dataPath, "outputs\\TMP class 0122
 I should use all species for the calculation, then extract the result for the VME indicators...
 ```{r}
 # Prepare the data
-spe <- trimmedwide %>% ungroup() %>% select(-SampID)%>%mutate_if(is.numeric, ~replace(., is.na(.), 0))
+spe <- spe %>% mutate_if(is.numeric, ~replace(., is.na(.), 0))
 hab <- hab
 
 # Compute Larsen's relative habitat use
@@ -120,6 +120,6 @@ indval <- data.frame(strassoc(X = spe, cluster = hab, func = "IndVal.g")) # Comp
 
 indval <- indval %>% filter(row.names(.)%in%indsp)
 
-write.csv(round(indval, digits = 2), file.path(dataPath, "outputs\\TMP class 0122\\indicator_value.csv"), row.names = TRUE)
+write.table(round(indval, digits = 2), file.path(dataPath, "outputs\\TMP class 0122\\indicator_value.csv"), row.names = TRUE, dec = ",", sep =";")
 ```
 
