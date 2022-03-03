@@ -1,6 +1,7 @@
 ## export species shapefile for inspection in GIS
 
 gisit <- function(sp){
+  require(rgdal) 
   species1 <- trimmedwide %>%
     select(sp)%>%
     left_join(sample_info)%>%
