@@ -15,6 +15,9 @@ Requires: my.subs.small, trimmedwide, indsp, indval
 library(dplyr)
 library(rgdal)
 library(indicspecies)
+library(mvabund)
+
+## pick a biotope and find (manually for now) the first classification level at which it splits
 
 clname = "SubTmpMrgS6"
 level = "level7"
@@ -32,6 +35,12 @@ spe_sub <- trimmedwide %>%
 
 spe_sub_nude <- spe_sub %>% ungroup() %>% select(-SampID)
 
+## make a plot of species composition of subclasses
+
+cl <- list(spe_sub_nude, as.factor(hab_sub))
+names(cl)<-c("spe_sub", "hab_sub")
+spe_subMV <- mvabund(cl$spe_sub)
+plot(spe_subMV~hab_sub, data=cl)
 
 ```
 
