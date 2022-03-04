@@ -44,3 +44,29 @@ plot(spe_subMV~hab_sub, data=cl)
 
 ```
 
+## Question: do the subclasses are significantly different in their species composition?
+```{r}
+df <- left_join(spe_sub, my.subs.small) %>%
+  mutate(hab_sub = as.factor(level10)) %>%
+  ungroup()%>%
+  as.data.frame()
+
+Abus = df[,2:75]
+
+cl_mglm = manyglm(mvabund(Abus)~hab_sub,data=df,
+                  family="poisson")
+
+an_cl=anova(cl_mglm,p.uni="adjusted")
+an_cl$table
+```
+
+### Follow up question, if so, which taxa are responsible for the difference?
+```{r}
+sorted_clstats = sort(an_cl$uni.test[2,],decreasing=TRUE,
+                      index.return=TRUE)
+top5=sorted_clstats$x[1:5]
+top5
+```
+
+
+
