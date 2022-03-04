@@ -107,7 +107,7 @@ I should use all species for the calculation, then extract the result for the VM
 ```{r}
 # Prepare the data
 spe1 <- combo %>% select(-class) %>% select(-contains("level")) %>% select(-SampID) %>% mutate_if(is.numeric, ~replace(., is.na(.), 0))
-hab <- hab
+hab <- my.subs.small$class
 
 # Compute Larsen's relative habitat use
 #rhu(spe = spe, hab = hab) # data frame
