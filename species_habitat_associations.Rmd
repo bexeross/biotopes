@@ -15,7 +15,7 @@ library(vegan)
 ## Required data
 ```{r}
 indic <- read_xlsx(file.path(dataPath,"VMEindicators.xlsx"))
-
+indsp <- with(indic,species[VMEindicator=="Yes"])
 
 ```
 
@@ -62,7 +62,6 @@ rhu <- function(spe, hab, long = FALSE) {
 
 ### Compute rhu
 ```{r}
-indsp <- with(indic,species[VMEindicator=="Yes"])
 #spe <- trimmedwide %>% select(indsp) %>% ungroup() %>% select(-SampID) 
 combo <- my.subs.small %>% left_join(trimmedwide)
 
