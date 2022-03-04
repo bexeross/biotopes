@@ -3,3 +3,35 @@ title: "Generate the response variable for the VME models"
 output: html_notebook
 ---
 
+Currently thinking of two different approaches, one using the classified points as the main element, another one using the species data.
+Different approach means different defition/set of rules for declaring VMEs!
+
+# Approach 1.- Using the biotope classification
+
+Requires: my.subs.small, trimmedwide, indsp, indval
+
+## Input data and libraries
+```{r}
+library(dplyr)
+library(rgdal)
+library(indicspecies)
+
+clname = "SubTmpMrgS6"
+level = "level7"
+
+hab_sub <- my.subs.small %>%
+  filter(class==clname)%>%
+  select(contains(level))%>%
+  pull()
+
+spe_sub <- trimmedwide %>%
+  left_join(my.subs.small)%>%
+  filter(class==clname)%>%
+  #ungroup()%>%
+  select(all_of(indsp))
+
+spe_sub_nude <- spe_sub %>% ungroup() %>% select(-SampID)
+
+
+```
+
