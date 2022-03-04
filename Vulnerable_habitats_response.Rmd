@@ -68,5 +68,19 @@ top5=sorted_clstats$x[1:5]
 top5
 ```
 
+## Calculate total "fidelity" to VME indicators
+This is some quantitative way to decide which of the two subclasses is most "pure", or at least, most strongly linked to VME indicators
+```{r}
+
+indval_sub <- data.frame(strassoc(X = spe_sub_nude, cluster = hab_sub, func = "IndVal.g")) # Compute point-biserial correlation (group-equalized), ranges 0-1
+
+total_indval_countif <- indval_sub %>% sapply(., function(x) sum(x>0))
+total_indval_sum <- indval_sub %>% colSums()
+total_indval_tot <- total_indval_countif*total_indval_sum
+
+winner <- gsub("X","",names(which(total_indval_tot==max(total_indval_tot))))
+loser <- gsub("X","",names(which(total_indval_tot!=max(total_indval_tot)))) # can be improved...
+winner; loser
+```
 
 
