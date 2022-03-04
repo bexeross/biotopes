@@ -83,4 +83,51 @@ loser <- gsub("X","",names(which(total_indval_tot!=max(total_indval_tot)))) # ca
 winner; loser
 ```
 
+## Create response variable
+If there was a difference, summarize all into a single 3-level ordered factor where 0 = absence, 1 = mixed and 2 = pure
+```{r}
+resp1<- my.subs.small%>%
+  mutate(resp = case_when(class==clname & get(level, .)==winner ~ 2,
+                          class==clname & get(level, .)==loser ~ 1,
+                          TRUE ~ 0)) %>%
+  select(SampID, resp)
 
+resp1_spat <- resp1 %>% left_join(sample_info)%>%
+  select(SampID, resp, x_coord, y_coord)
+
+resp1_spat <-  SpatialPointsDataFrame(coords = resp1_spat[,c(3,4)],
+                                      data = resp1_spat[,-5],
+                                      proj4string = CRS("+proj=utm +zone=33 +datum=WGS84 +units=m +no_defs"))
+
+writeOGR(resp1_spat,dsn = file.path(dataPath, "outputs\\Spatial"),
+         layer = "SubTmpMrgS6_ranked",
+         driver = "ESRI Shapefile")
+
+```
+
+# Approach 2.- Going back to species data
+Work in progress!
+```{r}
+v <- indval %>% select(clname) %>% filter(get(clname,.)>0.25) %>% rownames()
+d <- c("lopheliapertusa", "primnoaresedaeformis", "paragorgiaarborea", "mycalelingua",
+       "plakortissp", "cidariscidaris", "paramuriceaplacomus")
+
+# how the heck should I select which species to model together? myriad ways...
+
+resp2 <- trimmedwide %>%
+  select(c(astrophorina, geodiabarretti)) %>%
+  mutate(resp = rowSums(across(where(is.numeric)))) %>%
+  select(c(SampID, resp))
+
+resp2_spat <- resp2 %>% left_join(sample_info)%>%
+  select(SampID, resp, x_coord, y_coord)
+
+resp2_spat <-  SpatialPointsDataFrame(coords = resp2_spat[,c(3,4)],
+                                      data = resp2_spat,
+                                      proj4string = CRS("+proj=utm +zone=33 +datum=WGS84 +units=m +no_defs"))
+
+writeOGR(resp2_spat,dsn = file.path(dataPath, "outputs\\Spatial"),
+         layer = "SubTmp14_TotAbu",
+         driver = "ESRI Shapefile")
+
+```
