@@ -7,48 +7,20 @@ Here I would like to quantify the strength of the association between every indi
 ```{r}
 library(tidyverse)
 library(readxl)
-library(shar)
+#library(shar)
 library(spatstat.geom)
 library(vegan)
 ```
 
-## testing things out...
+## Required data
 ```{r}
 indic <- read_xlsx(file.path(dataPath,"VMEindicators.xlsx"))
 
-landscape <- pred[[12]]
-
-sp <- "aplysillasulfurea" # can be put in a loop
-
-species1 <- trimmedwide %>%
-  select(sp)%>%
-  left_join(sample_info)%>%
-  select(SampID, sp, x_coord, y_coord)%>%
-  mutate(presence=decostand(across(sp),method="pa"))%>%
-  filter(presence==1)
-
-species1conv <-ppp(species1$x_coord, species1$y_coord, 
-                   window=owin(xrange=c(extent(landscape)[1],extent(landscape)[2]), yrange=c(extent(landscape)[3],extent(landscape)[4])),
-                   marks=data.frame(presence = as.character(species1$presence))
-                   )
-
-marks(species1conv)<-data.frame(marks(species1conv))
 
 ```
 
-## habitat associations
-I think I have to exclude the habitats not thoroughly sampled... Actually, the proble is (I think) that it's using all points as presences because it's ignoring the densities! Need to convert to presence/absence... Actually, I need to subset the dataset and use only the presence points.
-```{r}
 
-significance_level <- 0.01
-
-results_habitat_association(pattern = fit_point_process(pattern = species1conv, process = "cluster", n_random = 99),
-                            raster = landscape,
-                            significance_level = significance_level)
-
-```
-
-## Option 2: Relative Habitat Use
+## Relative Habitat Use
 https://doi.org/10.1016/j.ecolind.2021.108521. Code below is by Francois Gillet
 ```{r}
 
