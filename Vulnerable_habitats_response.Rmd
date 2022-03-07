@@ -19,8 +19,8 @@ library(mvabund)
 
 ## pick a biotope and find (manually for now) the first classification level at which it splits
 
-clname = "SubTmpMrgS6"
-level = "level7"
+clname = "SubTmp19"
+level = "level9"
 
 hab_sub <- my.subs.small %>%
   filter(class==clname)%>%
@@ -40,7 +40,7 @@ spe_sub_nude <- spe_sub %>% ungroup() %>% select(-SampID)
 cl <- list(spe_sub_nude, as.factor(hab_sub))
 names(cl)<-c("spe_sub", "hab_sub")
 spe_subMV <- mvabund(cl$spe_sub)
-plot(spe_subMV~hab_sub, data=cl)
+#plot(spe_subMV~hab_sub, data=cl)
 
 ```
 
@@ -107,6 +107,17 @@ writeOGR(resp1_spat,dsn = file.path(dataPath, "outputs\\Spatial"),
 
 # Approach 2.- Going back to species data
 Work in progress!
+
+## get species groupings from twinspan
+```{r}
+library(twinspan)
+ctlevel = 7
+sppgrp <- data.frame(spclass = cut(tw_2, level = ctlevel, what = "species"), species= tw_2$species$labels)
+sppgrp <- sppgrp %>% subset(species%in%indsp) %>% arrange(spclass)
+sppgrp
+```
+
+
 ```{r}
 v <- indval %>% select(clname) %>% filter(get(clname,.)>0.25) %>% rownames()
 d <- c("lopheliapertusa", "primnoaresedaeformis", "paragorgiaarborea", "mycalelingua",
