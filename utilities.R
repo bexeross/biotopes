@@ -2,6 +2,7 @@
 
 gisit <- function(sp){
   require(rgdal) 
+  require(vegan)
   species1 <- trimmedwide %>%
     select(sp)%>%
     left_join(sample_info)%>%
