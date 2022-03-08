@@ -8,6 +8,7 @@ output: html_notebook
 library(raster)
 library(rgdal)
 library(partykit)
+library(party)
 ```
 
 ## Predictors
@@ -32,4 +33,8 @@ resp_spat <-  SpatialPointsDataFrame(coords = resp_spat[,c(3,4)],
 e <- extract(pred, resp_spat)
 v <- e %>% data.frame(cbind(resp_spat)) %>% mutate(landscape = factor(landscape))
 str(v)
+```
+## Variance explained
+```{r}
+
 ```
