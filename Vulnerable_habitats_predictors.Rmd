@@ -13,10 +13,10 @@ library(raster)
 path <- file.path(dataPath,"envStack")
 files <- list.files(path, pattern = "tif$")
 pred <- stack()
-      for (i in 1:length(files)){
-      tmpraster <- raster(file.path(path,files[i]))
-      pred <- stack( pred , tmpraster)
-      }
-      projection(pred) <- "+proj=utm +north +zone=33 +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
+for (i in 1:length(files)){
+   tmpraster <- raster(file.path(path,files[i]))
+   pred <- stack( pred , tmpraster)
+   }
+projection(pred) <- "+proj=utm +north +zone=33 +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
 ```
 
