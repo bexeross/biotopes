@@ -116,6 +116,38 @@ sppgrp <- data.frame(spclass = cut(tw_2, level = ctlevel, what = "species"), spe
 sppgrp <- sppgrp %>% subset(species%in%indsp) %>% arrange(spclass)
 sppgrp
 ```
+## how strongly associated are these species groups to our biotopes
+```{r}
+spe2 <- trimmed %>%
+  select(-c(TotAbu_pseudocount,TotAbu_count,density_n_100m2_count)) %>%
+  mutate(new_name = gsub(" ","",new_name)) %>%
+  mutate(new_name = gsub("\\.","",new_name)) %>%
+  mutate(new_name = tolower(new_name)) %>%
+  mutate(sppgrp = sppgrp$spclass[match(new_name,sppgrp$species)]) %>%
+  filter(!is.na(sppgrp)) %>%
+  select(-new_name) %>%
+  pivot_wider(names_from = sppgrp, values_from = density_n_100m2_pseudocount, values_fill = 0, values_fn = sum)
+
+hab <- spe2 %>%
+  left_join(my.subs.small) %>%
+  select(class) %>%
+  pull()
+
+spe3 <- spe2 %>% ungroup() %>% select(-SampID)
+
+library(indicspecies)
+# Compute Dufrêne and Legendre's IndVal (group-equalized)
+indval3 <- data.frame(strassoc(X = spe3, cluster = hab, func = "IndVal.g")) # Compute point-biserial correlation (group-equalized), ranges 0-1
+#indval <- data.frame(strassoc(X = spe, cluster = hab, func = "r.g"))
+
+library(agrmt)
+x <- data.frame( species = row.names(indval3), biotope = colnames(indval3)[max.col(indval3,ties.method="first")],
+                 assoc = apply(indval3, 1, max),
+                 ent = apply(indval3, 1, entropy))
+x
+
+```
+
 
 
 ```{r}
