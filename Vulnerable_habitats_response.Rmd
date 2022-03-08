@@ -147,8 +147,15 @@ x <- data.frame( species = row.names(indval3), biotope = colnames(indval3)[max.c
 x
 
 ```
-## what to model?
+## what to model? aka creating the response variable
+If the species group has a strong association with one of the biotopes, it can be turned into a response variable right away (easy to explain)
 ```{r}
+goahead <- x %>% filter(assoc > 0.5 | ent < 2) %>% select(species)
+
+# need to merge 30 and 31 because they are associated to the same biotope
+
+# what to do with the others?
+think <- x$species[which(!x$species%in%goahead$species)]
 
 ```
 
