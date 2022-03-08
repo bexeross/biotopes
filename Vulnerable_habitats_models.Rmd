@@ -8,3 +8,15 @@ output: html_notebook
 pred
 ```
 
+## Make the response into a spatial object
+```{r}
+resp = "3031"
+resp_spat <- respdf %>%
+  rownames_to_column(var = "SampID")%>%
+  left_join(sample_info)%>%
+  select(SampID, resp, x_coord, y_coord)
+resp_spat <-  SpatialPointsDataFrame(coords = resp_spat[,c(3,4)],
+                                      data = resp_spat,
+                                      proj4string = CRS("+proj=utm +zone=33 +datum=WGS84 +units=m +no_defs"))
+```
+
