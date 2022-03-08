@@ -147,9 +147,13 @@ x <- data.frame( species = row.names(indval3), biotope = colnames(indval3)[max.c
 x
 
 ```
+## what to model?
+```{r}
 
+```
 
-
+## combinig indicator value with diagnostic species
+I started to write this to create a continuous response variable from species data, but I will leave it aside for now
 ```{r}
 v <- indval %>% select(clname) %>% filter(get(clname,.)>0.25) %>% rownames()
 d <- c("lopheliapertusa", "primnoaresedaeformis", "paragorgiaarborea", "mycalelingua",
