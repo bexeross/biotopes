@@ -1,0 +1,10 @@
+---
+title: "Modeling"
+output: html_notebook
+---
+
+## Predictors
+```{r}
+pred
+```
+
