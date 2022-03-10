@@ -9,6 +9,10 @@ library(raster)
 library(rgdal)
 library(partykit)
 library(party)
+
+library(usdm)
+library(vegan)
+library(glmnet)
 ```
 
 ## Predictors
@@ -34,7 +38,13 @@ e <- extract(pred, resp_spat)
 v <- e %>% data.frame(cbind(resp_spat)) %>% mutate(landscape = factor(landscape))
 str(v)
 ```
-## Variance explained
+## Variable selection
+I don't think this is very important right now - all I care about is spatial predictions - but oh well
 ```{r}
+fmla <- as.formula(paste(paste0("X",resp,"~"), 
+                         paste(colnames(v)[1:(which(colnames(v)=="X")-1)], collapse= "+"))) # all predictors
+m0 <- cforest(fmla,
+                      data=v, # all observations 
+                      control = cforest_unbiased(ntree=1000,mtry = 3))
 
 ```
