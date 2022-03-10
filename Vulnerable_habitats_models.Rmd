@@ -46,5 +46,51 @@ fmla <- as.formula(paste(paste0("X",resp,"~"),
 m0 <- cforest(fmla,
                       data=v, # all observations 
                       control = cforest_unbiased(ntree=1000,mtry = 3))
-
 ```
+
+### Check which variables are important at explaining presence/absence
+```{r}
+# Make a predictor-only matrix and a response-only vector, and also, leave only complete cases in there
+x0 <- v %>% select(-c(paste0("X",resp), optional)) %>% filter(complete.cases(.))
+cc <- x0$SampID
+
+y <- v %>% filter(SampID %in% cc) %>%
+  select(paste0("X",resp)) %>%
+  pull()
+  
+y <- as_factor(decostand(y,method="pa"))
+
+x <- x0 %>% select(-SampID) %>% data.matrix()
+
+# Model coefficients
+cvfit = cv.glmnet(x, y,family="binomial",type.measure="auc")
+coef(cvfit, s = "lambda.1se")
+```
+
+### Check which variables are correlated to each other
+```{r}
+vset <- vifstep(data.frame(x), th=10)
+vset@excluded
+```
+
+### Check overall variable importance of remaining variables
+```{r}
+x_new <- x %>% 
+  data.frame() %>%
+  select(-vset@excluded) %>%
+  data.matrix()
+
+fmla1 <- as.formula(paste(paste0("X",resp,"~"), 
+                          paste(colnames(x_new), collapse= "+")))
+
+dotplot(sort(varimp(cforest(fmla1,
+                            data=v, # all observations 
+                            control = cforest_unbiased(ntree=1000,mtry = 3)))), xlab="Variable Importance", panel = function(x,y){ 
+  panel.dotplot(x, y, col='darkblue', pch=16, cex=1.1) 
+  panel.abline(v=abs(min(vi)), col='red', 
+               lty='longdash', lwd=2
+  )
+})  
+```
+
+
