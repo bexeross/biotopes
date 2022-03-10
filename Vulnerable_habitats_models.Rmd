@@ -72,7 +72,7 @@ coef(cvfit, s = "lambda.1se")
 
 ### Check which variables are correlated to each other
 ```{r}
-vset <- vifstep(data.frame(x), th=10)
+vset <- vifstep(data.frame(x), th=12)
 vset@excluded
 ```
 
@@ -80,7 +80,7 @@ vset@excluded
 ```{r}
 x_new <- x %>% 
   data.frame() %>%
-  select(-vset@excluded[1:10]) %>%
+  select(-vset@excluded) %>%
   data.matrix()
 
 fmla1 <- as.formula(paste(paste0("X",resp,"~"), 
