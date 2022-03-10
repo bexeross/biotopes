@@ -34,8 +34,11 @@ resp_spat <-  SpatialPointsDataFrame(coords = resp_spat[,c(3,4)],
 
 ## Extract values
 ```{r}
-e <- extract(pred, resp_spat)
-v <- e %>% data.frame(cbind(resp_spat)) %>% mutate(landscape = factor(landscape))
+r <- resp_spat_sel
+#r <- resp_spat
+
+e <- raster::extract(pred, r)
+v <- e %>% data.frame(cbind(r)) %>% mutate(landscape = factor(landscape)) %>% select(-contains("coord"))
 str(v)
 ```
 ## Variable selection
@@ -77,7 +80,7 @@ vset@excluded
 ```{r}
 x_new <- x %>% 
   data.frame() %>%
-  select(-vset@excluded) %>%
+  select(-vset@excluded[1:10]) %>%
   data.matrix()
 
 fmla1 <- as.formula(paste(paste0("X",resp,"~"), 
