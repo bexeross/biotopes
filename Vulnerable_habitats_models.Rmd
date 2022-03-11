@@ -10,6 +10,9 @@ library(rgdal)
 library(partykit)
 library(party)
 
+library(spatstat)
+library(maptools)
+
 library(usdm)
 library(vegan)
 library(glmnet)
@@ -32,6 +35,47 @@ resp_spat <-  SpatialPointsDataFrame(coords = resp_spat[,c(3,4)],
                                       proj4string = CRS("+proj=utm +zone=33 +datum=WGS84 +units=m +no_defs"))
 ```
 
+## Reduce the dataset
+Some species/taxa have very limited distributions. It may be a good idea to eliminate absence points that are too far away from any presence point
+```{r}
+## Select a subset of stations from the core distribution area(s) (code by RS)
+
+# Step 1 - split into presence and absence points
+abs<- subset(resp_spat, X3031==0)
+pres<- subset(resp_spat, X3031>0)
+
+# prevalence check
+prev_1 <- length(pres)/length(resp_spat)
+
+# Step 2 - find the distance to the nearest presence point of each absence point
+absppp<- as(abs, "ppp")
+presppp<-as(pres, "ppp")
+
+dists<-nncross(absppp, presppp) # gives column dist (distance) and which (# of nearest presence point)
+
+## if you want to check the distribution
+#dist_ord<-dists[order(dists$dist),]
+#plot(dist_ord$dist)
+
+# Step 3 - find quartiles
+qdist<-quantile(dists$dist,probs = seq(0, 1, 1/2)) # can modify the probs to change the number of divisions
+lowQ<-qdist[[1]] # do not eliminate close ones
+hiQ<-qdist[[2]]
+
+# Step 4 - subset absences to exclude extreme quartiles
+sel<-which((dists$dist>lowQ) & (dists$dist<hiQ))
+sel.abs<-abs[sel, ]
+
+## OUTPUT 
+# Step 5 - combine with presences into output shapefile
+resp_spat_sel<-rbind(pres,sel.abs)
+
+# (prevalence check)
+prev2<- length(pres)/length(resp_spat_sel)
+
+prev2
+```
+
 ## Extract values
 ```{r}
 r <- resp_spat_sel
@@ -49,6 +93,7 @@ fmla <- as.formula(paste(paste0("X",resp,"~"),
 m0 <- cforest(fmla,
                       data=v, # all observations 
                       control = cforest_unbiased(ntree=1000,mtry = 3))
+fmla
 ```
 
 ### Check which variables are important at explaining presence/absence
