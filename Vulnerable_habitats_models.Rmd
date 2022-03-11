@@ -140,5 +140,14 @@ dotplot(sort(varimp(cforest(fmla1,
   )
 })  
 ```
-
+## Best model
+A bit manual. Select the top variables according to variable importance making sure that they include the ones selected by glmnet (lasso?). This is the best because it's the simplest
+```{r}
+var <- sort(varimp(cforest(fmla1,
+                            data=v, # all observations 
+                            control = cforest_unbiased(ntree=1000,mtry = 3))),decreasing=TRUE)
+fmlabest <- as.formula(paste(paste0("X",resp,"~"), 
+                          paste(names(var[1:9]), collapse= "+")))
+fmlabest
+```
 
