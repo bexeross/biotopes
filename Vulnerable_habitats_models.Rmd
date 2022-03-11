@@ -87,6 +87,7 @@ e <- raster::extract(pred, r)
 v <- e %>% data.frame(cbind(r)) %>% mutate(landscape = factor(landscape)) %>% select(-contains("coord"))
 str(v)
 ```
+
 ## Variable selection
 I don't think this is very important right now - all I care about is spatial predictions - but oh well
 ```{r}
@@ -155,6 +156,7 @@ fmlabest
 
 
 ## Cross-validate with blocks
+I have to get the spm library to work and replace rmse with vecv...
 ```{r}
 v <- v %>% mutate(block = as_factor(sub("_.*", "", SampID)))
 
