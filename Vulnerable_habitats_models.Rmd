@@ -9,6 +9,7 @@ library(raster)
 library(rgdal)
 library(partykit)
 library(party)
+library(tidyverse)
 
 library(spatstat)
 library(maptools)
@@ -91,12 +92,12 @@ str(v)
 ## Variable selection
 I don't think this is very important right now - all I care about is spatial predictions - but oh well
 ```{r}
-fmla <- as.formula(paste(paste0("X",resp,"~"), 
+fmla0 <- as.formula(paste(paste0("X",resp,"~"), 
                          paste(colnames(v)[1:(which(colnames(v)=="X")-1)], collapse= "+"))) # all predictors
-m0 <- cforest(fmla,
+m0 <- cforest(fmla0,
                       data=v, # all observations 
                       control = cforest_unbiased(ntree=1000,mtry = 3))
-fmla
+fmla0
 ```
 
 ### Check which variables are important at explaining presence/absence
@@ -149,9 +150,9 @@ A bit manual. Select the top variables according to variable importance making s
 var <- sort(varimp(cforest(fmla1,
                             data=v, # all observations 
                             control = cforest_unbiased(ntree=1000,mtry = 3))),decreasing=TRUE)
-fmlabest <- as.formula(paste(paste0("X",resp,"~"), 
+fmla2 <- as.formula(paste(paste0("X",resp,"~"), 
                           paste(names(var[1:9]), collapse= "+")))
-fmlabest
+fmla2
 ```
 
 
@@ -205,5 +206,13 @@ crossvalidate <- function(data, k, model, dependent){
   return(c('RMSE' = mean(performances)))
 }
 
-crossvalidate(train_set,4,fmla,"X3031")
+plot(c(crossvalidate(train_set,4,fmla0,"X3031"),
+crossvalidate(train_set,4,fmla1,"X3031"),
+crossvalidate(train_set,4,fmla2,"X3031"))~c(0,1,2), xlab = "model", ylab = "RMSE")
 ```
+
+### Choose model
+```{r}
+fmlabest <- fmla1
+```
+
