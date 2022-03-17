@@ -3,3 +3,37 @@ title: "Get spatial predictions"
 output: html_notebook
 ---
 
+## Libraries
+```{r}
+library(tidyvers)
+library(party)
+```
+
+## Get biotope polygon
+Need Margaret's outputs!
+
+## Crop predictor stack to biotope polygon
+
+## Predict
+```{r}
+crop_pred <- pred
+
+## Predict using the raster package function:
+# list of factor levels
+f1 <- levels(v$landscape)
+f <- list(f1)
+names(f) <-c("landscape")
+
+predfun <- function(m, d, ...) predict(m, newdata=d, ...)
+
+model = cforest(fmlabest,
+                data=v, 
+                control = cforest_unbiased(ntree=1000,mtry = 3))
+
+#pc <- raster::predict(pred, model, OOB=TRUE, factors=f, fun=predfun)
+
+## same, in parallel
+beginCluster()
+pc <- clusterR(pred, predict, args=list(model=model, OOB=TRUE, factors=f, fun=predfun, index=1))
+
+```
