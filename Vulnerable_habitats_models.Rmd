@@ -216,10 +216,16 @@ crossvalidate(train_set,4,fmla2,"X3031"))~c(0,1,2), xlab = "model", ylab = "RMSE
 fmlabest <- fmla1
 ```
 
+## Export
+```{r}
+save(list=c("train_set", "test_set", "fmlabest"), file = file.path(outPath,"WORKSPACE_modeltraining.Rdata"))
+```
 
 ## Calculate variance explained
 ```{r}
 library(spm)
+load("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/WORKSPACE_modeltraining.Rdata")
+
 data = train_set
 model = cforest(fmlabest,
                 data=data, 
@@ -228,4 +234,7 @@ p <- treeresponse(model, test_set)
 o <- test_set %>% select(contains(resp))
 crosscheck <- data.frame(predicted = unlist(p), observed = pull(o))
 ve <- vecv(crosscheck$observed,crosscheck$predicted)
+```
+```{r}
+
 ```
