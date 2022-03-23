@@ -29,7 +29,7 @@ pred
 ## Make the response into a spatial object
 ```{r}
 resp = "3031"
-resp_spat <- respdf %>%
+resp_spat <- respdf_sum %>%
   rownames_to_column(var = "SampID")%>%
   left_join(sample_info)%>%
   select(SampID, resp, x_coord, y_coord)
