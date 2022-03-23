@@ -213,12 +213,14 @@ crossvalidate(train_set,4,fmla2,"X3031"))~c(0,1,2), xlab = "model", ylab = "RMSE
 
 ### Choose model
 ```{r}
-fmlabest <- fmla1
+fmlabest <- fmla0
 ```
 
 ## Export
 ```{r}
 save(list=c("train_set", "test_set", "fmlabest"), file = file.path(outPath,"WORKSPACE_modeltraining.Rdata"))
+
+save(list=c("train_set", "test_set", "fmlabest"), file = "WORKSPACE_modeltraining.Rdata") # save in working dir
 ```
 
 ## Calculate variance explained
