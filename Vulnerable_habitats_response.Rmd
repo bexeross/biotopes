@@ -13,9 +13,11 @@ Requires: my.subs.small, trimmedwide, indsp, indval
 ## Input data and libraries
 ```{r}
 library(dplyr)
+library(tidyr)
 library(rgdal)
 library(indicspecies)
 library(mvabund)
+library(magrittr)
 
 ## pick a biotope and find (manually for now) the first classification level at which it splits
 
@@ -154,8 +156,26 @@ goahead <- x %>% filter(assoc > 0.5 | ent < 2) %>% select(species)
 
 # need to merge 30 and 31 because they are associated to the same biotope
 
-respdf <- spe3 %>% mutate("3031" = select(., c("30", "31")) %>% rowSums(na.rm = TRUE)) %>%
+respdf_sum <- spe3 %>% mutate("3031" = select(., c("30", "31")) %>% rowSums(na.rm = TRUE)) %>%
   select(c(all_of(goahead$species), "3031")) %>% select(-c("30","31"))%>% set_rownames(spe2$SampID)
+
+# get count 
+
+s <- c("30", "31")
+
+spe4 <- trimmed %>%
+  select(-c(TotAbu_pseudocount,TotAbu_count,density_n_100m2_count,density_n_100m2_pseudocount)) %>%
+  mutate(new_name = gsub(" ","",new_name)) %>%
+  mutate(new_name = gsub("\\.","",new_name)) %>%
+  mutate(new_name = tolower(new_name)) %>%
+  filter(new_name%in%with(sppgrp, species[spclass%in%s]))%>%
+  group_by(SampID) %>%
+  summarize(., count = length(SampID))
+
+addsamp <- with(trimmedwide, SampID[!SampID%in%spe4$SampID])
+
+spe5 <- add_row(spe4, SampID = addsamp, count = 0)
+
 
 # what to do with the others?
 #think <- x$species[which(!x$species%in%goahead$species)]
