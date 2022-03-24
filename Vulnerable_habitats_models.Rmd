@@ -243,6 +243,3 @@ crosscheck <- data.frame(predicted = unlist(p), observed = pull(o))
 ve <- vecv(crosscheck$observed,crosscheck$predicted)
 ve
 ```
-```{r}
-
-```
