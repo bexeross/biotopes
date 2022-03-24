@@ -32,8 +32,9 @@ resp = "3031"
 resp_spat <- respdf_sum %>%
   rownames_to_column(var = "SampID")%>%
   left_join(sample_info)%>%
-  select(SampID, resp, x_coord, y_coord)
-resp_spat <-  SpatialPointsDataFrame(coords = resp_spat[,c(3,4)],
+  left_join(spe5) %>%
+  select(SampID, resp, count, x_coord, y_coord)
+resp_spat <-  SpatialPointsDataFrame(coords = resp_spat[,c(4,5)],
                                       data = resp_spat,
                                       proj4string = CRS("+proj=utm +zone=33 +datum=WGS84 +units=m +no_defs"))
 ```
@@ -85,7 +86,8 @@ r <- resp_spat_sel
 #r <- resp_spat
 
 e <- raster::extract(pred, r)
-v <- e %>% data.frame(cbind(r)) %>% mutate(landscape = factor(landscape)) %>% select(-contains("coord"))
+v <- e %>% data.frame(cbind(r)) %>% mutate(landscape = factor(landscape)) %>% select(-contains("coord")) %>%
+  transform(count=replace(count, which(count==0),1))
 str(v)
 ```
 
@@ -95,7 +97,8 @@ I don't think this is very important right now - all I care about is spatial pre
 fmla0 <- as.formula(paste(paste0("X",resp,"~"), 
                          paste(colnames(v)[1:(which(colnames(v)=="X")-1)], collapse= "+"))) # all predictors
 m0 <- cforest(fmla0,
-                      data=v, # all observations 
+                      data=v, # all observations
+                      weights = v$count,
                       control = cforest_unbiased(ntree=1000,mtry = 3))
 fmla0
 ```
@@ -130,6 +133,7 @@ vset@excluded
 x_new <- x %>% 
   data.frame() %>%
   select(-vset@excluded) %>%
+  select(-count)
   data.matrix()
 
 fmla1 <- as.formula(paste(paste0("X",resp,"~"), 
@@ -226,7 +230,7 @@ save(list=c("train_set", "test_set", "fmlabest"), file = "WORKSPACE_modeltrainin
 ## Calculate variance explained
 ```{r}
 library(spm)
-load("U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/Data_Delivery_2021/outputs/WORKSPACE_modeltraining.Rdata")
+load("WORKSPACE_modeltraining.Rdata")
 
 data = train_set
 model = cforest(fmlabest,
