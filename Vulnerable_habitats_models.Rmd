@@ -228,6 +228,7 @@ save(list=c("train_set", "test_set", "fmlabest"), file = "WORKSPACE_modeltrainin
 ```
 
 ## Calculate variance explained
+This bit needs to be run on the server because I can't install the required package on my computer!
 ```{r}
 library(spm)
 load("WORKSPACE_modeltraining.Rdata")
@@ -240,6 +241,7 @@ p <- treeresponse(model, test_set)
 o <- test_set %>% select(contains(resp))
 crosscheck <- data.frame(predicted = unlist(p), observed = pull(o))
 ve <- vecv(crosscheck$observed,crosscheck$predicted)
+ve
 ```
 ```{r}
 
