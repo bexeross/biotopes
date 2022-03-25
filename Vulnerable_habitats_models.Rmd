@@ -52,7 +52,7 @@ kable(indicbiot, format = "markdown", digits =2)
 ## Make the response into a spatial object
 ### Choose an indicator assemblage
 ```{r}
-respv = c("30","31")
+respv = c("133")
 resp = paste0(respv)
 resp = sapply(list(resp),function (x) base::paste(x, sep = " ",collapse=""))
 as.character(with(sppgrp, species[spclass%in%respv]))
@@ -60,7 +60,6 @@ as.character(with(sppgrp, species[spclass%in%respv]))
 
 ### Make it into a spatial object
 ```{r}
-
 resp_spat <- respdf_sum %>%
   rownames_to_column(var = "SampID")%>%
   left_join(sample_info)%>%
@@ -78,8 +77,8 @@ Some species/taxa have very limited distributions. It may be a good idea to elim
 ## Select a subset of stations from the core distribution area(s) (code by RS)
 
 # Step 1 - split into presence and absence points
-abs<- subset(resp_spat, X3031==0)
-pres<- subset(resp_spat, X3031>0)
+abs<- subset(resp_spat, `133`==0)
+pres<- subset(resp_spat, `133`>0)
 
 # prevalence check
 prev_1 <- length(pres)/length(resp_spat)
@@ -141,7 +140,7 @@ fmla0
 # Make a predictor-only matrix and a response-only vector, and also, leave only complete cases in there
 x0 <- v %>% select(-c(paste0("X",resp), optional)) %>%
   select(-count) %>%
-  select(-block)%>%
+  #select(-block)%>%
   filter(complete.cases(.))
 cc <- x0$SampID
 
@@ -192,7 +191,7 @@ var <- sort(varimp(cforest(fmla1,
                            #weights = v$count,
                             control = cforest_unbiased(ntree=1000,mtry = 3))),decreasing=TRUE)
 fmla2 <- as.formula(paste(paste0("X",resp,"~"), 
-                          paste(names(var[1:9]), collapse= "+")))
+                          paste(names(var[1:16]), collapse= "+")))
 fmla2
 ```
 
@@ -241,7 +240,7 @@ crossvalidate <- function(data, k, model, dependent){
     # Predict the dependent variable in the testing_set with the trained model
     predicted <- treeresponse(modelmodel, testing_set)
     # Get the Root Mean Square Error between the predicted and the observed
-    RMSE <- rmse(unlist(predicted), testing_set[[dependent]])
+    RMSE <- mse(unlist(predicted), testing_set[[dependent]])
     # Add the RMSE to the performance list
     performances[fold] <- RMSE
   }
