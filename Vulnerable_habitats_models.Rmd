@@ -31,8 +31,9 @@ Take a glance at the predictors
 ```{r}
 kable(data.frame(Name = names(pred), Min_val = minValue(pred), Max_val = maxValue(pred)), format = "markdown", digits = 2)
 ```
+
 ## Potential responses
-Take a glance at the VME indicator taxa and how they group into what we have called assemblages
+Take a glance at the VME indicator taxa, and how they group into what we have called assemblages
 ```{r}
 kable(sppgrp)
 ```
@@ -49,8 +50,17 @@ kable(indicbiot, format = "markdown", digits =2)
 ```
 
 ## Make the response into a spatial object
+### Choose an indicator assemblage
 ```{r}
-resp = "3031"
+respv = c("30","31")
+resp = paste0(respv)
+resp = sapply(list(resp),function (x) base::paste(x, sep = " ",collapse=""))
+as.character(with(sppgrp, species[spclass%in%respv]))
+```
+
+### Make it into a spatial object
+```{r}
+
 resp_spat <- respdf_sum %>%
   rownames_to_column(var = "SampID")%>%
   left_join(sample_info)%>%
@@ -59,6 +69,7 @@ resp_spat <- respdf_sum %>%
 resp_spat <-  SpatialPointsDataFrame(coords = resp_spat[,c(4,5)],
                                       data = resp_spat,
                                       proj4string = CRS("+proj=utm +zone=33 +datum=WGS84 +units=m +no_defs"))
+resp_spat@data %>% select(contains(resp)) %>% pull %>% quantile(.,probs = seq(0, 1, 0.1))
 ```
 
 ## Reduce the dataset
