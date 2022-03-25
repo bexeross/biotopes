@@ -143,10 +143,10 @@ indval3 <- data.frame(strassoc(X = spe3, cluster = hab, func = "IndVal.g")) # Co
 #indval <- data.frame(strassoc(X = spe, cluster = hab, func = "r.g"))
 
 library(agrmt)
-x <- data.frame( species = row.names(indval3), biotope = colnames(indval3)[max.col(indval3,ties.method="first")],
+indicbiot <- data.frame( species = row.names(indval3), biotope = colnames(indval3)[max.col(indval3,ties.method="first")],
                  assoc = apply(indval3, 1, max),
                  ent = apply(indval3, 1, entropy))
-x
+indicbiot
 
 ```
 ## what to model? aka creating the response variable
