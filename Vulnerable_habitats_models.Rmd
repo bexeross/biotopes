@@ -1,29 +1,51 @@
 ---
-title: "Modeling"
-output: html_notebook
+title: "Specifications for distribution models of vulnerable marine ecosystem indicator assemblanges"
+author: Genoveva Gonzalez Mirelis, Rebecca Ross, Pål Buhl-Mortensen
+output: 
+  html_notebook: 
+    toc: yes
 ---
 
+## Introduction
+In compliance with the MAREANO Activity Plan, we have produced data and models to help towards the management of Vulnerable Marine Ecosystems (VMEs) and/or vulnerable biotopes. In this sheet we summarize all the specifications (code and outputs) for the models we have built that predict the distribution of VME indicator species/taxa/assemblages.
+
 ## Libraries
-```{r}
+Load necessary libraries
+```{r warning=FALSE}
 library(raster)
 library(rgdal)
 library(partykit)
 library(party)
 library(tidyverse)
-
+library(knitr)
 library(spatstat)
 library(maptools)
-
 library(usdm)
 library(vegan)
 library(glmnet)
-
 library(groupdata2)
 ```
 
 ## Predictors
+Take a glance at the predictors
 ```{r}
-pred
+kable(data.frame(Name = names(pred), Min_val = minValue(pred), Max_val = maxValue(pred)), format = "markdown", digits = 2)
+```
+## Potential responses
+Take a glance at the VME indicator taxa and how they group into what we have called assemblages
+```{r}
+kable(sppgrp)
+```
+
+## Strength of association to biotopes
+Strength of association between VME indicator assemblages and MAREANO biotopes
+```{r}
+kable(indval3,format = "markdown", digits = 2)
+```
+
+### Summarized associations
+```{r}
+kable(indicbiot, format = "markdown", digits =2)
 ```
 
 ## Make the response into a spatial object
@@ -98,7 +120,7 @@ fmla0 <- as.formula(paste(paste0("X",resp,"~"),
                          paste(colnames(v)[1:(which(colnames(v)=="X")-1)], collapse= "+"))) # all predictors
 m0 <- cforest(fmla0,
                       data=v, # all observations
-                      weights = v$count,
+                      #weights = v$count,
                       control = cforest_unbiased(ntree=1000,mtry = 3))
 fmla0
 ```
@@ -106,7 +128,10 @@ fmla0
 ### Check which variables are important at explaining presence/absence
 ```{r}
 # Make a predictor-only matrix and a response-only vector, and also, leave only complete cases in there
-x0 <- v %>% select(-c(paste0("X",resp), optional)) %>% filter(complete.cases(.))
+x0 <- v %>% select(-c(paste0("X",resp), optional)) %>%
+  select(-count) %>%
+  select(-block)%>%
+  filter(complete.cases(.))
 cc <- x0$SampID
 
 y <- v %>% filter(SampID %in% cc) %>%
@@ -133,7 +158,6 @@ vset@excluded
 x_new <- x %>% 
   data.frame() %>%
   select(-vset@excluded) %>%
-  select(-count)
   data.matrix()
 
 fmla1 <- as.formula(paste(paste0("X",resp,"~"), 
@@ -141,6 +165,7 @@ fmla1 <- as.formula(paste(paste0("X",resp,"~"),
 
 dotplot(sort(varimp(cforest(fmla1,
                             data=v, # all observations 
+                            #weights = v$count,
                             control = cforest_unbiased(ntree=1000,mtry = 3)))), xlab="Variable Importance", panel = function(x,y){ 
   panel.dotplot(x, y, col='darkblue', pch=16, cex=1.1) 
   panel.abline(v=abs(min(vi)), col='red', 
@@ -153,6 +178,7 @@ A bit manual. Select the top variables according to variable importance making s
 ```{r}
 var <- sort(varimp(cforest(fmla1,
                             data=v, # all observations 
+                           #weights = v$count,
                             control = cforest_unbiased(ntree=1000,mtry = 3))),decreasing=TRUE)
 fmla2 <- as.formula(paste(paste0("X",resp,"~"), 
                           paste(names(var[1:9]), collapse= "+")))
@@ -197,7 +223,9 @@ crossvalidate <- function(data, k, model, dependent){
     # If there is a random effect,
     # use lmer() to train model
     # else use lm()
-    modelmodel <- cforest(model, training_set, control = cforest_unbiased(ntree=500,mtry = 3))
+    modelmodel <- cforest(model, training_set, 
+                          #weights = training_set$count,
+                          control = cforest_unbiased(ntree=500,mtry = 3))
     ## Test model
     # Predict the dependent variable in the testing_set with the trained model
     predicted <- treeresponse(modelmodel, testing_set)
@@ -217,7 +245,7 @@ crossvalidate(train_set,4,fmla2,"X3031"))~c(0,1,2), xlab = "model", ylab = "RMSE
 
 ### Choose model
 ```{r}
-fmlabest <- fmla0
+fmlabest <- fmla1
 ```
 
 ## Export
