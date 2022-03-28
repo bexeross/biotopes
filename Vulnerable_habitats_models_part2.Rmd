@@ -2,6 +2,22 @@
 title: "R Notebook"
 output: html_notebook
 ---
+## Libraries
+Load necessary libraries
+```{r warning=FALSE}
+library(raster)
+library(rgdal)
+library(partykit)
+library(party)
+library(tidyverse)
+library(knitr)
+library(spatstat)
+library(maptools)
+library(usdm)
+library(vegan)
+library(glmnet)
+library(groupdata2)
+```
 
 ## Make the response into a spatial object
 ### Choose an indicator assemblage
@@ -79,6 +95,8 @@ str(v)
 
 ## Variable selection
 I don't think this is very important right now - all I care about is spatial predictions - but oh well
+
+### Full model
 ```{r}
 fmla0 <- as.formula(paste(paste0("X",resp,"~"), 
                          paste(colnames(v)[1:(which(colnames(v)=="X")-1)], collapse= "+"))) # all predictors
@@ -137,7 +155,8 @@ dotplot(sort(varimp(cforest(fmla1,
   )
 })  
 ```
-## Best model
+
+### Simplest model
 A bit manual. Select the top variables according to variable importance making sure that they include the ones selected by glmnet (lasso?). This is the best because it's the simplest
 ```{r}
 var <- sort(varimp(cforest(fmla1,
@@ -145,13 +164,12 @@ var <- sort(varimp(cforest(fmla1,
                            #weights = v$count,
                             control = cforest_unbiased(ntree=1000,mtry = 3))),decreasing=TRUE)
 fmla2 <- as.formula(paste(paste0("X",resp,"~"), 
-                          paste(names(var[1:16]), collapse= "+")))
+                          paste(names(var[1:7]), collapse= "+")))
 fmla2
 ```
 
 
 ## Cross-validate with blocks
-I have to get the spm library to work and replace rmse with vecv...
 ```{r}
 v <- v %>% mutate(block = as_factor(sub("_.*", "", SampID)))
 
@@ -202,21 +220,20 @@ crossvalidate <- function(data, k, model, dependent){
   return(c('RMSE' = mean(performances)))
 }
 
-plot(c(crossvalidate(train_set,4,fmla0,"X3031"),
-crossvalidate(train_set,4,fmla1,"X3031"),
-crossvalidate(train_set,4,fmla2,"X3031"))~c(0,1,2), xlab = "model", ylab = "RMSE")
+plot(c(crossvalidate(train_set,4,fmla0,paste0("X",resp)),
+crossvalidate(train_set,4,fmla1,paste0("X",resp)),
+crossvalidate(train_set,4,fmla2,paste0("X",resp)))~c(0,1,2), xlab = "model", ylab = "(R)MSE")
 ```
 
 ### Choose model
 ```{r}
-fmlabest <- fmla1
+fmlabest <- fmla0
 ```
 
 ## Export
 ```{r}
-save(list=c("train_set", "test_set", "fmlabest"), file = file.path(outPath,"WORKSPACE_modeltraining.Rdata"))
-
-save(list=c("train_set", "test_set", "fmlabest"), file = "WORKSPACE_modeltraining.Rdata") # save in working dir
+#save(list=c("train_set", "test_set", "fmlabest"), file = file.path(outPath,"WORKSPACE_modeltraining.Rdata"))
+save(list=c("train_set", "test_set", "fmlabest", "resp"), file = "WORKSPACE_modeltraining.Rdata") # save in working dir
 ```
 
 ## Calculate variance explained
