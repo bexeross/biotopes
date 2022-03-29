@@ -263,15 +263,15 @@ crossvalidateVE <- function(data, k, model, dependent){
     # If there is a random effect,
     # use lmer() to train model
     # else use lm()
-    modelmodel <- cforest(model, training_set, 
+    modelmodel <- party::cforest(model, training_set, 
                           #weights = training_set$count,
                           control = cforest_unbiased(ntree=500,mtry = 3))
     ## Test model
     # Predict the dependent variable in the testing_set with the trained model
     predicted <- treeresponse(modelmodel, testing_set)
     # Get the VE between the predicted and the observed
-    o <- test_set %>% select(contains(resp))
-    crosscheck <- data.frame(predicted = unlist(p), observed = pull(o))
+    o <- testing_set %>% select(contains(resp))
+    crosscheck <- data.frame(predicted = unlist(predicted), observed = pull(o))
     ve <- vecv(crosscheck$observed,crosscheck$predicted)
         # Add the RMSE to the performance list
     performances[fold] <- ve
