@@ -21,8 +21,6 @@ crop_pred <- mask(crop(pred,mask),mask)
 
 ## Predict
 ```{r}
-pred <- crop_pred
-
 ## Predict using the raster package function:
 # list of factor levels
 f1 <- levels(v$landscape)
@@ -39,6 +37,7 @@ model = cforest(fmlabest,
 
 ## same, in parallel
 beginCluster()
-pc <- clusterR(pred, predict, args=list(model=model, OOB=TRUE, factors=f, fun=predfun, index=1))
+pc <- clusterR(crop_pred, predict, args=list(model=model, OOB=TRUE, factors=f, fun=predfun, index=1))
+endCluster()
 
 ```
