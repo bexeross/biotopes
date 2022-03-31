@@ -48,4 +48,10 @@ kable(indval3,format = "markdown", digits = 2)
 ```{r}
 kable(indicbiot, format = "markdown", digits =2)
 ```
+## Export
+```{r}
+names_pred <- names(pred)
+save(list=c("sppgrp", "respdf_sum", "sample_info", "spe5", "names_pred"), file = "WORKSPACE_modeltraining.Rdata") # save in working dir
+writeRaster(pred,"pred.tif", options="INTERLEAVE=BAND", overwrite=TRUE)
+```
 
