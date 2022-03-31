@@ -1,7 +1,14 @@
 ---
-title: "R Notebook"
-output: html_notebook
+title: "Specifications for distribution models of vulnerable marine ecosystem indicator assemblanges"
+author: Genoveva Gonzalez Mirelis, Rebecca Ross, Pål Buhl-Mortensen
+output: 
+  html_notebook: 
+    toc: yes
 ---
+
+## Introduction
+In compliance with the MAREANO Activity Plan, we have produced data and models to help towards the management of Vulnerable Marine Ecosystems (VMEs) and/or vulnerable biotopes. In this sheet we summarize all the specifications (code and outputs) for the models we have built that predict the distribution of VME indicator species/taxa/assemblages.
+
 ## Libraries
 Load necessary libraries
 ```{r warning=FALSE}
@@ -17,6 +24,14 @@ library(usdm)
 library(vegan)
 library(glmnet)
 library(groupdata2)
+library(spm)
+```
+
+## Load needed objects
+```{r}
+load("WORKSPACE_modeltraining.Rdata")
+pred <- raster("pred.tif")
+names(pred)<-names_pred
 ```
 
 ## Make the response into a spatial object
@@ -170,10 +185,8 @@ fmla2
 
 
 ## Cross-validate with blocks
-```{r}
+```{r warning=FALSE}
 v <- v %>% mutate(block = as_factor(sub("_.*", "", SampID)))
-
-
 crossvalidate <- function(data, k, model, dependent){
   require(Metrics)
   # 'data' is the training set with the ".folds" column
@@ -222,17 +235,10 @@ crossvalidate(d,4,fmla2,paste0("X",resp)))~c(0,1,2), xlab = "model", ylab = "(R)
 fmlabest <- fmla0
 ```
 
-## Export
-```{r}
-#save(list=c("train_set", "test_set", "fmlabest"), file = file.path(outPath,"WORKSPACE_modeltraining.Rdata"))
-save(list=c("v", "fmlabest", "resp"), file = "WORKSPACE_modeltraining.Rdata") # save in working dir
-```
 
 ## Calculate variance explained
 This bit needs to be run on the server because I can't install the required package on my computer!
 ```{r}
-library(spm)
-load("WORKSPACE_modeltraining.Rdata")
 # Split data in 20/80 (percentage)
 parts <- partition(v, p = 0.3, id_col = "block")
 test_set <- parts[[1]]
@@ -252,7 +258,9 @@ ve <- vecv(crosscheck$observed,crosscheck$predicted)
 ve        
 ```
 
-## Export, again
+## Export
 ```{r}
-save(list=c("v", "fmlabest", "resp", "pred"), file = "WORKSPACE_modeltraining.Rdata") # save in working dir
+names_pred <- names(pred)
+save(list=c("v", "fmlabest", "resp", "names_pred"), file = "WORKSPACE_modeltraining.Rdata") # save in working dir
+writeRaster(pred,"pred.tif", options="INTERLEAVE=BAND", overwrite=TRUE)
 ```
