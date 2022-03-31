@@ -21,7 +21,7 @@ crop_pred <- mask(crop(pred,mask),mask)
 
 ## Predict
 ```{r}
-#crop_pred <- pred
+pred <- crop_pred
 
 ## Predict using the raster package function:
 # list of factor levels
