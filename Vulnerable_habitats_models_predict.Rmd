@@ -6,7 +6,7 @@ output: html_notebook
 ## Libraries and needed R objects
 ```{r}
 load("WORKSPACE_modeltraining.Rdata")
-library(tidyvers)
+library(tidyverse)
 library(party)
 library(snow)
 ```
@@ -32,7 +32,7 @@ names(f) <-c("landscape")
 
 predfun <- function(m, d, ...) predict(m, newdata=d, ...)
 
-model = cforest(fmlabest,
+model = party::cforest(fmlabest,
                 data=v, 
                 control = cforest_unbiased(ntree=1000,mtry = 3))
 
