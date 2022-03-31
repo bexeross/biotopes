@@ -1,5 +1,5 @@
 ---
-title: "Specifications for distribution models of vulnerable marine ecosystem indicator assemblanges"
+title: "VME indicators and biotopes"
 author: Genoveva Gonzalez Mirelis, Rebecca Ross, Pål Buhl-Mortensen
 output: 
   html_notebook: 
