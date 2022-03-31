@@ -3,16 +3,19 @@ title: "Get spatial predictions"
 output: html_notebook
 ---
 
-## Libraries
+## Libraries and needed R objects
 ```{r}
 load("WORKSPACE_modeltraining.Rdata")
 library(tidyvers)
 library(party)
+library(snow)
 ```
 
-## Get biotope polygon
-Need Margaret's outputs!
+## Get predictor data
+This can't be saved as an R object, so I have to import it again
 ```{r}
+pred <- raster("pred.tif")
+names(pred)<-names_pred
 mask<-readOGR("tiny.shp")
 crop_pred <- mask(crop(pred,mask),mask)
 ```
