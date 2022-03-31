@@ -5,18 +5,23 @@ output: html_notebook
 
 ## Libraries
 ```{r}
+load("WORKSPACE_modeltraining.Rdata")
 library(tidyvers)
 library(party)
 ```
 
 ## Get biotope polygon
 Need Margaret's outputs!
+```{r}
+mask<-readOGR("tiny.shp")
+crop_pred <- mask(crop(pred,mask),mask)
+```
 
 ## Crop predictor stack to biotope polygon
 
 ## Predict
 ```{r}
-crop_pred <- pred
+#crop_pred <- pred
 
 ## Predict using the raster package function:
 # list of factor levels
