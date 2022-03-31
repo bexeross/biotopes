@@ -225,7 +225,7 @@ fmlabest <- fmla0
 ## Export
 ```{r}
 #save(list=c("train_set", "test_set", "fmlabest"), file = file.path(outPath,"WORKSPACE_modeltraining.Rdata"))
-save(list=c("train_set", "test_set", "fmlabest", "resp"), file = "WORKSPACE_modeltraining.Rdata") # save in working dir
+save(list=c("v", "fmlabest", "resp"), file = "WORKSPACE_modeltraining.Rdata") # save in working dir
 ```
 
 ## Calculate variance explained
@@ -250,4 +250,9 @@ o <- test_set %>% select(contains(resp))
 crosscheck <- data.frame(predicted = unlist(predicted), observed = pull(o))
 ve <- vecv(crosscheck$observed,crosscheck$predicted)
 ve        
+```
+
+## Export, again
+```{r}
+save(list=c("v", "fmlabest", "resp", "pred"), file = "WORKSPACE_modeltraining.Rdata") # save in working dir
 ```
