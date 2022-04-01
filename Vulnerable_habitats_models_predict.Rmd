@@ -43,4 +43,6 @@ beginCluster()
 pc <- clusterR(crop_pred, predict, args=list(model=model, OOB=TRUE, factors=f, fun=predfun, index=1))
 endCluster()
 
+writeRaster(pc, paste0("vmeOutputs\\Prediction", resp, ".tif", collapse = NULL), options="INTERLEAVE=BAND", overwrite=TRUE)
+
 ```
