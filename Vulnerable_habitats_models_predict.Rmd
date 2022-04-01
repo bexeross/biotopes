@@ -14,10 +14,10 @@ library(snow)
 ## Get predictor data
 This can't be saved as an R object, so I have to import it again
 ```{r}
-pred <- raster("pred.tif")
+pred <- stack("pred.tif")
 names(pred)<-names_pred
-mask<-readOGR("tiny.shp")
-crop_pred <- mask(crop(pred,mask),mask)
+#mask<-readOGR("tiny.shp")
+#crop_pred <- mask(crop(pred,mask),mask)
 ```
 
 ## Crop predictor stack to biotope polygon
@@ -41,8 +41,9 @@ model = party::cforest(fmlabest,
 ## same, in parallel
 beginCluster()
 pc <- clusterR(crop_pred, predict, args=list(model=model, OOB=TRUE, factors=f, fun=predfun, index=1))
+writeRaster(pc, paste0("vmeOutputs\\Prediction", resp, ".tif", collapse = NULL), options="INTERLEAVE=BAND", overwrite=TRUE)
 endCluster()
 
-writeRaster(pc, paste0("vmeOutputs\\Prediction", resp, ".tif", collapse = NULL), options="INTERLEAVE=BAND", overwrite=TRUE)
+
 
 ```
